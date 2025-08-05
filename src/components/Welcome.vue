@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import Banner from './welcome/Banner.vue'
 import Welcome from './welcome/Welcome.vue'
+import OurStory from './welcome/OurStory.vue'
+import OurSharedStorage from './welcome/OurSharedStorage.vue'
 </script>
 
 <template>
   <Welcome />
   <Banner />
   <div class="banner-video-container">
-    <video class="banner-video" src="/banner.mp4" autoplay loop muted playsinline></video>
+    <div class="container">
+      <video class="banner-video" src="/banner.mp4" autoplay loop muted playsinline></video>
+    </div>
   </div>
+  <OurStory />
+  <OurSharedStorage />
+  <Banner />
 </template>
 
 <style scoped>
