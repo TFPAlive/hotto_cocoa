@@ -1,6 +1,11 @@
 :root {
   --font-color: rgb(151, 5, 5);
-  --background-color: rgb(253, 255, 239);
+  --header-color: rgb(160, 82, 45);
+  --main-bg-color: rgb(253, 255, 239);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --hover-color: rgb(255, 224, 128);
+  --hover-font-color: rgb(122, 58, 27);
+  --button-color: rgb(255, 230, 128);
 }
 
 #app {

@@ -1,7 +1,7 @@
 .footer,
 .navbar {
   width: 100vw;
-  background: var(--background-color);
+  background: var(--main-bg-color);
   color: var(--font-color);
   display: flex;
   justify-content: space-between;

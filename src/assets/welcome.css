@@ -5,7 +5,7 @@
   gap: 40px;
   padding: 40px 25px;
   margin: 0 auto;
-  background-color: var(--background-color);
+  background-color: var(--main-bg-color);
 }
 .welcome-left {
   max-width: 500px;
@@ -18,7 +18,7 @@
   font-size: 4rem;
   font-weight: bold;
   margin-bottom: 24px;
-  color: #a0522d;
+  color: var(--header-color);
 }
 .cup-icons {
   display: flex;
@@ -37,13 +37,13 @@
 }
 .welcome-desc {
   font-size: 1.1rem;
-  color: #5a3a1b;
+  color: var(--font-color);
   line-height: 1.6;
 }
 .design-btn {
   display: inline-block;
-  background: #ffe680;
-  color: #a0522d;
+  background: var(--button-color);
+  color: var(--header-color);
   font-weight: bold;
   padding: 12px 32px;
   border-radius: 24px;
@@ -55,8 +55,8 @@
     color 0.2s;
 }
 .design-btn:hover {
-  background: #ffe080;
-  color: #7a3a1b;
+  background: var(--hover-color);
+  color: var(--hover-font-color);
 }
 @media (max-width: 1024px) {
   .welcome-title {

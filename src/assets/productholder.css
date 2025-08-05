@@ -4,12 +4,12 @@
   gap: 40px;
   width: 100%;
   padding: 40px 0;
-  background-color: #ffe680;
+  background-color: var(--button-color);
 }
 .product-section {
   margin: 0 auto;
   max-width: 1200px;
-  background: #fffbe6;
+  background: var(--main-bg-color);
   border-radius: 18px;
   box-shadow: 0 2px 8px #e0c3a033;
   padding: 32px 24px 24px 24px;
@@ -23,11 +23,11 @@
 .section-title {
   font-size: 1.3rem;
   font-weight: bold;
-  color: #a0522d;
+  color: var(--header-color);
 }
 .section-btn {
-  background: #ffe680;
-  color: #a0522d;
+  background: var(--button-color);
+  color: var(--header-color);
   font-weight: bold;
   border: none;
   border-radius: 18px;
@@ -40,8 +40,8 @@
     color 0.2s;
 }
 .section-btn:hover {
-  background: #ffe080;
-  color: #7a3a1b;
+  background: var(--hover-color);
+  color: var(--hover-font-color);
 }
 .products-row {
   display: flex;
@@ -71,7 +71,7 @@
 .empty-text {
   margin-top: 10px;
   font-size: 0.98rem;
-  color: #b0a08a;
+  color: var(--hover-font-color);
   text-align: center;
 }
 .products-row-wrapper {
@@ -81,8 +81,8 @@
   overflow: hidden;
 }
 .scroll-btn {
-  background: #ffe680;
-  color: #a0522d;
+  background: var(--button-color);
+  color: var(--header-color);
   border: none;
   border-radius: 50%;
   width: 36px;
@@ -107,7 +107,7 @@
 .products-row-bg {
   display: flex;
   align-items: center;
-  background: #fffbe6;
+  background: var(--main-bg-color);
   border-radius: 12px;
   padding: 40px 0;
   z-index: 1;

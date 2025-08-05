@@ -4,9 +4,9 @@ import IconEmpty from '../icons/IconEmpty.vue'
 import { ref } from 'vue'
 
 const sections = [
-  { title: 'Your current design', buttonLabel: 'Design More' },
-  { title: 'Recommend from your browser', buttonLabel: 'Check History' },
-  { title: 'See more related products', buttonLabel: 'Shop All' },
+  { title: 'Your current design', buttonLabel: 'Design More', link: '/design' },
+  { title: 'Recommend from your browser', buttonLabel: 'Check History', link: '/history' },
+  { title: 'See more related products', buttonLabel: 'Shop All', link: '/shop' },
 ]
 
 // Each section gets its own scroll index
@@ -31,7 +31,7 @@ function scrollRight(sectionIdx: number) {
     <div v-for="(section, idx) in sections" :key="section.title" class="product-section">
       <div class="section-header">
         <span class="section-title">{{ section.title }}</span>
-        <button class="section-btn">{{ section.buttonLabel }}</button>
+        <router-link :to="section.link" class="section-btn">{{ section.buttonLabel }}</router-link>
       </div>
       <div class="products-row-wrapper">
         <div class="products-row-bg">

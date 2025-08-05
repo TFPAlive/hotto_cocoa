@@ -4,7 +4,7 @@
   right: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--shadow-color);
   z-index: 1000;
   display: flex;
   justify-content: flex-end;
@@ -13,7 +13,7 @@
   width: 350px;
   max-width: 90vw;
   height: 100vh;
-  background: #fffbe6;
+  background: var(--main-bg-color);
   box-shadow: -2px 0 12px #c9b37c44;
   display: flex;
   flex-direction: column;
@@ -26,21 +26,21 @@
   padding: 20px 24px 12px 24px;
   font-size: 1.3rem;
   font-weight: bold;
-  color: #a0522d;
-  border-bottom: 1px solid #f0e0b0;
+  color: var(--header-color);
+  border-bottom: 1px solid var(--font-color);
 }
 .close-btn {
   background: none;
   border: none;
   font-size: 2rem;
-  color: #a0522d;
+  color: var(--header-color);
   cursor: pointer;
   line-height: 1;
 }
 .cart-drawer-body {
   flex: 1;
   padding: 24px;
-  color: #5a3a1b;
+  color: var(--font-color);
 }
 @keyframes cart-slide-in {
   from {
