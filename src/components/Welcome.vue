@@ -3,6 +3,7 @@ import Banner from './welcome/Banner.vue'
 import Welcome from './welcome/Welcome.vue'
 import OurStory from './welcome/OurStory.vue'
 import OurSharedStorage from './welcome/OurSharedStorage.vue'
+import ProductHolder from './welcome/ProductHolder.vue'
 </script>
 
 <template>
@@ -16,12 +17,14 @@ import OurSharedStorage from './welcome/OurSharedStorage.vue'
   <OurStory />
   <OurSharedStorage />
   <Banner />
+  <ProductHolder />
+  <Banner />
 </template>
 
 <style scoped>
 .banner-video-container {
   width: 100%;
-  height: 500px;
+  height: 800px;
   position: relative;
   overflow: hidden;
   background: transparent;
