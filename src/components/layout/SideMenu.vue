@@ -5,11 +5,13 @@ import CartIcon from '../icons/IconCart.vue'
 import Navigation from './Navigation.vue'
 import IconClose from '../icons/IconClose.vue'
 import { ref } from 'vue'
+
 const showCart = ref(false)
+const cartCount = 3
+
 function toggleCart() {
   showCart.value = !showCart.value
 }
-const cartCount = 3
 </script>
 
 <template>

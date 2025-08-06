@@ -2,7 +2,9 @@
 import IconHamburger from '../icons/IconHamburger.vue'
 import IconClose from '../icons/IconClose.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
+
 const showNav = ref(window.innerWidth >= 1024)
+
 function toggleNav() {
   showNav.value = !showNav.value
 }
@@ -13,6 +15,7 @@ function handleResize() {
     showNav.value = true
   }
 }
+
 onMounted(() => {
   window.addEventListener('resize', handleResize)
   handleResize()
@@ -33,7 +36,6 @@ onUnmounted(() => {
       </span>
     </transition>
   </button>
-
   <div class="navbar-center" :class="{ collapsed: !showNav }">
     <router-link to="/" class="nav-btn">Story</router-link>
     <router-link to="/store" class="nav-btn">Store</router-link>

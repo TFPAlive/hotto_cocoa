@@ -4,6 +4,11 @@ import Welcome from '../home/Welcome.vue'
 import OurStory from '../home/OurStory.vue'
 import OurSharedStorage from '../home/OurSharedStorage.vue'
 import ProductHolder from '../home/ProductHolder.vue'
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  document.title = 'Design | Hotto Choco'
+})
 </script>
 
 <template>

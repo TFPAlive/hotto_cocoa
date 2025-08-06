@@ -5,6 +5,7 @@ import OurStory from '../home/OurStory.vue'
 import OurSharedStorage from '../home/OurSharedStorage.vue'
 import ProductHolder from '../home/ProductHolder.vue'
 import { onMounted } from 'vue'
+
 onMounted(() => {
   document.title = 'Home | Hotto Choco'
 })

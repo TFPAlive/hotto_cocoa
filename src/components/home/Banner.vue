@@ -2,6 +2,7 @@
 import '../../assets/banner.css'
 import IconCampaign from '../icons/IconCampaign.vue'
 import { ref } from 'vue'
+
 const repeatCount = ref(7)
 </script>
 
