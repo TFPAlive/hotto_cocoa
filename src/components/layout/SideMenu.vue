@@ -4,10 +4,17 @@ import '../../assets/cartmenu.css'
 import CartIcon from '../icons/IconCart.vue'
 import Navigation from './Navigation.vue'
 import IconClose from '../icons/IconClose.vue'
+
 import { ref } from 'vue'
 
 const showCart = ref(false)
 const cartCount = 3
+const currencies = [
+  { label: 'USD ($)', value: 'USD' },
+  { label: 'VND (đ)', value: 'VND' },
+  { label: 'JPY (¥)', value: 'JPY' },
+]
+const selectedCurrency = ref('JPY')
 
 function toggleCart() {
   showCart.value = !showCart.value
@@ -22,6 +29,9 @@ function toggleCart() {
     </div>
     <Navigation />
     <div class="navbar-right">
+      <select v-model="selectedCurrency" class="currency-dropdown" aria-label="Select currency">
+        <option v-for="c in currencies" :key="c.value" :value="c.value">{{ c.label }}</option>
+      </select>
       <div class="cart-container">
         <button class="icon-btn" aria-label="Cart" @click="toggleCart">
           <CartIcon />

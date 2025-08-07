@@ -39,34 +39,6 @@
   max-height: 500px;
   overflow: hidden;
 }
-@media (max-width: 1024px) {
-  .navbar-center {
-    position: absolute;
-    left: 0;
-    top: 101px;
-    width: 100vw;
-    background: var(--background-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem 2rem;
-    z-index: 1001;
-    opacity: 1;
-    transform: translateY(0);
-    max-height: 500px;
-    overflow: hidden;
-  }
-  .navbar-center.collapsed {
-    opacity: 0;
-    transform: translateY(-30px);
-    max-height: 0;
-    pointer-events: none;
-    transition:
-      max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-}
 .menu-toggle {
   display: none;
   background: none;
@@ -82,7 +54,7 @@
   .navbar-center {
     position: absolute;
     left: 0;
-    top: 99px;
+    top: 96px;
     width: 100vw;
     background: var(--main-bg-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -169,4 +141,31 @@
 }
 .login-btn:hover {
   background: var(--font-color);
+}
+.currency-dropdown {
+  background: var(--main-bg-color);
+  color: var(--font-color);
+  border: 1.5px solid var(--font-color);
+  padding: 0.45rem 1.5rem 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border 0.2s;
+  outline: none;
+  appearance: none;
+  min-width: 110px;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  margin-right: 0.5rem;
+}
+.currency-dropdown:focus {
+  border-color: #e6b800;
+  box-shadow: 0 0 0 2px #ffe68055;
+}
+.currency-dropdown option {
+  color: #5a3a1b;
+  background: #fffbe6;
 }
