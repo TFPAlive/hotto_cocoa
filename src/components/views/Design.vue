@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import Banner from '../home/Banner.vue'
 import Welcome from '../design/Welcome.vue'
-import DesignCorner from '../design/DesignCorner.vue'
-import OurSharedStorage from '../home/OurSharedStorage.vue'
-import ProductHolder from '../home/ProductHolder.vue'
+import ChatBot from '../design/ChatBot.vue'
 import { onMounted } from 'vue'
 
 onMounted(() => {
@@ -14,9 +12,5 @@ onMounted(() => {
 <template>
   <Welcome />
   <Banner />
-  <DesignCorner />
-  <OurSharedStorage />
-  <Banner />
-  <ProductHolder />
-  <Banner />
+  <ChatBot />
 </template>

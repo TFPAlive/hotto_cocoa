@@ -53,4 +53,69 @@ onUnmounted(() => {
 .icon-fade-leave-to {
   opacity: 0;
 }
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--font-color);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.nav-btn:hover {
+  background: var(--hover-color);
+}
+.navbar-center {
+  display: flex;
+  gap: 1.5rem;
+  transition:
+    max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 500px;
+  overflow: hidden;
+}
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  margin: 0 1rem 0 0;
+  cursor: pointer;
+}
+@media (max-width: 1024px) {
+  .menu-toggle {
+    display: block;
+  }
+  .navbar-center {
+    position: absolute;
+    left: 0;
+    top: 96px;
+    width: 100vw;
+    background: var(--main-bg-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 2rem;
+    z-index: 1001;
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+    overflow: hidden;
+  }
+  .navbar-center.collapsed {
+    opacity: 0;
+    transform: translateY(-30px);
+    max-height: 0;
+    pointer-events: none;
+    transition:
+      max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
 </style>

@@ -1,24 +1,15 @@
 <script setup lang="ts">
-import '../../assets/sidemenu.css'
-import '../../assets/cartmenu.css'
-import CartIcon from '../icons/IconCart.vue'
 import Navigation from './Navigation.vue'
-import IconClose from '../icons/IconClose.vue'
+import CartMenu from './CartMenu.vue'
 
 import { ref } from 'vue'
 
-const showCart = ref(false)
-const cartCount = 3
 const currencies = [
   { label: 'USD ($)', value: 'USD' },
   { label: 'VND (đ)', value: 'VND' },
   { label: 'JPY (¥)', value: 'JPY' },
 ]
 const selectedCurrency = ref('JPY')
-
-function toggleCart() {
-  showCart.value = !showCart.value
-}
 </script>
 
 <template>
@@ -32,28 +23,84 @@ function toggleCart() {
       <select v-model="selectedCurrency" class="currency-dropdown" aria-label="Select currency">
         <option v-for="c in currencies" :key="c.value" :value="c.value">{{ c.label }}</option>
       </select>
-      <div class="cart-container">
-        <button class="icon-btn" aria-label="Cart" @click="toggleCart">
-          <CartIcon />
-        </button>
-        <span v-if="cartCount > 0" class="cart-badge">{{ cartCount }}</span>
-        <transition name="cart-drawer">
-          <div v-if="showCart" class="cart-drawer" @click.self="toggleCart">
-            <div class="cart-drawer-content">
-              <div class="cart-drawer-header">
-                <span>Cart List</span>
-                <button class="close-btn" @click="toggleCart">
-                  <IconClose />
-                </button>
-              </div>
-              <div class="cart-drawer-body">
-                <p>Your cart is empty.</p>
-              </div>
-            </div>
-          </div>
-        </transition>
-      </div>
+      <CartMenu />
       <button class="login-btn">Login</button>
     </div>
   </header>
 </template>
+
+<style scoped>
+.navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--main-bg-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.site-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.site-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--font-color);
+  letter-spacing: 1px;
+}
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.login-btn {
+  background: var(--font-color);
+  color: var(--main-bg-color);
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.login-btn:hover {
+  background: var(--font-color);
+}
+.currency-dropdown {
+  background: var(--main-bg-color);
+  color: var(--font-color);
+  border: 1.5px solid var(--font-color);
+  padding: 0.45rem 1.5rem 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border 0.2s;
+  outline: none;
+  appearance: none;
+  min-width: 110px;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  margin-right: 0.5rem;
+}
+.currency-dropdown:focus {
+  border-color: #e6b800;
+  box-shadow: 0 0 0 2px #ffe68055;
+}
+.currency-dropdown option {
+  color: #5a3a1b;
+  background: #fffbe6;
+}
+</style>
