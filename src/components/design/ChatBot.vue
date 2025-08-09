@@ -2,27 +2,31 @@
 </script>
 
 <template>
-  <div class="chatbot-container">
-    <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
-    <div class="chatbot-intro">
-      Hi! I'm the Hotto Choco box chat.<br />
-      Let's do our best for your perfect drink. Tell me what you want, or click on the stuff below.
-    </div>
-    <div class="chatbox">
-      <!-- Chat messages and input will go here -->
-      
-    </div>
-    <div class="chatbox-input-row">
-        <textarea class="chatbox-input" rows="2" placeholder="Type your message..."></textarea>
-        <button class="chatbox-send-btn">Send</button>
+  <div class="chatbot-background">
+    <div class="chatbot-container">
+      <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
+      <div class="chatbot-intro">
+        Hi! I'm the Hotto Choco box chat.<br />
+        Let's do our best for your perfect drink. Tell me what you want, or click on the stuff below.
       </div>
+      <div class="chatbox">
+      </div>
+      <div class="chatbot-input-row">
+        <textarea class="chatbot-input" rows="2" placeholder="Type your message..."></textarea>
+        <button class="chatbot-send-btn">Send</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.chatbot-background {
+  padding: 20px;
+  background-color: var(--button-color);
+}
 .chatbot-container {
-  max-width: 480px;
-  margin: 40px auto;
+  max-width: 750px;
+  margin: 0 auto;
   background: #fffbe6;
   border-radius: 18px;
   box-shadow: 0 2px 12px #e0c3a033;
@@ -53,7 +57,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* Chatbox input styles */
+}
+.chatbot-input-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
 }
 .chatbot-input {
   flex: 1;
@@ -65,12 +74,11 @@
   background: #fffbe6;
   color: #5a3a1b;
   transition: border 0.2s;
+  margin: 20px 20px 10px 0;
 }
 .chatbot-input:focus {
   border-color: #a0522d;
 }
-
-/* Chatbox send button styles */
 .chatbot-send-btn {
   background: #ffe680;
   color: #a0522d;
