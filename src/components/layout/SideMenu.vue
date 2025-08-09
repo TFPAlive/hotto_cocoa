@@ -20,9 +20,6 @@ const selectedCurrency = ref('JPY')
     </div>
     <Navigation />
     <div class="navbar-right">
-      <select v-model="selectedCurrency" class="currency-dropdown" aria-label="Select currency">
-        <option v-for="c in currencies" :key="c.value" :value="c.value">{{ c.label }}</option>
-      </select>
       <CartMenu />
       <button class="login-btn">Login</button>
     </div>

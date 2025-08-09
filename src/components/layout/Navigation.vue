@@ -37,7 +37,7 @@ onUnmounted(() => {
     </transition>
   </button>
   <div class="navbar-center" :class="{ collapsed: !showNav }">
-    <router-link to="/" class="nav-btn">Story</router-link>
+    <router-link to="#story" class="nav-btn">Story</router-link>
     <router-link to="/store" class="nav-btn">Store</router-link>
     <router-link to="/design" class="nav-btn">Design</router-link>
     <router-link to="#footer" class="nav-btn">Contact</router-link>

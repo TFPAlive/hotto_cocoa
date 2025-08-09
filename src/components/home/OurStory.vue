@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="ourstory-container">
+  <div id="story" class="ourstory-container">
     <div class="ourstory-video">
       <video class="story-video" src="/banner2.mp4" autoplay loop muted playsinline></video>
     </div>
