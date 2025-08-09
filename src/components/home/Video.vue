@@ -1,5 +1,4 @@
 <script lang="ts">
-import '../../assets/video.css'
 </script>
 
 <template>
