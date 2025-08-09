@@ -2,6 +2,7 @@
   --font-color: rgb(151, 5, 5);
   --header-color: rgb(160, 82, 45);
   --main-bg-color: rgb(253, 255, 239);
+  --sub-bg-color: rgb(35, 40, 26);
   --shadow-color: rgba(0, 0, 0, 0.3);
   --hover-color: rgb(255, 224, 128);
   --hover-font-color: rgb(122, 58, 27);
@@ -27,6 +28,7 @@ body,
   margin: 0px;
   color: var(--font-color);
   background-color: transparent;
+  scroll-behavior: smooth;
 }
 
 @media (hover: hover) {

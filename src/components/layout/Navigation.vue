@@ -40,7 +40,7 @@ onUnmounted(() => {
     <router-link to="/" class="nav-btn">Story</router-link>
     <router-link to="/store" class="nav-btn">Store</router-link>
     <router-link to="/design" class="nav-btn">Design</router-link>
-    <router-link to="/contact" class="nav-btn">Contact</router-link>
+    <router-link to="#footer" class="nav-btn">Contact</router-link>
   </div>
 </template>
 

@@ -1,12 +1,15 @@
+<script setup lang="ts">
+</script>
+
 <template>
   <div class="chatbot-background">
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
-      <div class="chatbot-intro">
-        Hi! I'm the Hotto Choco box chat.<br />
-        Let's do our best for your perfect drink. Tell me what you want, or click on the stuff below.
-      </div>
       <div class="chatbox">
+        <div class="chatbot-respond">
+          Hi! I'm the Hotto Choco box chat.<br />
+          Let's do our best for your perfect drink. Tell me what you want, or click on the stuff below.
+        </div>
       </div>
       <div class="chatbot-input-row">
         <textarea class="chatbot-input" rows="2" placeholder="Type your message..."></textarea>
@@ -19,10 +22,10 @@
 <style scoped>
 .chatbot-background {
   padding: 20px;
-  background-color: var(--button-color);
+  background-color: var(--sub-bg-color);
 }
 .chatbot-container {
-  max-width: 750px;
+  max-width: 1000px;
   margin: 0 auto;
   background: #fffbe6;
   border-radius: 18px;
@@ -38,11 +41,10 @@
   margin-bottom: 18px;
   text-align: center;
 }
-.chatbot-intro {
+.chatbot-respond {
   font-size: 1.1rem;
   color: #5a3a1b;
   margin-bottom: 24px;
-  text-align: center;
 }
 .chatbox {
   width: 100%;

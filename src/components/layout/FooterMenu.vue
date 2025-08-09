@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <footer class="footer">
+  <footer id="footer" class="footer">
     <div class="footer-section footer-logo">
       <img src="/hotto_choco.png" alt="Hotto Choco Logo" class="footer-logo-img" />
     </div>
