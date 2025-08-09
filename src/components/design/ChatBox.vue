@@ -1,6 +1,3 @@
-<script lang="js">
-</script>
-
 <template>
   <div class="chatbot-background">
     <div class="chatbot-container">
