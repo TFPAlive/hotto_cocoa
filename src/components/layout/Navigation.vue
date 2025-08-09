@@ -53,7 +53,6 @@ onUnmounted(() => {
 .icon-fade-leave-to {
   opacity: 0;
 }
-
 .nav-btn {
   background: none;
   border: none;
@@ -94,7 +93,7 @@ onUnmounted(() => {
   .navbar-center {
     position: absolute;
     left: 0;
-    top: 96px;
+    top: 66px;
     width: 100vw;
     background: var(--main-bg-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);

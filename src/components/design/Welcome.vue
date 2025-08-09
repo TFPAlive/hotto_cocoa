@@ -27,7 +27,7 @@
 }
 .main-box-black {
   background: var(--main-bg-color);
-  color: #fff;
+  color: var(--font-color);
   font-size: 2rem;
   font-weight: bold;
   padding: 48px 32px 32px 32px;
