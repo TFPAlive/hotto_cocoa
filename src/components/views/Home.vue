@@ -21,4 +21,5 @@ onMounted(() => {
   <Banner />
   <ProductHolder />
   <Banner />
+  
 </template>

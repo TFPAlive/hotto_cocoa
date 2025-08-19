@@ -15,8 +15,10 @@ const selectedCurrency = ref('JPY')
 <template>
   <header class="navbar">
     <div class="navbar-left">
-      <img src="/icon.png" alt="Hotto Choco Icon" class="site-icon" />
-      <span class="site-name">Hotto Choco</span>
+        <router-link to="/" class="navbar-home-link">
+          <img src="/icon.png" alt="Hotto Choco Icon" class="site-icon" />
+          <span class="site-name">Hotto Choco</span>
+        </router-link>
     </div>
     <Navigation />
     <div class="navbar-right">
@@ -27,6 +29,10 @@ const selectedCurrency = ref('JPY')
 </template>
 
 <style scoped>
+.navbar-home-link:hover {
+  text-emphasis: none; 
+  background-color: transparent;
+}
 .navbar {
   position: sticky;
   top: 0;
@@ -43,6 +49,12 @@ const selectedCurrency = ref('JPY')
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+.navbar-home-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
 }
 .site-icon {
   width: 32px;

@@ -8,6 +8,7 @@
         <div class="rating-row">
           <span>Sweetness level</span>
             <StarRating v-model="sweetness"/>
+            
         </div>
         <div class="rating-row">
           <span>Calories level</span>
@@ -39,14 +40,13 @@ import { ref, defineComponent } from 'vue'
 const StarRating = defineComponent({
   name: 'StarRating',
   props: {
-    modelValue: { type: Number, required: true },
-    max: { type: Number, default: 5 }
+    modelValue: { type: Number, required: true }
   },
   emits: ['update:modelValue'],
   computed: {
     starTypes() {
       const types: string[] = []
-      for (let i = 1; i <= this.max; i++) {
+      for (let i = 1; i <= 5; i++) {
         if (this.modelValue >= i) types.push('full')
         else if (this.modelValue >= i - 0.5) types.push('half')
         else types.push('empty')
