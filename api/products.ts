@@ -1,10 +1,12 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node'
-import mysql from 'mysql2/promise'
-import dotenv from 'dotenv'
+import { Router } from "express"
+import mysql from "mysql2/promise"
+import dotenv from "dotenv"
 
 dotenv.config()
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+const router = Router()
+
+router.get("/", async (req, res) => {
   try {
     const connection = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -12,12 +14,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
     })
-
-    const [rows] = await connection.query('SELECT * FROM Product')
+    const [rows] = await connection.query("SELECT * FROM Product")
     await connection.end()
-
-    res.status(200).json(rows)   // ✅ Vercel will return JSON
+    res.json(rows)
   } catch (err: any) {
     res.status(500).json({ error: err.message })
   }
-}
+})
+
+export default router
