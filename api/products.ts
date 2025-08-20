@@ -8,6 +8,11 @@ export default async function products(req, res) {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
+      ssl: {
+        ca: process.env.DB_SSL_CA,
+        key: process.env.DB_SSL_KEY,
+        cert: process.env.DB_SSL_CERT,
+      },
     });
 
     const [rows] = await connection.execute("SELECT * FROM products");
