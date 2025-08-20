@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise";
 
+var exports = {};
 export default async function products(req, res) {
   try {
     const connection = await mysql.createConnection({
