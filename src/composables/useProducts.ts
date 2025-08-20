@@ -1,5 +1,6 @@
 import { ref, onMounted } from "vue"
 
+var exports = {};
 export interface Product {
   id: string
   name: string
