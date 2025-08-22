@@ -1,18 +1,23 @@
 import mysql from "mysql2/promise";
+import { Connector } from "@google-cloud/cloud-sql-connector";
 
 export default async function products(req, res) {
-  console.log(process.env.DB_HOST);
   try {
+    // Create a connector instance
+    const connector = new Connector();
+
+    // Get secure connection options for Cloud SQL
+    const clientOpts = await connector.getOptions({
+      instanceConnectionName: process.env.INSTANCE_CONNECTION_NAME, // format: project:region:instance
+      ipType: "PUBLIC", // can also use "PRIVATE" if needed
+    });
+
+    // Create the connection
     const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
+      ...clientOpts,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      ssl: {
-        ca: process.env.DB_SSL_CA,
-        key: process.env.DB_SSL_KEY,
-        cert: process.env.DB_SSL_CERT,
-      },
     });
 
     const [rows] = await connection.execute("SELECT * FROM products");
