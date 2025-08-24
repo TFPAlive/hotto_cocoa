@@ -5,11 +5,6 @@ import { SpeedInsights } from "@vercel/speed-insights/vue"
 </script>
 
 <template>
-  <SideMenu />
-  <main>
-    <RouterView />
-  </main>
-  <FooterMenu />
-
+  <RouterView />
   <SpeedInsights />
 </template>
