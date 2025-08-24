@@ -9,11 +9,6 @@
   --button-color: rgb(255, 230, 128);
 }
 
-#app {
-  margin: 0 auto;
-  font-weight: normal;
-}
-
 a,
 .green {
   text-decoration: none;
@@ -31,6 +26,11 @@ body,
   scroll-behavior: smooth;
 }
 
+.body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 @media (hover: hover) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
