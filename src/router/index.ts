@@ -8,6 +8,8 @@ const router = createRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/design', component: Design },
+    { path: "/login", component: () => import('../components/auth/Login.vue') },
+    { path: "/register", component: () => import('../components/auth/Register.vue') },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {
