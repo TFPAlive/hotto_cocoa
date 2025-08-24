@@ -1,38 +1,15 @@
-import type { Request, Response } from "express";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { getConnection } from "../../lib/db";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
-export async function registerUser(req: Request, res: Response) {
-  const { username, email, password } = req.body;
-
-  try {
-    const conn = await getConnection();
-
-    // check if user exists
-    const [rows]: any = await conn.execute("SELECT id FROM User WHERE email = ?", [email]);
-    if (rows.length > 0) {
-      return res.status(400).json({ message: "Email already registered" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await conn.execute("INSERT INTO User (username, email, password_hash) VALUES (?, ?, ?)", [
-      username.value,
-      email.value,
-      hashedPassword,
-    ]);
-
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
-}
 
-export async function loginUser(req: Request, res: Response) {
   const { identifier, password } = req.body;
 
   function isEmail(str: string) {
@@ -46,6 +23,7 @@ export async function loginUser(req: Request, res: Response) {
       `SELECT * FROM User WHERE ${field} = ?`,
       [identifier]
     );
+
     if (rows.length === 0) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -60,9 +38,9 @@ export async function loginUser(req: Request, res: Response) {
       expiresIn: "1h",
     });
 
-    res.json({ token });
+    return res.json({ token });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 }
