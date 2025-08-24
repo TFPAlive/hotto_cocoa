@@ -4,7 +4,7 @@ import IconClose from '../icons/IconClose.vue'
 import { ref } from 'vue'
 
 const showCart = ref(false)
-const cartCount = 3
+const cartCount = ref(0)
 function toggleCart() {
   showCart.value = !showCart.value
 }
