@@ -6,7 +6,7 @@ import { getConnection } from "../../lib/db";
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 export async function registerUser(req: Request, res: Response) {
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
     const conn = await getConnection();
@@ -19,8 +19,9 @@ export async function registerUser(req: Request, res: Response) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await conn.execute("INSERT INTO User (email, password_hash) VALUES (?, ?)", [
-      email,
+    await conn.execute("INSERT INTO User (username, email, password_hash) VALUES (?, ?, ?)", [
+      username.value,
+      email.value,
       hashedPassword,
     ]);
 
@@ -32,12 +33,19 @@ export async function registerUser(req: Request, res: Response) {
 }
 
 export async function loginUser(req: Request, res: Response) {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body;
+
+  function isEmail(str: string) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(str);
+  }
 
   try {
     const conn = await getConnection();
-
-    const [rows]: any = await conn.execute("SELECT * FROM User WHERE email = ?", [email]);
+    const field = isEmail(identifier) ? "email" : "username";
+    const [rows]: any = await conn.execute(
+      `SELECT * FROM User WHERE ${field} = ?`,
+      [identifier]
+    );
     if (rows.length === 0) {
       return res.status(400).json({ message: "Invalid credentials" });
     }

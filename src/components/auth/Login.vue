@@ -2,14 +2,14 @@
 import { ref } from "vue";
 import axios from "axios";
 
-const email = ref("");
+const identifier = ref(""); // for email or username
 const password = ref("");
 const error = ref("");
 
 async function handleLogin() {
   try {
     const res = await axios.post("/api/auth/login", {
-      email: email.value,
+      identifier: identifier.value,
       password: password.value,
     });
     console.log("Login success:", res.data);
@@ -26,8 +26,8 @@ async function handleLogin() {
     <h2>Login</h2>
     <form @submit.prevent="handleLogin">
       <div>
-        <label>Email:</label>
-        <input v-model="email" type="email" required />
+        <label>Email/Username:</label>
+        <input v-model="identifier" type="text" placeholder="Email or Username" required />
       </div>
       <div>
         <label>Password:</label>
@@ -72,7 +72,7 @@ label {
 }
 input[type="email"],
 input[type="password"] {
-  width: 100%;
+  width:370px;
   padding: 10px 14px;
   border-radius: 8px;
   border: 1.5px solid #e6b800;

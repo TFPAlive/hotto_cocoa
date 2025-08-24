@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import axios from "axios";
 
+const username = ref("");
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
@@ -15,6 +16,7 @@ async function handleRegister() {
 
   try {
     const res = await axios.post("/api/auth/register", {
+      username: username.value,
       email: email.value,
       password: password.value,
     });
@@ -29,6 +31,10 @@ async function handleRegister() {
   <div class="register">
     <h2>Register</h2>
     <form @submit.prevent="handleRegister">
+      <div>
+        <label>Username:</label>
+        <input v-model="username" type="text" required />
+      </div>
       <div>
         <label>Email:</label>
         <input v-model="email" type="email" required />
@@ -81,7 +87,7 @@ label {
 input[type="email"],
 input[type="password"],
 input[type="text"] {
-  width: 100%;
+  width: 370px;
   padding: 10px 14px;
   border-radius: 8px;
   border: 1.5px solid #e6b800;
