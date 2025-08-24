@@ -1,15 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
 import Home from '../components/views/Home.vue'
 import Design from '../components/views/Design.vue'
+import Login from '../components/auth/Login.vue'
+import Register from '../components/auth/Register.vue'
+import Admin from '../components/admin/Dashboard.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: Home },
     { path: '/design', component: Design },
-    { path: "/login", component: () => import('../components/auth/Login.vue') },
-    { path: "/register", component: () => import('../components/auth/Register.vue') },
+    { path: "/login", component: Login },
+    { path: "/register", component: Register },
+    { path: "/admin", component: Admin }
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {

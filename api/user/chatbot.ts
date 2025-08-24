@@ -1,4 +1,4 @@
-import GenAI from "../lib/chatbot"
+import GenAI from "../../lib/chatbot"
 
 async function getChatbotResponse(message: string): Promise<string> {
     const response = await GenAI.models.generateContent({

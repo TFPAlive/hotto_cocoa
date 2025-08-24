@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import axios from "axios";
+import api from "../../plugins/axios";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -12,15 +12,24 @@ const loading = ref(false);
 async function handleLogin() {
   loading.value = true;
   error.value = "";
+
   try {
-    const res = await axios.post("/api/auth/login", {
+    const res = await api.post("/auth/login", {
       identifier: identifier.value,
       password: password.value,
     });
-    console.log("Login success:", res.data);
-    // save JWT/token in localStorage
-    localStorage.setItem("token", res.data.token);
-    router.push("/");
+    
+    const { token, role } = res.data;
+
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("userRole", role);
+
+    if (role === "admin") {
+      router.push("/admin");
+      return;
+    } else {
+      router.push("/");
+    }
   } catch (err: any) {
     error.value = err.response?.data?.message || "Login failed";
   } finally {
