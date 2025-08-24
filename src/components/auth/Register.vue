@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const username = ref("");
 const email = ref("");
 const password = ref("");
@@ -21,6 +23,7 @@ async function handleRegister() {
       password: password.value,
     });
     console.log("Register success:", res.data);
+    router.push("/");
   } catch (err: any) {
     error.value = err.response?.data?.message || "Register failed";
   }

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const identifier = ref(""); // for email or username
 const password = ref("");
 const error = ref("");
@@ -15,6 +17,7 @@ async function handleLogin() {
     console.log("Login success:", res.data);
     // save JWT/token in localStorage
     localStorage.setItem("token", res.data.token);
+    router.push("/");
   } catch (err: any) {
     error.value = err.response?.data?.message || "Login failed";
   }
