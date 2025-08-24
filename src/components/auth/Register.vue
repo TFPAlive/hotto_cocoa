@@ -9,8 +9,11 @@ const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const error = ref("");
+const loading = ref(false);
 
 async function handleRegister() {
+  loading.value = true;
+  error.value = "";
   if (password.value !== confirmPassword.value) {
     error.value = "Passwords do not match";
     return;
@@ -26,6 +29,8 @@ async function handleRegister() {
     router.push("/");
   } catch (err: any) {
     error.value = err.response?.data?.message || "Register failed";
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -53,6 +58,7 @@ async function handleRegister() {
       <button type="submit">Register</button>
     </form>
 
+    <p v-if="loading" class="loading-text">Registering...</p>
     <p v-if="error" class="error">{{ error }}</p>
     <div class="login-link-row">
       <span>Already have an account?</span>
@@ -139,5 +145,10 @@ button[type="submit"]:hover {
 }
 .login-link:hover {
   color: #e6b800;
+}
+.loading-text {
+  color: #e6b800;
+  margin-top: 12px;
+  font-size: 1rem;
 }
 </style>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -7,8 +7,11 @@ const router = useRouter();
 const identifier = ref(""); // for email or username
 const password = ref("");
 const error = ref("");
+const loading = ref(false);
 
 async function handleLogin() {
+  loading.value = true;
+  error.value = "";
   try {
     const res = await axios.post("/api/auth/login", {
       identifier: identifier.value,
@@ -20,6 +23,8 @@ async function handleLogin() {
     router.push("/");
   } catch (err: any) {
     error.value = err.response?.data?.message || "Login failed";
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -39,7 +44,8 @@ async function handleLogin() {
       <button type="submit">Login</button>
     </form>
 
-    <p v-if="error" class="error">{{ error }}</p>
+  <p v-if="loading" class="loading-text">Logging in...</p>
+  <p v-if="error" class="error">{{ error }}</p>
     <div class="register-link-row">
       <span>Don't have an account?</span>
       <router-link to="/register" class="register-link">Register Here</router-link>
@@ -124,5 +130,10 @@ button[type="submit"]:hover {
 }
 .register-link:hover {
   color: #e6b800;
+}
+.loading-text {
+  color: #e6b800;
+  margin-top: 12px;
+  font-size: 1rem;
 }
 </style>
