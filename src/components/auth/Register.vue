@@ -45,11 +45,90 @@ async function handleRegister() {
     </form>
 
     <p v-if="error" class="error">{{ error }}</p>
+    <div class="login-link-row">
+      <span>Already have an account?</span>
+      <router-link to="/login" class="login-link">Login Now</router-link>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.register {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 32px 24px 24px 24px;
+  background: #fffbe6;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px #e0c3a033;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h2 {
+  color: #a0522d;
+  margin-bottom: 18px;
+}
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+label {
+  font-weight: 500;
+  color: #5a3a1b;
+}
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #e6b800;
+  font-size: 1rem;
+  outline: none;
+  background: #fffbe6;
+  color: #5a3a1b;
+  transition: border 0.2s;
+}
+input:focus {
+  border-color: #a0522d;
+}
+button[type="submit"] {
+  background: #ffe680;
+  color: #a0522d;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 1px 4px #e0c3a044;
+  transition: background 0.2s, color 0.2s;
+}
+button[type="submit"]:hover {
+  background: #ffe080;
+  color: #7a3a1b;
+}
 .error {
   color: red;
+  margin-top: 12px;
+  font-size: 1rem;
+}
+.login-link-row {
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 1rem;
+}
+.login-link {
+  color: #a0522d;
+  font-weight: bold;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.login-link:hover {
+  color: #e6b800;
 }
 </style>
