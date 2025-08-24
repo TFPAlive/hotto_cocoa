@@ -3,7 +3,7 @@ import Home from '../components/views/Home.vue'
 import Design from '../components/views/Design.vue'
 import Login from '../components/auth/Login.vue'
 import Register from '../components/auth/Register.vue'
-import Admin from '../components/admin/Dashboard.vue'
+import Admin from '../components/admin/Landing.vue'
 
 const router = createRouter({
   history: createWebHistory(),
