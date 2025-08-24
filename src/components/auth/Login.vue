@@ -73,7 +73,7 @@ label {
   font-weight: 500;
   color: #5a3a1b;
 }
-input[type="email"],
+input[type="text"],
 input[type="password"] {
   width:370px;
   padding: 10px 14px;
