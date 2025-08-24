@@ -23,7 +23,9 @@ const selectedCurrency = ref('JPY')
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <button class="login-btn">Login</button>
+      <router-link to="/login">
+        <button class="login-btn">Login</button>
+      </router-link>
     </div>
   </header>
 </template>
