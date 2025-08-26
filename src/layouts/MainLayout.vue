@@ -4,8 +4,8 @@ import FooterMenu from "../components/layout/FooterMenu.vue";
 </script>
 
 <template>
-  <SideMenu />
   <main>
+  <SideMenu />
     <RouterView />
   </main>
   <FooterMenu />
