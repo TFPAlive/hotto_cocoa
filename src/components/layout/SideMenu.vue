@@ -16,15 +16,15 @@ const isLoggedIn = ref(false)
 const router = useRouter()
 
 onMounted(() => {
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("authToken")
   isLoggedIn.value = !!token
 })
 
 function logout() {
   fetch("/api/auth/logout", { method: "POST" })
 
-  localStorage.removeItem("token")
-  localStorage.removeItem("role")
+  localStorage.removeItem("authToken")
+  localStorage.removeItem("userRole")
 
   isLoggedIn.value = false
 
