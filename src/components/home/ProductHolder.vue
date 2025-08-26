@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import IconEmpty from '@/icons/IconEmpty.vue'
+import IconEmpty from '../icons/IconEmpty.vue'
 import { ref } from 'vue'
 
 const sections = [
