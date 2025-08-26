@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import IconHamburger from '@/icons/IconHamburger.vue'
-import IconClose from '@/icons/IconClose.vue'
+import IconHamburger from '../icons/IconHamburger.vue'
+import IconClose from '../icons/IconClose.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const showNav = ref(window.innerWidth >= 1024)
