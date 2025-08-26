@@ -7,11 +7,6 @@ import { useRouter } from 'vue-router'
 const auth = useAuthStore()
 const router = useRouter()
 
-function handleLogout() {
-  fetch("/api/auth/logout", { method: "POST" }) // optional
-  auth.logout()
-  router.push("/")
-}
 </script>
 
 <template>
@@ -25,7 +20,10 @@ function handleLogout() {
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <div>
+      <div v-if="auth.isLoggedIn">
+        <button class="login-btn" @click="handleLogout">Logout</button>
+      </div>
+      <div v-else>
         <router-link to="/login">
           <button class="login-btn">Login</button>
         </router-link>
