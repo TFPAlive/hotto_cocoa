@@ -1,15 +1,33 @@
 <script setup lang="ts">
 import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
-import { useAuthStore } from '../../../backend/api/auth/auth'
+
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-const auth = useAuthStore()
+const currencies = [
+  { label: 'USD ($)', value: 'USD' },
+  { label: 'VND (đ)', value: 'VND' },
+  { label: 'JPY (¥)', value: 'JPY' },
+]
+const selectedCurrency = ref('JPY')
+
+const isLoggedIn = ref(true)
 const router = useRouter()
 
-function handleLogout() {
-  fetch("backend/api/auth/logout", { method: "POST" }) // optional
-  auth.logout()
+onMounted(() => {
+  const token = localStorage.getItem("authToken")
+  isLoggedIn.value = !!token
+})
+
+function logout() {
+  fetch("backend/api/auth/logout", { method: "POST" })
+
+  localStorage.removeItem("authToken")
+  localStorage.removeItem("userRole")
+
+  isLoggedIn.value = false
+
   router.push("/")
 }
 </script>
@@ -25,8 +43,8 @@ function handleLogout() {
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <div v-if="auth.isLoggedIn">
-        <button class="login-btn" @click="handleLogout">Logout</button>
+      <div v-if="isLoggedIn">
+        <button class="login-btn" @click="logout">Logout</button>
       </div>
       <div v-else>
         <router-link to="/login">
