@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Banner from '@/home/Banner.vue'
+import Banner from '../home/Banner.vue'
 import Welcome from '@/home/Welcome.vue'
 import OurStory from '@/home/OurStory.vue'
 import OurSharedStorage from '@/home/OurSharedStorage.vue'
