@@ -8,7 +8,7 @@ const auth = useAuthStore()
 const router = useRouter()
 
 function handleLogout() {
-  fetch("/api/auth/logout", { method: "POST" }) // optional
+  fetch("backend/api/auth/logout", { method: "POST" }) // optional
   auth.logout()
   router.push("/")
 }
@@ -25,7 +25,14 @@ function handleLogout() {
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      
+      <div v-if="auth.isLoggedIn">
+        <button class="login-btn" @click="handleLogout">Logout</button>
+      </div>
+      <div v-else>
+        <router-link to="/login">
+          <button class="login-btn">Login</button>
+        </router-link>
+      </div>
     </div>
   </header>
 </template>
