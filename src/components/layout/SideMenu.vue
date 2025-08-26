@@ -12,7 +12,7 @@ const currencies = [
 ]
 const selectedCurrency = ref('JPY')
 
-const isLoggedIn = ref(false)
+const isLoggedIn = ref(true)
 const router = useRouter()
 
 onMounted(() => {
