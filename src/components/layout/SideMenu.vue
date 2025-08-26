@@ -7,6 +7,8 @@ import { useRouter } from 'vue-router'
 const auth = useAuthStore()
 const router = useRouter()
 
+function handleLogout() {
+}
 </script>
 
 <template>
