@@ -2,7 +2,8 @@
 import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 const currencies = [
   { label: 'USD ($)', value: 'USD' },
@@ -10,22 +11,46 @@ const currencies = [
   { label: 'JPY (¥)', value: 'JPY' },
 ]
 const selectedCurrency = ref('JPY')
+
+const isLoggedIn = ref(false)
+const router = useRouter()
+
+onMounted(() => {
+  const token = localStorage.getItem("token")
+  isLoggedIn.value = !!token
+})
+
+function logout() {
+  fetch("/api/auth/logout", { method: "POST" })
+
+  localStorage.removeItem("token")
+  localStorage.removeItem("role")
+
+  isLoggedIn.value = false
+
+  router.push("/")
+}
 </script>
 
 <template>
   <header class="navbar">
     <div class="navbar-left">
-        <router-link to="/" class="navbar-home-link">
-          <img src="/icon.png" alt="Hotto Choco Icon" class="site-icon" />
-          <span class="site-name">Hotto Choco</span>
-        </router-link>
+      <router-link to="/" class="navbar-home-link">
+        <img src="/icon.png" alt="Hotto Choco Icon" class="site-icon" />
+        <span class="site-name">Hotto Choco</span>
+      </router-link>
     </div>
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <router-link to="/login">
-        <button class="login-btn">Login</button>
-      </router-link>
+      <div v-if="isLoggedIn">
+        <button class="login-btn" @click="logout">Logout</button>
+      </div>
+      <div v-else>
+        <router-link to="/login">
+          <button class="login-btn">Login</button>
+        </router-link>
+      </div>
     </div>
   </header>
 </template>
