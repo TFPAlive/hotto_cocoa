@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import IconCampaign from '../icons/IconCampaign.vue'
+import IconCampaign from "@/icons/IconCampaign.vue"
 import { ref } from 'vue'
 
 const repeatCount = ref(7)

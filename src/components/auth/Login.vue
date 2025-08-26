@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import api from "../../plugins/axios";
+import api from "@/plugins/axios";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -14,7 +14,7 @@ async function handleLogin() {
   error.value = "";
 
   try {
-    const res = await api.post("/auth/login", {
+    const res = await api.post("backend/auth/login", {
       identifier: identifier.value,
       password: password.value,
     });

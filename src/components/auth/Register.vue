@@ -20,7 +20,7 @@ async function handleRegister() {
   }
 
   try {
-    const res = await axios.post("/api/auth/register", {
+    const res = await axios.post("backend/auth/register", {
       username: username.value,
       email: email.value,
       password: password.value,

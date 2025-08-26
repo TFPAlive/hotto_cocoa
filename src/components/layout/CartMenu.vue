@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import CartIcon from '../icons/IconCart.vue'
-import IconClose from '../icons/IconClose.vue'
+import CartIcon from '@/icons/IconCart.vue'
+import IconClose from '@/icons/IconClose.vue'
 import { ref } from 'vue'
 
 const showCart = ref(false)
