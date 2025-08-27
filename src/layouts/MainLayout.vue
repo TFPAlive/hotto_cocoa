@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import SideMenu from "../components/layout/SideMenu.vue";
+import Navigation from "../components/layout/Navigation.vue";
 import FooterMenu from "../components/layout/FooterMenu.vue";
 </script>
 
 <template>
-  <SideMenu />
+  <Navigation />
   <main>
     <RouterView />
   </main>
