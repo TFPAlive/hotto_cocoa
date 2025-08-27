@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
-import { useAuthStore } from '@/backend/auth/auth'
+import { useAuthStore } from '../../../api/auth/auth'
+import { useRouter } from 'vue-router'
+
 const auth = useAuthStore()
+const router = useRouter()
+
+function handleLogout() {
+  fetch("/api/auth/logout", { method: "POST" }) // optional
+  auth.logout()
+  router.push("/")
+}
 </script>
 
 <template>
@@ -17,9 +26,7 @@ const auth = useAuthStore()
     <div class="navbar-right">
       <CartMenu />
       <div v-if="auth.isLoggedIn">
-        <router-link to="/logout">
-          <button class="login-btn">Logout</button>
-        </router-link>
+        <button class="login-btn" @click="handleLogout">Logout</button>
       </div>
       <div v-else>
         <router-link to="/login">

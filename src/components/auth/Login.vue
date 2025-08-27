@@ -1,39 +1,39 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
-import api from "@/plugins/axios";
+import api from "../../plugins/axios";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "@/backend/auth/auth";
 
 const router = useRouter();
-const identifier = ref("");
+const identifier = ref(""); // for email or username
 const password = ref("");
 const error = ref("");
 const loading = ref(false);
 
 async function handleLogin() {
-  loading.value = true
-  error.value = ""
+  loading.value = true;
+  error.value = "";
 
   try {
-    const res = await api.post("/src/backend/auth/login", {
+    const res = await api.post("/auth/login", {
       identifier: identifier.value,
       password: password.value,
-    })
+    });
+    
+    const { token, role } = res.data;
 
-    const { token, role } = res.data
-
-    const auth = useAuthStore()
-    auth.login(token, role)
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("userRole", role);
 
     if (role === "admin") {
-      router.push("/admin")
+      router.push("/admin");
+      return;
     } else {
-      router.push("/")
+      router.push("/");
     }
   } catch (err: any) {
-    error.value = err.response?.data?.message || "Login failed"
+    error.value = err.response?.data?.message || "Login failed";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
