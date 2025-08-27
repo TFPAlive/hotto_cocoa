@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../../backend/auth/auth'
 
-const currencies = [
-  { label: 'USD ($)', value: 'USD' },
-  { label: 'VND (đ)', value: 'VND' },
-  { label: 'JPY (¥)', value: 'JPY' },
-]
-const selectedCurrency = ref('JPY')
 const auth = useAuthStore()
 </script>
 
