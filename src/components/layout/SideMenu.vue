@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
-
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from 'backend/auth/auth'
 
 const currencies = [
   { label: 'USD ($)', value: 'USD' },
@@ -11,25 +11,7 @@ const currencies = [
   { label: 'JPY (¥)', value: 'JPY' },
 ]
 const selectedCurrency = ref('JPY')
-
-const isLoggedIn = ref(true)
-const router = useRouter()
-
-onMounted(() => {
-  const token = localStorage.getItem("authToken")
-  isLoggedIn.value = !!token
-})
-
-function logout() {
-  fetch("backend/api/auth/logout", { method: "POST" })
-
-  localStorage.removeItem("authToken")
-  localStorage.removeItem("userRole")
-
-  isLoggedIn.value = false
-
-  router.push("/")
-}
+const auth = useAuthStore()
 </script>
 
 <template>
@@ -43,8 +25,10 @@ function logout() {
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <div v-if="isLoggedIn">
-        <button class="login-btn" @click="logout">Logout</button>
+      <div v-if="auth.isLoggedIn">
+        <router-link to="/logout">
+          <button class="login-btn">Logout</button>
+        </router-link>
       </div>
       <div v-else>
         <router-link to="/login">

@@ -16,7 +16,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    // Insert new user
     const [result]: any = await conn.execute(
       "INSERT INTO User (username, email, password_hash) VALUES (?, ?, ?)",
       [username, email, hashedPassword]
@@ -24,14 +23,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const userId = result.insertId;
 
-    // Build JWT payload
     const token = jwt.sign(
-      { userId, email, role: "user" }, // default role "user", adjust if you have roles table
+      { userId, email, role: "user" },
       JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    // Return token + role like login.ts
     return res.status(201).json({
       message: "User registered and logged in successfully",
       token,

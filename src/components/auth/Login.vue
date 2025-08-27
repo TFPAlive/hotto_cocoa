@@ -2,38 +2,38 @@
 import { ref } from "vue";
 import api from "@/plugins/axios";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "backend/auth/auth"
 
 const router = useRouter();
-const identifier = ref(""); // for email or username
+const identifier = ref("");
 const password = ref("");
 const error = ref("");
 const loading = ref(false);
 
 async function handleLogin() {
-  loading.value = true;
-  error.value = "";
+  loading.value = true
+  error.value = ""
 
   try {
     const res = await api.post("backend/auth/login", {
       identifier: identifier.value,
       password: password.value,
-    });
-    
-    const { token, role } = res.data;
+    })
 
-    localStorage.setItem("authToken", token);
-    localStorage.setItem("userRole", role);
+    const { token, role } = res.data
+
+    const auth = useAuthStore()
+    auth.login(token, role)
 
     if (role === "admin") {
-      router.push("/admin");
-      return;
+      router.push("/admin")
     } else {
-      router.push("/");
+      router.push("/")
     }
   } catch (err: any) {
-    error.value = err.response?.data?.message || "Login failed";
+    error.value = err.response?.data?.message || "Login failed"
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 </script>

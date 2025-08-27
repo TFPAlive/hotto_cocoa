@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const stats = ref({
+    orders: 120,
+    products: 58,
+    users: 340,
+    revenue: 15400
+})
+
+const recentOrders = ref([
+    { id: 'ORD001', user: 'John Doe', total: 120, status: 'Shipped', date: '2024-06-10' },
+    { id: 'ORD002', user: 'Jane Smith', total: 75, status: 'Processing', date: '2024-06-09' },
+    { id: 'ORD003', user: 'Alice Brown', total: 200, status: 'Delivered', date: '2024-06-08' },
+    { id: 'ORD004', user: 'Bob Lee', total: 50, status: 'Cancelled', date: '2024-06-07' }
+])
+</script>
+
 <template>
     <div class="admin-dashboard">
         <h1>Admin Dashboard</h1>
@@ -44,28 +62,6 @@
         </div>
     </div>
 </template>
-
-<script>
-export default {
-    name: 'AdminDashboard',
-    data() {
-        return {
-            stats: {
-                orders: 120,
-                products: 58,
-                users: 340,
-                revenue: 15400
-            },
-            recentOrders: [
-                { id: 'ORD001', user: 'John Doe', total: 120, status: 'Shipped', date: '2024-06-10' },
-                { id: 'ORD002', user: 'Jane Smith', total: 75, status: 'Processing', date: '2024-06-09' },
-                { id: 'ORD003', user: 'Alice Brown', total: 200, status: 'Delivered', date: '2024-06-08' },
-                { id: 'ORD004', user: 'Bob Lee', total: 50, status: 'Cancelled', date: '2024-06-07' }
-            ]
-        };
-    }
-};
-</script>
 
 <style scoped>
 .admin-dashboard {
