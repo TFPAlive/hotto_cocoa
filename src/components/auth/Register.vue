@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -14,19 +14,31 @@ const loading = ref(false);
 async function handleRegister() {
   loading.value = true;
   error.value = "";
+
   if (password.value !== confirmPassword.value) {
     error.value = "Passwords do not match";
+    loading.value = false;
     return;
   }
 
   try {
-    const res = await axios.post("/api/auth/register", {
-      username: username.value,
-      email: email.value,
-      password: password.value,
-    });
-    console.log("Register success:", res.data);
-    router.push("/");
+    const res = await axios.post(
+      "/api/auth/register",
+      {
+        username: username.value,
+        email: email.value,
+        password: password.value,
+      },
+      { withCredentials: true }
+    );
+
+    const { role } = res.data;
+
+    if (role === "admin") {
+      router.push("/admin");
+    } else {
+      router.push("/");
+    }
   } catch (err: any) {
     error.value = err.response?.data?.message || "Register failed";
   } finally {
@@ -34,6 +46,7 @@ async function handleRegister() {
   }
 }
 </script>
+
 
 <template>
   <div class="register">

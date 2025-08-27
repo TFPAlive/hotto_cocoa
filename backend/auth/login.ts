@@ -1,9 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { getConnection } from "../../lib/db";
-
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+import { getConnection } from "../lib/db_conn";
+import { createAuthCookie } from "../lib/authentication";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -34,11 +32,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user.user_id, email: user.email, role: user.role }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    return res.json({ token, role: user.role });
+    return res.json(createAuthCookie(res, {
+      userId: user.user_id,
+      email: user.email,
+      role: user.role
+    }));
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });

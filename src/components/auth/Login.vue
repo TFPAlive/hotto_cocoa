@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import api from "@/plugins/axios";
+import axios from "axios";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const identifier = ref(""); // for email or username
+const identifier = ref(""); // email or username
 const password = ref("");
 const error = ref("");
 const loading = ref(false);
@@ -14,19 +14,15 @@ async function handleLogin() {
   error.value = "";
 
   try {
-    const res = await api.post("/auth/login", {
+    const res = await axios.post("/api/auth/login", {
       identifier: identifier.value,
       password: password.value,
-    });
-    
-    const { token, role } = res.data;
+    }, { withCredentials: true });
 
-    localStorage.setItem("authToken", token);
-    localStorage.setItem("userRole", role);
+    const { role } = res.data;
 
     if (role === "admin") {
       router.push("/admin");
-      return;
     } else {
       router.push("/");
     }
@@ -37,6 +33,7 @@ async function handleLogin() {
   }
 }
 </script>
+
 
 <template>
   <div class="login">
