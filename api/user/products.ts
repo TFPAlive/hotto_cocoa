@@ -1,4 +1,4 @@
-import { getConnection } from "../../lib/db";
+import { getConnection } from "../lib/db_conn";
 
 export default async function products(req, res) {
   try {
