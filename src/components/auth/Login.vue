@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import api from "@/plugins/axios";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "backend/auth/auth"
+import { useAuthStore } from "@backend/auth/auth"
 
 const router = useRouter();
 const identifier = ref("");
