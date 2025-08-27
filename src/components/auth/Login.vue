@@ -14,7 +14,7 @@ async function handleLogin() {
   error.value = "";
 
   try {
-    const res = await axios.post("/backend/auth/login", {
+    const res = await axios.post("/be/auth/login", {
       identifier: identifier.value,
       password: password.value,
     }, { withCredentials: true });
