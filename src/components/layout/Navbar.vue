@@ -2,7 +2,7 @@
 import Navigation from './Navigation.vue';
 import CartMenu from './CartMenu.vue';
 import axios from "axios";
-import { isLoggedIn, userRole, checkUser } from "@/App.vue";
+import { auth, checkUser } from "@/composables/auth";
 
 async function handleLogout() {
   try {
@@ -26,7 +26,7 @@ async function handleLogout() {
     <div class="navbar-right">
       <CartMenu />
 
-      <div v-if="isLoggedIn">
+      <div v-if="auth.isLoggedIn">
         <button class="logout-btn" @click="handleLogout">Logout</button>
       </div>
       <div v-else>

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import { checkUser } from "@/App.vue";
+import { checkUser } from "@/composables/auth";
 
 const router = useRouter();
 const username = ref("");
