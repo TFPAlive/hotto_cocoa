@@ -14,7 +14,7 @@ async function handleLogin() {
   error.value = "";
 
   try {
-    const res = await api.post("/api/auth/login", {
+    const res = await api.post("/auth/login", {
       identifier: identifier.value,
       password: password.value,
     });
