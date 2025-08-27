@@ -1,6 +1,6 @@
 import type { VercelResponse } from "@vercel/node";
-import { verifyToken } from "../lib/authMiddleware";
-import type { AuthRequest } from "../lib/authMiddleware";
+import { verifyToken } from "../../lib/authMiddleware";
+import type { AuthRequest } from "../../lib/authMiddleware";
 
 export default async function handler(req: AuthRequest, res: VercelResponse) {
   if (!verifyToken(req, res)) return;
