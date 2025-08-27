@@ -2,7 +2,6 @@
 import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
 import { useAuthStore } from '../../../backend/auth/auth'
-
 const auth = useAuthStore()
 </script>
 
@@ -17,7 +16,12 @@ const auth = useAuthStore()
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <div>
+      <div v-if="auth.isLoggedIn">
+        <router-link to="/logout">
+          <button class="login-btn">Logout</button>
+        </router-link>
+      </div>
+      <div v-else>
         <router-link to="/login">
           <button class="login-btn">Login</button>
         </router-link>

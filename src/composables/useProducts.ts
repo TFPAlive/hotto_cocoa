@@ -21,7 +21,6 @@ export function useProducts() {
       if (!res.ok) throw new Error("Failed to fetch products")
       products.value = await res.json()
     } catch (err: any) {
-      console.error(err)
       error.value = err.message || "Unknown error"
     } finally {
       loading.value = false
