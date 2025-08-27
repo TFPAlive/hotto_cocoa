@@ -3,7 +3,7 @@ import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from 'backend/auth/auth'
+import { useAuthStore } from '@/backend/auth/auth'
 
 const currencies = [
   { label: 'USD ($)', value: 'USD' },

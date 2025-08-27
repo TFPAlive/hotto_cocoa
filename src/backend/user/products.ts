@@ -1,6 +1,8 @@
 import { getConnection } from "../lib/db";
 
-export default async function products(req, res) {
+import type { Request, Response } from "express";
+
+export default async function products(req: Request, res: Response) {
   try {
     const connection = await getConnection();
     const [rows] = await connection.execute("SELECT * FROM Product");
