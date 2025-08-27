@@ -17,12 +17,7 @@ const auth = useAuthStore()
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <div v-if="auth.isLoggedIn">
-        <router-link to="/logout">
-          <button class="login-btn">Logout</button>
-        </router-link>
-      </div>
-      <div v-else>
+      <div>
         <router-link to="/login">
           <button class="login-btn">Login</button>
         </router-link>
