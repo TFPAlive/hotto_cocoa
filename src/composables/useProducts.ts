@@ -18,7 +18,7 @@ export function useProducts() {
     error.value = null
     try {
       const res = await fetch("backend/user/products")
-      console.log(res)
+      console.log(await res.json())
       if (!res.ok) throw new Error("Failed to fetch products")
       products.value = await res.json()
     } catch (err: any) {
