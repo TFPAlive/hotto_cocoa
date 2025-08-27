@@ -1,9 +1,32 @@
 <script setup lang="ts">
-import Navigation from './Navigation.vue'
-import CartMenu from './CartMenu.vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import Navigation from './Navigation.vue';
+import CartMenu from './CartMenu.vue';
 
-const router = useRouter()
+const isLoggedIn = ref(false);
+
+async function checkLoginStatus() {
+  try {
+    const res = await axios.get("/api/auth/me", { withCredentials: true });
+    isLoggedIn.value = !!res.data.user;
+  } catch {
+    isLoggedIn.value = false;
+  }
+}
+
+async function handleLogout() {
+  try {
+    await axios.post("/api/auth/logout", {}, { withCredentials: true });
+    isLoggedIn.value = false;
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+}
+
+onMounted(() => {
+  checkLoginStatus();
+});
 </script>
 
 <template>
@@ -17,7 +40,11 @@ const router = useRouter()
     <Navigation />
     <div class="navbar-right">
       <CartMenu />
-      <div>
+
+      <div v-if="isLoggedIn">
+        <button class="logout-btn" @click="handleLogout">Logout</button>
+      </div>
+      <div v-else>
         <router-link to="/login">
           <button class="login-btn">Login</button>
         </router-link>
@@ -25,6 +52,7 @@ const router = useRouter()
     </div>
   </header>
 </template>
+
 
 <style scoped>
 .navbar-home-link:hover {
