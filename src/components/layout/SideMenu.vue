@@ -42,7 +42,7 @@ onMounted(() => {
       <CartMenu />
 
       <div v-if="isLoggedIn">
-        <button class="logout-btn" @click="handleLogout">Logout</button>
+        <button class="login-btn" @click="handleLogout">Logout</button>
       </div>
       <div v-else>
         <router-link to="/login">

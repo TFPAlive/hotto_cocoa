@@ -13,7 +13,6 @@ export function createAuthCookie(
     "Set-Cookie",
     `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Strict; Secure`
   );
-
   return { role: user.role }; // frontend uses this to redirect
 }
 
