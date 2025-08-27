@@ -1,6 +1,8 @@
 import { getConnection } from "../lib/db";
+import type { VercelResponse } from "@vercel/node";
+import type { AuthRequest } from "../lib/authMiddleware";
 
-export default async function products(req, res) {
+export default async function products(req: AuthRequest, res: VercelResponse) {
   try {
     const connection = await getConnection();
     const [rows] = await connection.execute("SELECT * FROM Product");
