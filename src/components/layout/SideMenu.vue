@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Navigation from './Navigation.vue'
 import CartMenu from './CartMenu.vue'
-import { useAuthStore } from '../../backend/auth/auth'
+import { useAuthStore } from '@/backend/auth/auth'
 const auth = useAuthStore()
 </script>
 

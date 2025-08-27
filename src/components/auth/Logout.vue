@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useAuthStore } from '../../backend/auth/auth'
+import { useAuthStore } from '@/backend/auth/auth'
 import { useRouter } from 'vue-router'
 const auth = useAuthStore()
 const router = useRouter()
 const loading = ref(true)
 
 function handleLogout() {
-  fetch("/api/auth/logout", { method: "POST" }) // optional
+  fetch("/src/backend/auth/logout", { method: "POST" }) // optional
   auth.logout()
   setTimeout(() => {
     loading.value = false

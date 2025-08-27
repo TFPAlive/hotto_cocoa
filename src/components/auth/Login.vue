@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import api from "@/plugins/axios";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../../backend/auth/auth";
+import { useAuthStore } from "@/backend/auth/auth";
 
 const router = useRouter();
 const identifier = ref("");
@@ -15,7 +15,7 @@ async function handleLogin() {
   error.value = ""
 
   try {
-    const res = await api.post("backend/auth/login", {
+    const res = await api.post("/src/backend/auth/login", {
       identifier: identifier.value,
       password: password.value,
     })
