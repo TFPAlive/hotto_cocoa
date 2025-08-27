@@ -14,7 +14,7 @@ async function handleLogin() {
   error.value = "";
 
   try {
-    const res = await axios.post("/be/auth/login", {
+    const res = await axios.post("/api/auth/login", {
       identifier: identifier.value,
       password: password.value,
     }, { withCredentials: true });
