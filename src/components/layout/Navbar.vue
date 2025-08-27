@@ -1,32 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import axios from "axios";
 import Navigation from './Navigation.vue';
 import CartMenu from './CartMenu.vue';
-
-const isLoggedIn = ref(false);
-
-async function checkLoginStatus() {
-  try {
-    const res = await axios.get("/api/auth/me", { withCredentials: true });
-    isLoggedIn.value = !!res.data.user;
-  } catch {
-    isLoggedIn.value = false;
-  }
-}
+import axios from "axios";
+import { isLoggedIn, userRole, checkUser } from "@/App.vue";
 
 async function handleLogout() {
   try {
     await axios.post("/api/auth/logout", {}, { withCredentials: true });
-    isLoggedIn.value = false;
+    await checkUser(); // update global state after logout
   } catch (err) {
     console.error("Logout failed", err);
   }
 }
-
-onMounted(() => {
-  checkLoginStatus();
-});
 </script>
 
 <template>
@@ -42,7 +27,7 @@ onMounted(() => {
       <CartMenu />
 
       <div v-if="isLoggedIn">
-        <button class="login-btn" @click="handleLogout">Logout</button>
+        <button class="logout-btn" @click="handleLogout">Logout</button>
       </div>
       <div v-else>
         <router-link to="/login">
@@ -52,7 +37,6 @@ onMounted(() => {
     </div>
   </header>
 </template>
-
 
 <style scoped>
 .navbar-home-link:hover {

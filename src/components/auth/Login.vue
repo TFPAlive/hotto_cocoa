@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { checkUser } from "@/App.vue";
 
 const router = useRouter();
 const identifier = ref(""); // email or username
@@ -20,6 +21,8 @@ async function handleLogin() {
     }, { withCredentials: true });
 
     const { role } = res.data;
+
+    await checkUser();
 
     if (role === "admin") {
       router.push("/admin");
