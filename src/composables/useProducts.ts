@@ -18,10 +18,10 @@ export function useProducts() {
     error.value = null
     try {
       const res = await fetch("backend/user/products")
+      console.log(res)
       if (!res.ok) throw new Error("Failed to fetch products")
       products.value = await res.json()
     } catch (err: any) {
-      console.log(err)
       error.value = err.message || "Unknown error"
     } finally {
       loading.value = false
