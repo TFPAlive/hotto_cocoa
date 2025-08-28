@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Navigation from './Navigation.vue';
-import CartMenu from './CartMenu.vue';
 import axios from "axios";
 import { auth, checkUser } from "@/composables/useAuth";
 
@@ -17,22 +16,15 @@ async function handleLogout() {
 <template>
   <header class="navbar">
     <div class="navbar-left">
-      <router-link to="/" class="navbar-home-link">
+      <router-link to="/Landing" class="navbar-home-link">
         <img src="/icon.png" alt="Hotto Choco Icon" class="site-icon" />
         <span class="site-name">Hotto Choco</span>
       </router-link>
     </div>
     <Navigation />
     <div class="navbar-right">
-      <CartMenu />
-
       <div v-if="auth.isLoggedIn">
         <button class="logout-btn" @click="handleLogout">Logout</button>
-      </div>
-      <div v-else>
-        <router-link to="/login">
-          <button class="login-btn">Login</button>
-        </router-link>
       </div>
     </div>
   </header>
