@@ -28,7 +28,7 @@ async function handleLogout() {
     <Navigation />
     <div class="navbar-right">
       <div v-if="auth.isLoggedIn">
-        <button class="logout-btn" @click="handleLogout">Logout</button>
+        <button class="login-btn" @click="handleLogout">Logout</button>
       </div>
     </div>
   </header>
