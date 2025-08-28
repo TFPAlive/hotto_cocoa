@@ -95,31 +95,19 @@ async function handleLogout() {
 .login-btn:hover {
   background: var(--font-color);
 }
-.currency-dropdown {
-  background: var(--main-bg-color);
-  color: var(--font-color);
-  border: 1.5px solid var(--font-color);
-  padding: 0.45rem 1.5rem 0.45rem 0.75rem;
-  border-radius: 6px;
+.logout-btn {
+  background: var(--font-color);
+  color: var(--main-bg-color);
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border 0.2s;
-  outline: none;
-  appearance: none;
-  min-width: 110px;
   font-weight: 500;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  margin-right: 0.5rem;
+  transition: background 0.2s, color 0.2s;
 }
-.currency-dropdown:focus {
-  border-color: #e6b800;
-  box-shadow: 0 0 0 2px #ffe68055;
-}
-.currency-dropdown option {
-  color: #5a3a1b;
-  background: #fffbe6;
+.logout-btn:hover {
+  background: #e6b800;
+  color: #fffbe6;
 }
 </style>

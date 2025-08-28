@@ -114,4 +114,20 @@ async function handleLogout() {
   color: #5a3a1b;
   background: #fffbe6;
 }
+/* Style for the Logout button */
+.logout-btn {
+  background: var(--font-color);
+  color: var(--main-bg-color);
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+  background: #e6b800;
+  color: #fffbe6;
+}
 </style>
