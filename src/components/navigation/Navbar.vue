@@ -3,11 +3,15 @@ import Navigation from './Navigation.vue';
 import CartMenu from './CartMenu.vue';
 import axios from "axios";
 import { auth, checkUser } from "@/composables/useAuth";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 async function handleLogout() {
   try {
     await axios.post("/api/auth/logout", {}, { withCredentials: true });
     await checkUser(); // update global state after logout
+    router.push("/");
   } catch (err) {
     console.error("Logout failed", err);
   }
