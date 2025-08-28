@@ -27,6 +27,7 @@ body,
 }
 
 #app {
+  width: -webkit-fill-available;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
