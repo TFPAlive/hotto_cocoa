@@ -98,8 +98,8 @@ export default defineComponent({
   setup() {
     const sweetness = ref(3.5)
     const calories = ref(2)
-    const categories = ref(['Category 1', 'Category 2', 'Category 3'])
-    const selectedCategory = ref('Category 1')
+    const categories = ref(['Cups & Mugs', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straw', 'Coasters', 'Packing styles'])
+    const selectedCategory = ref('Cups & Mugs')
 
     return { sweetness, calories, categories, selectedCategory }
   }
