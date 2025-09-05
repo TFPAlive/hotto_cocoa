@@ -30,11 +30,18 @@ const send = () => {
         </div>
 
         <!-- Loop through messages -->
-        <div v-for="(m, i) in messages" :key="i" class="chat-chatbot" :class="m.sender">
-          <strong v-if="m.sender === 'bot'">Bot:</strong>
-          <strong v-else>You:</strong>
-          {{ m.text }}
-        </div>
+        <transition-group name="chat" tag="div" class="chat-messages">
+          <div
+            v-for="(m, i) in messages"
+            :key="i"
+            class="chat-message"
+            :class="m.sender"
+          >
+            <strong v-if="m.sender === 'bot'">Bot:</strong>
+            <strong v-else>You:</strong>
+            {{ m.text }}
+          </div>
+        </transition-group>
       </div>
 
       <div class="chatbot-input-row">
@@ -90,6 +97,8 @@ const send = () => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  max-height: 200px;
+  overflow-y: scroll;
 }
 .chatbot-input-row {
   display: flex;
@@ -132,4 +141,50 @@ const send = () => {
   background: #ffe080;
   color: #7a3a1b;
 }
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Shared chat bubble look */
+.chat-message {
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+/* User vs bot style */
+.chat-message.user {
+  align-self: flex-end;
+  background-color: #c9f2ff;
+}
+.chat-message.bot {
+  align-self: flex-start;
+  background-color: #f0e5ff;
+}
+
+/* Animation for messages (fade + slide up) */
+.chat-enter-active,
+.chat-leave-active {
+  transition: all 0.3s ease;
+}
+.chat-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.chat-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+.chat-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.chat-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
 </style>
