@@ -18,10 +18,10 @@ const send = () => {
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
       <div class="chatbox">
-        <div v-if="reply" class="mt-4 p-3 border rounded bg-gray-50">
+        <div v-if="reply" class="chatbot-respond">
           <strong>Bot:</strong> {{ reply }}
         </div>
-        <div class="chatbot-respond">
+        <div v-else class="chatbot-respond">
           Hi! I'm the Hotto Choco box chat.<br />
           Let's do our best for your perfect drink. Tell me what you want, or click on the stuff below.
         </div>
