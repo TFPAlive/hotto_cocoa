@@ -65,13 +65,6 @@ const categories = ref(['Cups & Mugs', 'Drink bases', 'Choco bombs', 'Dipped coo
 const selectedCategory = ref('Cups & Mugs')
 </script>
 
-<script lang="ts">
-export default defineComponent({
-  name: 'DesignCorner',
-  components: { StarRating }
-})
-</script>
-
 <template>
   <div class="design-corner-layout">
     <div class="design-corner-left">
