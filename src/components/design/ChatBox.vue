@@ -102,7 +102,7 @@ watch(messages, async () => {
 .chatbox {
   width: 100%;
   min-height: 200px;
-  background: #fff;
+  background: var(--main-bg-color);
   border-radius: 12px;
   box-shadow: 0 1px 6px #e0c3a044;
   padding: 18px 14px;
