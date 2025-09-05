@@ -1,0 +1,14 @@
+<template>
+  <svg
+    width="24"
+    height="24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    viewBox="0 0 24 24"
+  >
+    <path fill-rule="evenodd" d="M15.0729595,5 L15.7800663,5.70710678 L9.41020654,12.074 L15.7800663,18.4363861 L15.0729595,19.1434929 L7.99920654,12.077895 L8.00220654,12.074 L8,12.0717464 L15.0729595,5 Z"></path>  
+  </svg>
+</template>

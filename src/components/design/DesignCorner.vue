@@ -1,40 +1,6 @@
-<template>
-  <div class="design-corner-layout">
-    <div class="design-corner-left">
-      <div class="cup-image-placeholder">
-        <!-- Cup image goes here -->
-      </div>
-      <div class="rating-bars">
-        <div class="rating-row">
-          <span>Sweetness level</span>
-            <StarRating v-model="sweetness"/>
-            
-        </div>
-        <div class="rating-row">
-          <span>Calories level</span>
-            <StarRating v-model="calories"/>
-        </div>
-      </div>
-    </div>
-    <div class="design-corner-right">
-      <div class="category-buttons">
-        <button
-          v-for="cat in categories"
-          :key="cat"
-          :class="{ active: selectedCategory === cat }"
-          @click="selectedCategory = cat"
-        >
-          {{ cat }}
-        </button>
-      </div>
-      <div class="options-placeholder">
-        <!-- Product options go here -->
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts">
+import IconPointLeft from '../icons/IconPointLeft.vue'
+import IconPointRight from '../icons/IconPointRight.vue'
 import { ref, defineComponent } from 'vue'
 
 const StarRating = defineComponent({
@@ -106,6 +72,46 @@ export default defineComponent({
 })
 </script>
 
+<template>
+  <div class="design-corner-layout">
+    <div class="design-corner-left">
+      <div class="cup-image-placeholder">
+        <!-- Cup image goes here -->
+      </div>
+      <div class="rating-bars">
+        <div class="rating-row">
+          <span>Sweetness level</span>
+            <StarRating v-model="sweetness"/>
+            
+        </div>
+        <div class="rating-row">
+          <span>Calories level</span>
+            <StarRating v-model="calories"/>
+        </div>
+      </div>
+    </div>
+    <div class="design-corner-right">
+      <div class="category">
+        <div class="left-button"> <IconPointLeft /></div>
+        <div class="category-buttons">
+        <button
+          v-for="cat in categories"
+          :key="cat"
+          :class="{ active: selectedCategory === cat }"
+          @click="selectedCategory = cat"
+        >
+          {{ cat }}
+        </button>
+        </div>
+        <div class="right-button"> <IconPointRight /></div>
+      </div>
+      <div class="options-placeholder">
+        <!-- Product options go here -->
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .design-corner-layout {
   display: flex;
@@ -151,8 +157,10 @@ export default defineComponent({
   display: flex;
   gap: 18px;
   margin-bottom: 24px;
+  width: max-content;
 }
 .category-buttons button {
+
   background: #fff;
   color: #23281a;
   border: none;
