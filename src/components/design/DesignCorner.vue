@@ -65,7 +65,7 @@
 .design-corner-layout {
   display: flex;
   gap: 32px;
-  background: var(--sub-bg-color);
+  background: var(--main-bg-color);
   padding: 32px;
 }
 .design-corner-left {
