@@ -1,23 +1,33 @@
-// composables/useChatbot.ts
 import { ref } from "vue";
-import axios from "axios";
 
 export function useChatbot() {
+  const messages = ref<{ sender: "user" | "bot"; text: string }[]>([]);
   const loading = ref(false);
-  const reply = ref("");
 
   const sendMessage = async (prompt: string) => {
+    // Push user message immediately
+    messages.value.push({ sender: "user", text: prompt });
     loading.value = true;
-    reply.value = "";
+
     try {
-      const { data } = await axios.post("/api/lib/chatbot_conn", { prompt });
-      reply.value = data.reply || "";
-    } catch (err: any) {
-      reply.value = "Error: " + err.message;
+      const res = await fetch("/api/lib/chatbot_conn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      const data = await res.json();
+
+      if (data.reply) {
+        messages.value.push({ sender: "bot", text: data.reply });
+      } else if (data.error) {
+        messages.value.push({ sender: "bot", text: "Oops! Something went wrong." });
+      }
+    } catch (err) {
+      messages.value.push({ sender: "bot", text: "Network error, please try again." });
     } finally {
       loading.value = false;
     }
   };
 
-  return { reply, loading, sendMessage };
+  return { messages, loading, sendMessage };
 }

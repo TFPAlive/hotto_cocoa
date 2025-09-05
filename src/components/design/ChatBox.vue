@@ -3,7 +3,12 @@ import { ref } from "vue";
 import { useChatbot } from "@/composables/useChatbot";
 
 const prompt = ref("");
-const { reply, loading, sendMessage } = useChatbot();
+const { messages, loading, sendMessage } = useChatbot();
+
+// Greeting shown only once, before any messages
+const greeting = `Hi! I'm the Hotto Choco box chat.
+Let's do our best for your perfect drink. 
+Tell me what you want, or click on the stuff below.`;
 
 const send = () => {
   if (prompt.value.trim()) {
@@ -17,15 +22,21 @@ const send = () => {
   <div class="chatbot-background">
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
+
       <div class="chatbox">
-        <div v-if="reply" class="chatbot-respond">
-          <strong>Bot:</strong> {{ reply }}
+        <!-- Show greeting only if no messages yet -->
+        <div v-if="messages.length === 0" class="chatbot-respond">
+          {{ greeting }}
         </div>
-        <div v-else class="chatbot-respond">
-          Hi! I'm the Hotto Choco box chat.<br />
-          Let's do our best for your perfect drink. Tell me what you want, or click on the stuff below.
+
+        <!-- Loop through messages -->
+        <div v-for="(m, i) in messages" :key="i" class="chat-chatbot" :class="m.sender">
+          <strong v-if="m.sender === 'bot'">Bot:</strong>
+          <strong v-else>You:</strong>
+          {{ m.text }}
         </div>
       </div>
+
       <div class="chatbot-input-row">
         <textarea
           v-model="prompt"
@@ -40,6 +51,7 @@ const send = () => {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .chatbot-background {
