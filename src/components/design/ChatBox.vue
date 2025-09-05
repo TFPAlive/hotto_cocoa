@@ -22,9 +22,8 @@ const send = () => {
   <div class="chatbot-background">
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
-
+      
       <div class="chatbox" ref="chatboxRef">
-        <!-- Loop through messages -->
         <transition name="chat" mode="out-in">
           <div key="greeting" v-if="!reply" class="chatbot-respond">
             {{ greeting }}

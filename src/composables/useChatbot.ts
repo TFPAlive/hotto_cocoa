@@ -8,7 +8,7 @@ export function useChatbot() {
     loading.value = true;
 
     try {
-      const res = await fetch("/api/chatbot_conn", {
+      const res = await fetch("/api/lib/chatbot_conn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
