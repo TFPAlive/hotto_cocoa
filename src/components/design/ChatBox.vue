@@ -63,12 +63,12 @@ const send = () => {
 <style scoped>
 .chatbot-background {
   padding: 20px;
-  background-color: var(--sub-bg-color);
+  background-color: var(--main-bg-color);
 }
 .chatbot-container {
   max-width: 1000px;
   margin: 0 auto;
-  background: #fffbe6;
+  background: var(--main-bg-color);
   border-radius: 18px;
   box-shadow: 0 2px 12px #e0c3a033;
   padding: 32px 24px 24px 24px;
@@ -113,7 +113,7 @@ const send = () => {
   border: 1.5px solid #e6b800;
   font-size: 1rem;
   outline: none;
-  background: #fffbe6;
+  background: var(--main-bg-color);
   color: #5a3a1b;
   transition: border 0.2s;
   margin: 20px 20px 10px 0;
@@ -153,16 +153,17 @@ const send = () => {
   border-radius: 12px;
   max-width: 70%;
   word-wrap: break-word;
+  width: inherit;
 }
 
 /* User vs bot style */
 .chat-message.user {
   align-self: flex-end;
-  background-color: #c9f2ff;
+  /* background-color: #c9f2ff; */
 }
 .chat-message.bot {
   align-self: flex-start;
-  background-color: #f0e5ff;
+  /* background-color: #f0e5ff; */
 }
 
 /* Animation for messages (fade + slide up) */
