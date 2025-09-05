@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { useChatbot } from "@/composables/useChatbot";
 
 const prompt = ref("");
@@ -16,6 +16,15 @@ const send = () => {
     prompt.value = "";
   }
 };
+
+const chatboxRef = ref<HTMLElement | null>(null);
+
+watch(messages, async () => {
+  await nextTick();
+  if (chatboxRef.value) {
+    chatboxRef.value.scrollTop = chatboxRef.value.scrollHeight;
+  }
+});
 </script>
 
 <template>
@@ -23,7 +32,7 @@ const send = () => {
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
 
-      <div class="chatbox">
+      <div class="chatbox", ref="chatboxRef">
         <!-- Show greeting only if no messages yet -->
         <div v-if="messages.length === 0" class="chatbot-respond">
           {{ greeting }}
@@ -89,7 +98,7 @@ const send = () => {
 }
 .chatbox {
   width: 100%;
-  min-height: 180px;
+  min-height: 200px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 1px 6px #e0c3a044;
