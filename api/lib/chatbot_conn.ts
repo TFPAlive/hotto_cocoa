@@ -1,28 +1,24 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { defineEventHandler, readBody } from "h3";
 
 const genAI = new GoogleGenerativeAI(process.env.CHATBOT_API_KEY || "");
 
-export default defineEventHandler(async (event) => {
+export default async function handler(req, res) {
   try {
-    const body = await readBody<{ prompt: string }>(event);
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
 
-    if (!body?.prompt) {
-      throw new Error("No prompt provided");
+    const { prompt } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ error: "No prompt provided" });
     }
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
 
-    const result = await model.generateContent(body.prompt);
-
-    return { reply: result.response.text() };
-  } catch (err: any) {
+    res.status(200).json({ reply: result.response.text() });
+  } catch (err) {
     console.error("Chatbot API error:", err);
-    return {
-      error: {
-        code: "500",
-        message: err.message || "Unknown error",
-      },
-    };
+    res.status(500).json({ error: err.message || "Internal server error" });
   }
-});
+}
