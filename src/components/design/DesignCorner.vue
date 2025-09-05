@@ -112,6 +112,7 @@
   display: flex;
   gap: 18px;
   width: max-content;
+  overflow-x: hidden;
 }
 .category-buttons button {
   background: #fff;
@@ -123,7 +124,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
-  width: max-content;
+  min-width: fit-content;
 }
 .category-buttons button.active {
   background: #a0522d;
