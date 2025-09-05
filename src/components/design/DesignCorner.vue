@@ -1,68 +1,25 @@
 <script setup lang="ts">
-import LeftPointIcon from '../icons/IconPointLeft.vue'
-import RightPointIcon from '../icons/IconPointRight.vue'
-import { ref, defineComponent } from 'vue'
+  import LeftPointIcon from '../icons/IconPointLeft.vue'
+  import RightPointIcon from '../icons/IconPointRight.vue'
+  import StarRating from './StarRating.vue'
+  import { ref } from 'vue'
 
-const StarRating = defineComponent({
-  name: 'StarRating',
-  props: {
-    modelValue: { type: Number, required: true }
-  },
-  emits: ['update:modelValue'],
-  computed: {
-    starTypes() {
-      const types: string[] = []
-      for (let i = 1; i <= 5; i++) {
-        if (this.modelValue >= i) types.push('full')
-        else if (this.modelValue >= i - 0.5) types.push('half')
-        else types.push('empty')
-      }
-      return types
-    }
-  },
-  methods: {
-    setRating(val: number) {
-      this.$emit('update:modelValue', val)
-    }
-  },
-  template: `
-    <span class="star-rating">
-      <span
-        v-for="(types, idx) in starTypes"
-        :key="idx"
-        class="star"
-      >
-        <template v-if="types === 'full'">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="#a0522d" stroke="none">
-            <polygon points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9"/>
-          </svg>
-        </template>
-        <template v-else-if="types === 'half'">
-          <svg width="24" height="24" viewBox="0 0 24 24" stroke="none">
-            <defs>
-              <linearGradient id="halfGrad">
-                <stop offset="50%" stop-color="#a0522d"/>
-                <stop offset="50%" stop-color="lightgray"/>
-              </linearGradient>
-            </defs>
-            <polygon points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9" fill="url(#halfGrad)"/>
-          </svg>
-        </template>
-        <template v-else>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="lightgray" stroke="none">
-            <polygon points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9"/>
-          </svg>
-        </template>
-      </span>
-    </span>
-  `
-})
-
-// Register StarRating as a local component for <script setup>
-const sweetness = ref(3.5)
-const calories = ref(2)
-const categories = ref(['Cups & Mugs', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straw', 'Coasters', 'Packing styles'])
-const selectedCategory = ref('Cups & Mugs')
+  const sweetness = ref(3.5)
+  const calories = ref(2)
+  const categories = ref([
+    'Cups & Mugs',
+    'Drink bases',
+    'Choco bombs',
+    'Dipped cookies',
+    'Top-cream',
+    'Marshmallows',
+    'Sprinkles',
+    'Spoons & Candy canes',
+    'Straw',
+    'Coasters',
+    'Packing styles'
+  ])
+  const selectedCategory = ref('Cups & Mugs')
 </script>
 
 <template>
@@ -74,12 +31,11 @@ const selectedCategory = ref('Cups & Mugs')
       <div class="rating-bars">
         <div class="rating-row">
           <span>Sweetness level</span>
-            <StarRating v-model="sweetness"/>
-            
+          <StarRating v-model="sweetness" />
         </div>
         <div class="rating-row">
           <span>Calories level</span>
-            <StarRating v-model="calories"/>
+          <StarRating v-model="calories" />
         </div>
       </div>
     </div>
