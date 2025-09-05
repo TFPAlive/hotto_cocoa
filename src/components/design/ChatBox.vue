@@ -1,4 +1,15 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useChatbot } from '@/composables/useChatbot';
+
+const prompt = ref('');
+const { reply, loading, sendMessage } = useChatbot();
+
+const send = () => {
+  if (prompt.value.trim() === '') return;
+  sendMessage(prompt.value);
+  prompt.value = '';
+};
 </script>
 
 <template>
@@ -6,14 +17,17 @@
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
       <div class="chatbox">
-        <div class="chatbot-respond">
+        <div v-if="reply" class="chatbot-respond">
+          <strong>Bot:</strong> {{ reply }}
+        </div>
+        <div v-else class="chatbot-respond">
           Hi! I'm the Hotto Choco box chat.<br />
           Let's do our best for your perfect drink. Tell me what you want, or click on the stuff below.
         </div>
       </div>
       <div class="chatbot-input-row">
-        <textarea class="chatbot-input" rows="2" placeholder="Type your message..."></textarea>
-        <button class="chatbot-send-btn">Send</button>
+        <textarea v-model="prompt" class="chatbot-input" rows="2" placeholder="Type your message..."></textarea>
+        <button class="chatbot-send-btn" @click="send" :disabled="loading">{{ loading ? "Thinking..." : "Send" }}</button>
       </div>
     </div>
   </div>
