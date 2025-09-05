@@ -22,7 +22,10 @@ const chatboxRef = ref<HTMLElement | null>(null);
 watch(messages, async () => {
   await nextTick();
   if (chatboxRef.value) {
-    chatboxRef.value.scrollTop = chatboxRef.value.scrollHeight;
+    chatboxRef.value.scrollTo({
+  top: chatboxRef.value.scrollHeight,
+  behavior: "smooth",
+});
   }
 });
 </script>
