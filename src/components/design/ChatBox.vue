@@ -145,6 +145,7 @@ const send = () => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: inherit;
 }
 
 /* Shared chat bubble look */
@@ -153,7 +154,6 @@ const send = () => {
   border-radius: 12px;
   max-width: 70%;
   word-wrap: break-word;
-  width: inherit;
 }
 
 /* User vs bot style */
