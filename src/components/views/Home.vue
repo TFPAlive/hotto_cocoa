@@ -5,7 +5,6 @@ import OurStory from '../home/OurStory.vue'
 import OurSharedStorage from '../home/OurSharedStorage.vue'
 import ProductHolder from '../home/ProductHolder.vue'
 import Video from '../home/Video.vue'
-import Products from '../home/Products.vue'
 import { onMounted } from 'vue'
 
 onMounted(() => {
@@ -22,5 +21,4 @@ onMounted(() => {
   <Banner />
   <ProductHolder />
   <Banner />
-  <Products />
 </template>
