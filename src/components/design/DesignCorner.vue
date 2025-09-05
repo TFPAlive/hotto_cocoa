@@ -1,6 +1,6 @@
-<script lang="ts">
-import IconPointLeft from '../icons/IconPointLeft.vue'
-import IconPointRight from '../icons/IconPointRight.vue'
+<script setup lang="ts">
+import LeftPointIcon from '../icons/IconPointLeft.vue'
+import RightPointIcon from '../icons/IconPointRight.vue'
 import { ref, defineComponent } from 'vue'
 
 const StarRating = defineComponent({
@@ -58,17 +58,17 @@ const StarRating = defineComponent({
   `
 })
 
+// Register StarRating as a local component for <script setup>
+const sweetness = ref(3.5)
+const calories = ref(2)
+const categories = ref(['Cups & Mugs', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straw', 'Coasters', 'Packing styles'])
+const selectedCategory = ref('Cups & Mugs')
+</script>
+
+<script lang="ts">
 export default defineComponent({
   name: 'DesignCorner',
-  components: { StarRating },
-  setup() {
-    const sweetness = ref(3.5)
-    const calories = ref(2)
-    const categories = ref(['Cups & Mugs', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straw', 'Coasters', 'Packing styles'])
-    const selectedCategory = ref('Cups & Mugs')
-
-    return { sweetness, calories, categories, selectedCategory }
-  }
+  components: { StarRating }
 })
 </script>
 
@@ -92,7 +92,7 @@ export default defineComponent({
     </div>
     <div class="design-corner-right">
       <div class="category">
-        <div class="left-button"> <IconPointLeft /></div>
+        <div class="left-button"> <LeftPointIcon /></div>
         <div class="category-buttons">
         <button
           v-for="cat in categories"
@@ -103,7 +103,7 @@ export default defineComponent({
           {{ cat }}
         </button>
         </div>
-        <div class="right-button"> <IconPointRight /></div>
+        <div class="right-button"> <RightPointIcon /></div>
       </div>
       <div class="options-placeholder">
         <!-- Product options go here -->

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import IconHamburger from '../icons/IconHamburger.vue'
-import IconClose from '../icons/IconClose.vue'
+import HamburgerIcon from '../icons/IconHamburger.vue'
+import CloseIcon from '../icons/IconClose.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const showNav = ref(window.innerWidth >= 1024)
@@ -29,10 +29,10 @@ onUnmounted(() => {
   <button class="menu-toggle" @click="toggleNav" aria-label="Toggle navigation">
     <transition name="icon-fade" mode="out-in">
       <span v-if="!showNav" key="hamburger">
-        <IconHamburger />
+        <HamburgerIcon />
       </span>
       <span v-else key="close">
-        <IconClose />
+        <CloseIcon />
       </span>
     </transition>
   </button>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CartIcon from '../icons/IconCart.vue'
-import IconClose from '../icons/IconClose.vue'
+import CloseIcon from '../icons/IconClose.vue'
 import { ref } from 'vue'
 
 const showCart = ref(false)
@@ -22,7 +22,7 @@ function toggleCart() {
 					<div class="cart-drawer-header">
 						<span>Cart List</span>
 						<button class="close-btn" @click="toggleCart">
-							<IconClose />
+							<CloseIcon />
 						</button>
 					</div>
 					<div class="cart-drawer-body">
