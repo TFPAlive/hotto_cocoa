@@ -35,7 +35,7 @@ watch(messages, async () => {
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
 
-      <div class="chatbox", ref="chatboxRef">
+      <div class="chatbox" ref="chatboxRef">
         <!-- Show greeting only if no messages yet -->
         <div v-if="messages.length === 0" class="chatbot-respond">
           {{ greeting }}
