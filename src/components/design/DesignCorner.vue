@@ -98,6 +98,7 @@
   font-size: 1.1rem;
 }
 .design-corner-right {
+  width: 80%;
   flex: 2;
   display: flex;
   flex-direction: column;
@@ -110,11 +111,9 @@
 .category-buttons {
   display: flex;
   gap: 18px;
-  margin-bottom: 24px;
   width: max-content;
 }
 .category-buttons button {
-
   background: #fff;
   color: #23281a;
   border: none;
@@ -124,6 +123,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  width: max-content;
 }
 .category-buttons button.active {
   background: #a0522d;
