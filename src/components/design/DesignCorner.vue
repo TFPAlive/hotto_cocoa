@@ -102,6 +102,11 @@
   display: flex;
   flex-direction: column;
 }
+.category {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
 .category-buttons {
   display: flex;
   gap: 18px;
