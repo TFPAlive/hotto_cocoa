@@ -10,7 +10,7 @@ export function useChatbot() {
     loading.value = true;
     reply.value = "";
     try {
-      const { data } = await axios.post("/api/chatbot_conn", { prompt });
+      const { data } = await axios.post("/api/lib/chatbot_conn", { prompt });
       reply.value = data.reply || "";
     } catch (err: any) {
       reply.value = "Error: " + err.message;
