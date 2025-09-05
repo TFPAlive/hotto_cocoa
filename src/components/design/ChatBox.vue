@@ -16,13 +16,22 @@ const send = () => {
     prompt.value = "";
   }
 };
+
+const handleEnter = (e: KeyboardEvent) => {
+  if (e.shiftKey) {
+    // Allow new line
+    return;
+  }
+  e.preventDefault();
+  send();
+};
 </script>
 
 <template>
   <div class="chatbot-background">
     <div class="chatbot-container">
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
-      
+
       <div class="chatbox" ref="chatboxRef">
         <transition name="chat" mode="out-in">
           <div key="greeting" v-if="!reply" class="chatbot-respond">
@@ -40,6 +49,7 @@ const send = () => {
           class="chatbot-input"
           rows="2"
           placeholder="Type your message..."
+          @keydown.enter.prevent="handleEnter"
         ></textarea>
         <button class="chatbot-send-btn" @click="send" :disabled="loading">
           {{ loading ? "Thinking..." : "Send" }}
@@ -137,25 +147,6 @@ const send = () => {
   gap: 8px;
   width: inherit;
 }
-
-/* Shared chat bubble look */
-.chat-message {
-  padding: 8px 12px;
-  border-radius: 12px;
-  max-width: 70%;
-  word-wrap: break-word;
-}
-
-/* User vs bot style */
-.chat-message.user {
-  align-self: flex-end;
-  /* background-color: #c9f2ff; */
-}
-.chat-message.bot {
-  align-self: flex-start;
-  /* background-color: #f0e5ff; */
-}
-
 /* Animation for messages (fade + slide up) */
 .chat-enter-active,
 .chat-leave-active {
