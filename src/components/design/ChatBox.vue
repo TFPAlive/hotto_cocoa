@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from "vue";
+import { ref } from "vue";
 import { useChatbot } from "@/composables/useChatbot";
 
 const prompt = ref("");
-const { messages, loading, sendMessage } = useChatbot();
+const { reply, loading, sendMessage } = useChatbot();
 
 // Greeting shown only once, before any messages
 const greeting = `Hi! I'm the Hotto Choco box chat.
@@ -16,18 +16,6 @@ const send = () => {
     prompt.value = "";
   }
 };
-
-const chatboxRef = ref<HTMLElement | null>(null);
-
-watch(messages, async () => {
-  await nextTick();
-  if (chatboxRef.value) {
-    chatboxRef.value.scrollTo({
-  top: chatboxRef.value.scrollHeight,
-  behavior: "smooth",
-});
-  }
-});
 </script>
 
 <template>
@@ -36,24 +24,15 @@ watch(messages, async () => {
       <h2 class="chatbot-header">Welcome to your self-serve corner</h2>
 
       <div class="chatbox" ref="chatboxRef">
-        <!-- Show greeting only if no messages yet -->
-        <div v-if="messages.length === 0" class="chatbot-respond">
-          {{ greeting }}
-        </div>
-
         <!-- Loop through messages -->
-        <transition-group name="chat" tag="div" class="chat-messages">
-          <div
-            v-for="(m, i) in messages"
-            :key="i"
-            class="chat-message"
-            :class="m.sender"
-          >
-            <strong v-if="m.sender === 'bot'">Bot:</strong>
-            <strong v-else>You:</strong>
-            {{ m.text }}
+        <transition name="chat" mode="out-in">
+          <div key="greeting" v-if="!reply" class="chatbot-respond">
+            {{ greeting }}
           </div>
-        </transition-group>
+          <div key="reply" v-else class="chatbot-respond">
+            <strong>Bot:</strong> {{ reply }}
+          </div>
+        </transition>
       </div>
 
       <div class="chatbot-input-row">
