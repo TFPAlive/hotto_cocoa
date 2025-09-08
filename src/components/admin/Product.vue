@@ -4,38 +4,107 @@ import { useProducts } from '@/composables/useProducts'
 import type { Product } from '@/composables/useProducts'
 
 const { products, loading, error, fetchProducts } = useProducts()
-const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageUrl?: string }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' })
-
+const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageUrl?: string; file?: File }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' })
 const isEditing = ref(false)
 const editingId = ref<string | null>(null)
 const drawerOpen = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
+const filePreviewUrl = ref<string | undefined>(undefined)
+
+function triggerFileInput() {
+  fileInput.value?.click()
+}
+
+function onFileChange(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    form.value.file = file
+  if (filePreviewUrl.value) URL.revokeObjectURL(filePreviewUrl.value)
+  filePreviewUrl.value = URL.createObjectURL(file) || undefined
+  } else {
+    form.value.file = undefined
+  if (filePreviewUrl.value) URL.revokeObjectURL(filePreviewUrl.value)
+  filePreviewUrl.value = undefined
+  }
+}
 
 function openDrawerForAdd() {
   resetForm()
+  filePreviewUrl.value = undefined
   drawerOpen.value = true
 }
 
 function openDrawerForEdit(product: Product) {
-  form.value = { name: product.name, price: product.price, description: product.description, material: product.material, keyword: product.keyword, category: product.category, imageUrl: product.imageUrl }
+  form.value = { name: product.name, price: product.price, description: product.description, material: product.material, keyword: product.keyword, category: product.category, imageUrl: product.imageUrl, file: undefined }
   isEditing.value = true
   editingId.value = product.id
+  filePreviewUrl.value = undefined
   drawerOpen.value = true
 }
 
 function closeDrawer() {
   drawerOpen.value = false
   resetForm()
+  if (filePreviewUrl.value) {
+    URL.revokeObjectURL(filePreviewUrl.value)
+    filePreviewUrl.value = undefined
+  }
 }
 
 function resetForm() {
-  form.value = { name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' }
+  form.value = { name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '', file: undefined }
   isEditing.value = false
   editingId.value = null
 }
 
 async function onSubmit() {
-  if (isEditing.value && editingId.value) {
-    // ...existing code...
+  try {
+    // 1️⃣ If a new file is selected, upload it to GCS
+    if (form.value.file) {
+      // Ask backend for signed URL
+      const uploadRes = await fetch(`/api/genURL?fileName=${form.value.file.name}&fileType=${form.value.file.type}`);
+      if (!uploadRes.ok) throw new Error('Failed to get upload URL');
+      const { uploadUrl, publicUrl } = await uploadRes.json();
+
+      // Upload file directly to GCS
+      const putRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': form.value.file.type },
+        body: form.value.file
+      });
+      if (!putRes.ok) throw new Error('Failed to upload file');
+
+      // Store public URL into form data
+      form.value.imageUrl = publicUrl;
+    }
+
+    // 2️⃣ Send product data to API (PUT or POST)
+    let res;
+    if (isEditing.value && editingId.value) {
+      // Edit product
+      res = await fetch(`/api/admin/products/${editingId.value}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form.value)
+      });
+      if (!res.ok) throw new Error('Failed to update product');
+    } else {
+      // Add product
+      res = await fetch('/api/admin/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form.value)
+      });
+      if (!res.ok) throw new Error('Failed to add product');
+    }
+
+    // 3️⃣ Refresh UI
+    await fetchProducts();
+    closeDrawer();
+  } catch (err) {
+    console.error(err);
+    alert('Error submitting product');
   }
 }
 
@@ -123,12 +192,14 @@ async function deleteProduct(id: string) {
             <input v-model="form.category" />
           </div>
           <div>
-            <label>Image URL:</label>
-            <input v-model="form.imageUrl" placeholder="https://..." />
-            <div class="image-cell" style="margin-top:8px;">
-              <img v-if="form.imageUrl" :src="form.imageUrl" alt="Preview" />
-              <div v-else class="image-placeholder">No Image</div>
+            <label>Image:</label>
+            <input ref="fileInput" type="file" accept="image/*" style="display:none" @change="onFileChange" />
+            <div class="image-cell clickable" style="margin-top:8px;" @click="triggerFileInput">
+              <img v-if="form.file" :src="filePreviewUrl" alt="Preview" />
+              <img v-else-if="form.imageUrl" :src="form.imageUrl" alt="Preview" />
+              <div v-else class="image-placeholder">Click to add</div>
             </div>
+            <input v-model="form.imageUrl" placeholder="https://..." style="margin-top:8px;" />
           </div>
           <div class="drawer-actions">
             <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
@@ -252,6 +323,12 @@ th, td {
   background: #f5f5f5;
   border-radius: 8px;
   overflow: hidden;
+  cursor: pointer;
+  border: 2px dashed #ccc;
+  transition: border 0.2s;
+}
+.image-cell.clickable:hover {
+  border: 2px solid #a0522d;
 }
 .image-cell img {
   width: 100%;
