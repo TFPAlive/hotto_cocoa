@@ -2,22 +2,17 @@ import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "@/layouts/MainLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import Landing from "@/components/admin/Landing.vue";
-import Home from "@/components/views/Home.vue";
-import Design from "@/components/views/Design.vue";
-import Login from "@/components/auth/Login.vue";
-import Register from "@/components/auth/Register.vue";
-import NotFound from "@/components/views/NotFound.vue";
 
 const routes = [
   {
     path: "/",
     component: MainLayout,
     children: [
-      { path: "/", component: Home },
-      { path: "/design", component: Design },
-      { path: "/login", component: Login },
-      { path: "/register", component: Register },
-      { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },  // Catch-all route
+      { path: "/", component: () => import("@/components/views/Home.vue") },
+      { path: "/design", component: () => import("@/components/views/Design.vue") },
+      { path: "/login", component: () => import("@/components/auth/Login.vue") },
+      { path: "/register", component: () => import("@/components/auth/Register.vue") },
+      { path: "/:pathMatch(.*)*", name: "NotFound", component: () => import("@/components/views/NotFound.vue") },  // Catch-all route
       // ...other normal pages
     ]
   },
@@ -25,7 +20,8 @@ const routes = [
     path: "/admin",
     component: AdminLayout,
     children: [
-      { path: "", component: Landing },
+      { path: "/", component: Landing },
+      { path: "/product", component: () => import("@/components/admin/Product.vue") },
       // ...other admin pages
     ]
   }
