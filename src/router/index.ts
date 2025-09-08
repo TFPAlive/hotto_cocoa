@@ -6,7 +6,7 @@ import Home from "@/components/views/Home.vue";
 import Design from "@/components/views/Design.vue";
 import Login from "@/components/auth/Login.vue";
 import Register from "@/components/auth/Register.vue";
-
+import NotFound from "@/components/views/NotFound.vue";
 
 const routes = [
   {
@@ -17,6 +17,7 @@ const routes = [
       { path: "/design", component: Design },
       { path: "/login", component: Login },
       { path: "/register", component: Register },
+      { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },  // Catch-all route
       // ...other normal pages
     ]
   },
