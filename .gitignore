@@ -32,5 +32,5 @@ coverage
 
 .vercel
 
-ChatBot.vue
-chatbot_conn.ts
+src/components/design/ChatBot.vue
+api/lib/chatbot_conn.ts
