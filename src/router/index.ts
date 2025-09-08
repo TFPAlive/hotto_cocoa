@@ -12,7 +12,6 @@ const routes = [
       { path: "/design", component: () => import("@/components/views/Design.vue") },
       { path: "/login", component: () => import("@/components/auth/Login.vue") },
       { path: "/register", component: () => import("@/components/auth/Register.vue") },
-      { path: "/:pathMatch(.*)*", name: "NotFound", component: () => import("@/components/views/NotFound.vue") },  // Catch-all route
       // ...other normal pages
     ]
   },
@@ -24,9 +23,10 @@ const routes = [
       { path: "/product", component: () => import("@/components/admin/Product.vue") },
       // ...other admin pages
     ]
-  }
+  },
+  // Move catch-all route here to avoid conflict with /admin
+  { path: "/:pathMatch(.*)*", name: "NotFound", component: () => import("@/components/views/NotFound.vue") }  // Catch-all route
 ];
-
 export const router = createRouter({
   history: createWebHistory(),
   routes,
