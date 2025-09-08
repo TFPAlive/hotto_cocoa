@@ -31,3 +31,6 @@ coverage
 *.tsbuildinfo
 
 .vercel
+
+ChatBot.vue
+chatbot_conn.ts
