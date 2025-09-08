@@ -1,14 +1,15 @@
+<script setup lang="ts">
+function goBack() {
+  window.history.back();
+}
+</script>
+
 <template>
   <div class="not-found-page">
-    <h1>404 - Page Not Found</h1>
     <p>The page you are looking for does not exist.</p>
-    <router-link to="/">Go Home</router-link>
+    <a href="#" @click.prevent="goBack()">Go Back</a>
   </div>
 </template>
-
-<script setup lang="ts">
-// No script needed for static 404 page
-</script>
 
 <style scoped>
 .not-found-page {
