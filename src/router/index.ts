@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "@/layouts/MainLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
-import Landing from "@/components/admin/Landing.vue";
 
 const routes = [
   {
