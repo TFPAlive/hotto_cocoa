@@ -3,8 +3,11 @@ import { ref, onMounted } from "vue"
 export interface Product {
   id: string
   name: string
-  price: number
   description?: string
+  price: number
+  material?: string
+  keyword?: string
+  category?: string
   imageUrl?: string
 }
 

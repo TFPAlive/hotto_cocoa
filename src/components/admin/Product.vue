@@ -1,48 +1,65 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useProducts } from '@/composables/useProducts'
+import type { Product } from '@/composables/useProducts'
 
-interface Product {
-  id: number
-  name: string
-  price: number
-  description: string
-}
-
-const products = ref<Product[]>([])
-const form = ref({ name: '', price: 0, description: '' })
+const { products, loading, error, fetchProducts } = useProducts()
+const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageUrl?: string }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' })
 const isEditing = ref(false)
-const editingId = ref<number | null>(null)
+const editingId = ref<string | null>(null)
 
 function resetForm() {
-  form.value = { name: '', price: 0, description: '' }
+  form.value = { name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' }
   isEditing.value = false
   editingId.value = null
 }
 
-function onSubmit() {
-  if (isEditing.value && editingId.value !== null) {
-    // Update product
-    const idx = products.value.findIndex(p => p.id === editingId.value)
-    if (idx !== -1) {
-      products.value[idx] = { id: editingId.value, ...form.value }
+async function onSubmit() {
+  if (isEditing.value && editingId.value) {
+    // Update product via API
+    try {
+      const res = await fetch(`/api/admin/products/${editingId.value}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form.value)
+      })
+      if (!res.ok) throw new Error('Failed to update product')
+      await fetchProducts()
+    } catch (err) {
+      alert('Error updating product')
     }
   } else {
-    // Add product
-    const newId = products.value.length ? Math.max(...products.value.map(p => p.id)) + 1 : 1
-    products.value.push({ id: newId, ...form.value })
+    // Add product via API
+    try {
+      const res = await fetch('/api/admin/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form.value)
+      })
+      if (!res.ok) throw new Error('Failed to add product')
+      await fetchProducts()
+    } catch (err) {
+      alert('Error adding product')
+    }
   }
   resetForm()
 }
 
 function editProduct(product: Product) {
-  form.value = { name: product.name, price: product.price, description: product.description }
+  form.value = { name: product.name, price: product.price, description: product.description, material: product.material, keyword: product.keyword, category: product.category, imageUrl: product.imageUrl }
   isEditing.value = true
   editingId.value = product.id
 }
 
-function deleteProduct(id: number) {
-  products.value = products.value.filter(p => p.id !== id)
-  if (editingId.value === id) resetForm()
+async function deleteProduct(id: string) {
+  try {
+    const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Failed to delete product')
+    await fetchProducts()
+    if (editingId.value === id) resetForm()
+  } catch (err) {
+    alert('Error deleting product')
+  }
 }
 </script>
 
@@ -63,6 +80,18 @@ function deleteProduct(id: number) {
         <textarea v-model="form.description" required></textarea>
       </div>
       <div>
+        <label>Material:</label>
+        <input v-model="form.material" />
+      </div>
+      <div>
+        <label>Keyword:</label>
+        <input v-model="form.keyword" />
+      </div>
+      <div>
+        <label>Category:</label>
+        <input v-model="form.category" />
+      </div>
+      <div>
         <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
         <button v-if="isEditing" type="button" @click="resetForm">Cancel</button>
       </div>
@@ -75,6 +104,9 @@ function deleteProduct(id: number) {
           <th>Name</th>
           <th>Price</th>
           <th>Description</th>
+          <th>Material</th>
+          <th>Keyword</th>
+          <th>Category</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -83,6 +115,9 @@ function deleteProduct(id: number) {
           <td>{{ product.name }}</td>
           <td>{{ product.price }}</td>
           <td>{{ product.description }}</td>
+          <td>{{ product.material }}</td>
+          <td>{{ product.keyword }}</td>
+          <td>{{ product.category }}</td>
           <td>
             <button @click="editProduct(product)">Edit</button>
             <button @click="deleteProduct(product.id)">Delete</button>
