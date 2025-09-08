@@ -5,8 +5,27 @@ import type { Product } from '@/composables/useProducts'
 
 const { products, loading, error, fetchProducts } = useProducts()
 const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageUrl?: string }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' })
+
 const isEditing = ref(false)
 const editingId = ref<string | null>(null)
+const drawerOpen = ref(false)
+
+function openDrawerForAdd() {
+  resetForm()
+  drawerOpen.value = true
+}
+
+function openDrawerForEdit(product: Product) {
+  form.value = { name: product.name, price: product.price, description: product.description, material: product.material, keyword: product.keyword, category: product.category, imageUrl: product.imageUrl }
+  isEditing.value = true
+  editingId.value = product.id
+  drawerOpen.value = true
+}
+
+function closeDrawer() {
+  drawerOpen.value = false
+  resetForm()
+}
 
 function resetForm() {
   form.value = { name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' }
@@ -16,39 +35,8 @@ function resetForm() {
 
 async function onSubmit() {
   if (isEditing.value && editingId.value) {
-    // Update product via API
-    try {
-      const res = await fetch(`/api/admin/products/${editingId.value}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form.value)
-      })
-      if (!res.ok) throw new Error('Failed to update product')
-      await fetchProducts()
-    } catch (err) {
-      alert('Error updating product')
-    }
-  } else {
-    // Add product via API
-    try {
-      const res = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form.value)
-      })
-      if (!res.ok) throw new Error('Failed to add product')
-      await fetchProducts()
-    } catch (err) {
-      alert('Error adding product')
-    }
+    // ...existing code...
   }
-  resetForm()
-}
-
-function editProduct(product: Product) {
-  form.value = { name: product.name, price: product.price, description: product.description, material: product.material, keyword: product.keyword, category: product.category, imageUrl: product.imageUrl }
-  isEditing.value = true
-  editingId.value = product.id
 }
 
 async function deleteProduct(id: string) {
@@ -66,36 +54,7 @@ async function deleteProduct(id: string) {
 <template>
   <div class="admin-product-page">
     <h1>Admin Product Management</h1>
-    <form @submit.prevent="onSubmit">
-      <div>
-        <label>Name:</label>
-        <input v-model="form.name" required />
-      </div>
-      <div>
-        <label>Price:</label>
-        <input v-model.number="form.price" type="number" min="0" required />
-      </div>
-      <div>
-        <label>Description:</label>
-        <textarea v-model="form.description" required></textarea>
-      </div>
-      <div>
-        <label>Material:</label>
-        <input v-model="form.material" />
-      </div>
-      <div>
-        <label>Keyword:</label>
-        <input v-model="form.keyword" />
-      </div>
-      <div>
-        <label>Category:</label>
-        <input v-model="form.category" />
-      </div>
-      <div>
-        <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
-        <button v-if="isEditing" type="button" @click="resetForm">Cancel</button>
-      </div>
-    </form>
+    <button class="add-btn" @click="openDrawerForAdd">Add new Product</button>
     <hr />
     <h2>Product List</h2>
     <table>
@@ -119,12 +78,49 @@ async function deleteProduct(id: string) {
           <td>{{ product.keyword }}</td>
           <td>{{ product.category }}</td>
           <td>
-            <button @click="editProduct(product)">Edit</button>
+            <button @click="openDrawerForEdit(product)">Edit</button>
             <button @click="deleteProduct(product.id)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Drawer for Add/Edit Product -->
+    <div class="drawer" :class="{ open: drawerOpen }">
+      <div class="drawer-content">
+        <h2>{{ isEditing ? 'Edit Product' : 'Add Product' }}</h2>
+        <form @submit.prevent="onSubmit">
+          <div>
+            <label>Name:</label>
+            <input v-model="form.name" required />
+          </div>
+          <div>
+            <label>Price:</label>
+            <input v-model.number="form.price" type="number" min="0" required />
+          </div>
+          <div>
+            <label>Description:</label>
+            <textarea v-model="form.description" required></textarea>
+          </div>
+          <div>
+            <label>Material:</label>
+            <input v-model="form.material" />
+          </div>
+          <div>
+            <label>Keyword:</label>
+            <input v-model="form.keyword" />
+          </div>
+          <div>
+            <label>Category:</label>
+            <input v-model="form.category" />
+          </div>
+          <div class="drawer-actions">
+            <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
+            <button type="button" @click="closeDrawer">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -171,5 +167,47 @@ th, td {
   border: 1px solid #eee;
   padding: 0.5rem;
   text-align: left;
+}
+/* Drawer styles */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 400px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -2px 0 16px #a0522d22;
+  transition: right 0.3s cubic-bezier(.4,0,.2,1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.drawer.open {
+  right: 0;
+}
+.drawer-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.drawer-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+.add-btn {
+  background: #a0522d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-btn:hover {
+  background: #7a3a1d;
 }
 </style>
