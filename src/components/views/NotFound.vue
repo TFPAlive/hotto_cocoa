@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  document.title = '404 Not Found | Hotto Choco'
+})
 </script>
 
 <template>
@@ -12,4 +17,27 @@
 </template>
 
 <style scoped>
+.not-found-container {
+  text-align: center;
+  padding: 50px;
+}
+.not-found-title {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+.not-found-message {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+.home-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #a0522d;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+.home-link:hover {
+  background-color: #8b4513;
+}
 </style>
