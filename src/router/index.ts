@@ -19,7 +19,7 @@ const routes = [
     path: "/admin",
     component: AdminLayout,
     children: [
-      { path: "", component: Landing },
+      { path: "", component: () => import("@/components/admin/Landing.vue") },
       { path: "product", component: () => import("@/components/admin/Product.vue") },
       // ...other admin pages
     ]
