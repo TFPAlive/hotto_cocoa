@@ -8,10 +8,10 @@ const routes = [
     path: "/",
     component: MainLayout,
     children: [
-      { path: "/", component: () => import("@/components/views/Home.vue") },
-      { path: "/design", component: () => import("@/components/views/Design.vue") },
-      { path: "/login", component: () => import("@/components/auth/Login.vue") },
-      { path: "/register", component: () => import("@/components/auth/Register.vue") },
+      { path: "", component: () => import("@/components/views/Home.vue") },
+      { path: "design", component: () => import("@/components/views/Design.vue") },
+      { path: "login", component: () => import("@/components/auth/Login.vue") },
+      { path: "register", component: () => import("@/components/auth/Register.vue") },
       // ...other normal pages
     ]
   },
@@ -19,8 +19,8 @@ const routes = [
     path: "/admin",
     component: AdminLayout,
     children: [
-      { path: "/", component: Landing },
-      { path: "/product", component: () => import("@/components/admin/Product.vue") },
+      { path: "", component: Landing },
+      { path: "product", component: () => import("@/components/admin/Product.vue") },
       // ...other admin pages
     ]
   },
