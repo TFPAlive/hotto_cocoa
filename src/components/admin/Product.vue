@@ -1,50 +1,3 @@
-<template>
-  <div class="admin-product-page">
-    <h1>Admin Product Management</h1>
-    <form @submit.prevent="onSubmit">
-      <div>
-        <label>Name:</label>
-        <input v-model="form.name" required />
-      </div>
-      <div>
-        <label>Price:</label>
-        <input v-model.number="form.price" type="number" min="0" required />
-      </div>
-      <div>
-        <label>Description:</label>
-        <textarea v-model="form.description" required></textarea>
-      </div>
-      <div>
-        <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
-        <button v-if="isEditing" type="button" @click="resetForm">Cancel</button>
-      </div>
-    </form>
-    <hr />
-    <h2>Product List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Description</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="product in products" :key="product.id">
-          <td>{{ product.name }}</td>
-          <td>{{ product.price }}</td>
-          <td>{{ product.description }}</td>
-          <td>
-            <button @click="editProduct(product)">Edit</button>
-            <button @click="deleteProduct(product.id)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 
@@ -92,6 +45,53 @@ function deleteProduct(id: number) {
   if (editingId.value === id) resetForm()
 }
 </script>
+
+<template>
+  <div class="admin-product-page">
+    <h1>Admin Product Management</h1>
+    <form @submit.prevent="onSubmit">
+      <div>
+        <label>Name:</label>
+        <input v-model="form.name" required />
+      </div>
+      <div>
+        <label>Price:</label>
+        <input v-model.number="form.price" type="number" min="0" required />
+      </div>
+      <div>
+        <label>Description:</label>
+        <textarea v-model="form.description" required></textarea>
+      </div>
+      <div>
+        <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
+        <button v-if="isEditing" type="button" @click="resetForm">Cancel</button>
+      </div>
+    </form>
+    <hr />
+    <h2>Product List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="product in products" :key="product.id">
+          <td>{{ product.name }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.description }}</td>
+          <td>
+            <button @click="editProduct(product)">Edit</button>
+            <button @click="deleteProduct(product.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
 
 <style scoped>
 .admin-product-page {
