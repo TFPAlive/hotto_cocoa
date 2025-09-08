@@ -53,6 +53,7 @@ async function deleteProduct(id: string) {
 
 <template>
   <div class="admin-product-page">
+    <div v-if="drawerOpen" class="drawer-backdrop" @click="closeDrawer"></div>
     <h1>Admin Product Management</h1>
     <button class="add-btn" @click="openDrawerForAdd">Add new Product</button>
     <hr />
@@ -86,8 +87,8 @@ async function deleteProduct(id: string) {
     </table>
 
     <!-- Drawer for Add/Edit Product -->
-    <div class="drawer" :class="{ open: drawerOpen }">
-      <div class="drawer-content">
+    <div class="drawer" :class="{ open: drawerOpen }" @click.stop>
+      <div class="drawer-content" @click.stop>
         <h2>{{ isEditing ? 'Edit Product' : 'Add Product' }}</h2>
         <form @submit.prevent="onSubmit">
           <div>
@@ -209,5 +210,22 @@ th, td {
 }
 .add-btn:hover {
   background: #7a3a1d;
+}
+/* Drawer backdrop and blur */
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.18);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.admin-product-page {
+  transition: filter 0.3s;
+}
+.drawer.open ~ .admin-product-page {
+  filter: blur(3px);
 }
 </style>
