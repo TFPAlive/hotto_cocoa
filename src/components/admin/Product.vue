@@ -61,6 +61,7 @@ async function deleteProduct(id: string) {
     <table>
       <thead>
         <tr>
+          <th>Image</th>
           <th>Name</th>
           <th>Price</th>
           <th>Description</th>
@@ -72,6 +73,12 @@ async function deleteProduct(id: string) {
       </thead>
       <tbody>
         <tr v-for="product in products" :key="product.id">
+          <td>
+            <div class="image-cell">
+              <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
+              <div v-else class="image-placeholder">No Image</div>
+            </div>
+          </td>
           <td>{{ product.name }}</td>
           <td>{{ product.price }}</td>
           <td>{{ product.description }}</td>
@@ -101,7 +108,7 @@ async function deleteProduct(id: string) {
           </div>
           <div>
             <label>Description:</label>
-            <textarea v-model="form.description" required></textarea>
+            <textarea v-model="form.description" rows="5" required></textarea>
           </div>
           <div>
             <label>Material:</label>
@@ -114,6 +121,14 @@ async function deleteProduct(id: string) {
           <div>
             <label>Category:</label>
             <input v-model="form.category" />
+          </div>
+          <div>
+            <label>Image URL:</label>
+            <input v-model="form.imageUrl" placeholder="https://..." />
+            <div class="image-cell" style="margin-top:8px;">
+              <img v-if="form.imageUrl" :src="form.imageUrl" alt="Preview" />
+              <div v-else class="image-placeholder">No Image</div>
+            </div>
           </div>
           <div class="drawer-actions">
             <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
@@ -227,5 +242,26 @@ th, td {
 }
 .drawer.open ~ .admin-product-page {
   filter: blur(3px);
+}
+.image-cell {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.image-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.image-placeholder {
+  color: #bbb;
+  font-size: 0.9rem;
+  text-align: center;
 }
 </style>
