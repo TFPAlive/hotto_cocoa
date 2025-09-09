@@ -11,32 +11,19 @@ export interface AuthRequest extends VercelRequest {
   };
 }
 
-export function verifyToken(
-  req: AuthRequest,
-  res: VercelResponse,
-  requiredRole?: string
-): boolean {
+export function verifyToken(req: AuthRequest, requiredRole?: string) {
   const cookie = req.headers.cookie || "";
   const match = cookie.match(/token=([^;]+)/);
-  if (!match) {
-    res.status(401).json({ message: "Missing or invalid token" });
-    return false;
-  }
-
-  const token = match[1];
+  if (!match) return { ok: false };
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthRequest["user"];
-    req.user = decoded;
-
-    if (requiredRole && (!decoded || decoded.role !== requiredRole)) {
-      res.status(403).json({ message: "Forbidden" });
-      return false;
+    const token = match[1];
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthRequest["user"] | undefined;
+    if (!decoded || (requiredRole && decoded.role !== requiredRole)) {
+      return { ok: false };
     }
-
-    return true;
-  } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
-    return false;
+    return { ok: true, user: decoded };
+  } catch {
+    return { ok: false };
   }
 }
