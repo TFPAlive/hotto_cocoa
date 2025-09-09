@@ -18,7 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const conn = await getConnection()
       const [result]: any = await conn.query(
-        'INSERT INTO products (name, description, price, material, keyword, category, imageUrl) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO Product (name, description, price, material, keyword, category, imageUrl) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [name, description ?? '', price, material ?? '', keyword ?? '', category ?? '', imageUrl ?? '']
       )
       res.status(201).json({ id: result?.insertId, name, description, price, material, keyword, category, imageUrl })

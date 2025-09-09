@@ -9,7 +9,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Get single product
       try {
         const conn = await getConnection()
-        const [rows] = await conn.query('SELECT * FROM products WHERE id = ?', [id])
+        const [rows] = await conn.query('SELECT * FROM Product WHERE id = ?', [id])
         if (Array.isArray(rows) && rows.length > 0) {
           res.status(200).json(rows[0])
         } else {
@@ -27,20 +27,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const conn = await getConnection()
       await conn.query(
-        'UPDATE products SET name = ?, price = ?, description = ?, material = ?, keyword = ?, category = ?, imageUrl = ? WHERE id = ?',
+        'UPDATE Product SET name = ?, price = ?, description = ?, material = ?, keyword = ?, category = ?, imageUrl = ? WHERE id = ?',
         [name, price, description ?? '', material ?? '', keyword ?? '', category ?? '', imageUrl ?? '', id]
       )
       res.status(200).json({ id, name, description, price, material, keyword, category, imageUrl })
     } catch (err) {
+      console.error(err)
       res.status(500).json({ error: 'Failed to update product' })
     }
   } else if (req.method === 'DELETE') {
     if (!id) return res.status(400).json({ error: 'Product id is required' })
     try {
       const conn = await getConnection()
-      await conn.query('DELETE FROM products WHERE id = ?', [id])
+      await conn.query('DELETE FROM Product WHERE id = ?', [id])
       res.status(204).end()
     } catch (err) {
+      console.error(err)
       res.status(500).json({ error: 'Failed to delete product' })
     }
   } else {

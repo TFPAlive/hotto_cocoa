@@ -1,9 +1,7 @@
 import { ref } from 'vue'
-import { useProducts } from './useProducts'
 import type { Product } from '@/types'
 
-export function useManageProducts() {
-	const { fetchProducts } = useProducts()
+export function useManageProducts(fetchProducts: () => Promise<void>) {
 	const loading = ref(false)
 	const error = ref<string | null>(null)
 

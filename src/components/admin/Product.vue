@@ -5,10 +5,10 @@ import { useManageProducts } from '@/composables/useManageProducts'
 import type { Product } from '@/types'
 
 const { products, fetchProducts } = useProducts()
-const { addProduct, editProduct, deleteProduct, error } = useManageProducts()
+const { addProduct, editProduct, deleteProduct, error } = useManageProducts(fetchProducts)
 const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageUrl?: string; file?: File }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' })
 const isEditing = ref(false)
-const editingId = ref<string | null>(null)
+const editingId = ref<number | null>(null)
 const drawerOpen = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const filePreviewUrl = ref<string | undefined>(undefined)
@@ -63,23 +63,22 @@ function resetForm() {
 
 async function onSubmit() {
   let success = false
+  console.log(isEditing.value, editingId.value)
   if (isEditing.value && editingId.value) {
-    success = await editProduct(editingId.value, form.value)
+    success = await editProduct(String(editingId.value), form.value)
   } else {
     success = await addProduct(form.value)
   }
   if (success) {
-    await fetchProducts()
     closeDrawer()
   } else {
     alert(error.value || 'Error submitting product')
   }
 }
 
-async function onDeleteProduct(id: string) {
-  const ok = await deleteProduct(id)
+async function onDeleteProduct(id: number) {
+  const ok = await deleteProduct(String(id))
   if (ok) {
-    await fetchProducts()
     if (editingId.value === id) resetForm()
   } else {
     alert(error.value || 'Error deleting product')
@@ -97,6 +96,7 @@ async function onDeleteProduct(id: string) {
     <table>
       <thead>
         <tr>
+          <th>ID</th>
           <th>Image</th>
           <th>Name</th>
           <th>Price</th>
@@ -109,6 +109,7 @@ async function onDeleteProduct(id: string) {
       </thead>
       <tbody>
         <tr v-for="product in products" :key="product.id">
+          <td>{{ product.id }}</td>
           <td>
             <div class="image-cell">
               <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
