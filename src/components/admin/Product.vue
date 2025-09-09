@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useProducts } from '@/composables/useProducts'
-import type { Product } from '@/composables/useProducts'
+import { useManageProducts } from '@/composables/useManageProducts'
+import type { Product } from '@/types'
 
-const { products, loading, error, fetchProducts } = useProducts()
+const { products, fetchProducts } = useProducts()
+const { addProduct, editProduct, deleteProduct, error } = useManageProducts()
 const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageUrl?: string; file?: File }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' })
 const isEditing = ref(false)
 const editingId = ref<string | null>(null)
@@ -58,64 +60,29 @@ function resetForm() {
   editingId.value = null
 }
 
+
 async function onSubmit() {
-  try {
-    // 1️⃣ If a new file is selected, upload it to GCS
-    if (form.value.file) {
-      // Ask backend for signed URL
-      const uploadRes = await fetch(`/api/genURL?fileName=${form.value.file.name}&fileType=${form.value.file.type}`);
-      if (!uploadRes.ok) throw new Error('Failed to get upload URL');
-      const { uploadUrl, publicUrl } = await uploadRes.json();
-
-      // Upload file directly to GCS
-      const putRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': form.value.file.type },
-        body: form.value.file
-      });
-      if (!putRes.ok) throw new Error('Failed to upload file');
-
-      // Store public URL into form data
-      form.value.imageUrl = publicUrl;
-    }
-
-    // 2️⃣ Send product data to API (PUT or POST)
-    let res;
-    if (isEditing.value && editingId.value) {
-      // Edit product
-      res = await fetch(`/api/admin/products/${editingId.value}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form.value)
-      });
-      if (!res.ok) throw new Error('Failed to update product');
-    } else {
-      // Add product
-      res = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form.value)
-      });
-      if (!res.ok) throw new Error('Failed to add product');
-    }
-
-    // 3️⃣ Refresh UI
-    await fetchProducts();
-    closeDrawer();
-  } catch (err) {
-    console.error(err);
-    alert('Error submitting product');
+  let success = false
+  if (isEditing.value && editingId.value) {
+    success = await editProduct(editingId.value, form.value)
+  } else {
+    success = await addProduct(form.value)
+  }
+  if (success) {
+    await fetchProducts()
+    closeDrawer()
+  } else {
+    alert(error.value || 'Error submitting product')
   }
 }
 
-async function deleteProduct(id: string) {
-  try {
-    const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' })
-    if (!res.ok) throw new Error('Failed to delete product')
+async function onDeleteProduct(id: string) {
+  const ok = await deleteProduct(id)
+  if (ok) {
     await fetchProducts()
     if (editingId.value === id) resetForm()
-  } catch (err) {
-    alert('Error deleting product')
+  } else {
+    alert(error.value || 'Error deleting product')
   }
 }
 </script>
@@ -156,7 +123,7 @@ async function deleteProduct(id: string) {
           <td>{{ product.category }}</td>
           <td>
             <button @click="openDrawerForEdit(product)">Edit</button>
-            <button @click="deleteProduct(product.id)">Delete</button>
+            <button @click="onDeleteProduct(product.id)">Delete</button>
           </td>
         </tr>
       </tbody>

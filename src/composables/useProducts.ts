@@ -1,15 +1,5 @@
 import { ref, onMounted } from "vue"
-
-export interface Product {
-  id: string
-  name: string
-  description?: string
-  price: number
-  material?: string
-  keyword?: string
-  category?: string
-  imageUrl?: string
-}
+import type { Product } from "@/types"
 
 export function useProducts() {
   const products = ref<Product[]>([])
