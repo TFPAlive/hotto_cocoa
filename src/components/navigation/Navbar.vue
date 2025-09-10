@@ -8,11 +8,12 @@ import { ref, computed } from 'vue';
 
 const router = useRouter();
 const showDropdown = ref(false);
-const userAvatar = computed(() => auth.user?.avatar || '/icon.png');
-const userName = computed(() => auth.user?.username || auth.user?.email || 'User');
+const userName = computed(() => auth.user?.username || 'User');
+const userAvatar = computed(() => auth.user?.imageUrl || '/default-avatar.png');
 
 async function handleLogout() {
   try {
+    router.push("/auth/logging-out"); // Redirect to logging-out page first
     await axios.post("/api/auth/logout", {}, { withCredentials: true });
     await checkUser(); // update global state after logout
     router.push("/");
@@ -37,14 +38,14 @@ async function handleLogout() {
       <div v-if="auth.isLoggedIn" class="user-dropdown-wrapper">
         <div class="user-dropdown">
           <div class="user-trigger" @click="showDropdown = !showDropdown">
-            <img :src="auth.user?.avatar || '/icon.png'" class="user-avatar" alt="User Avatar" />
-            <span class="user-name">{{ auth.user?.username || 'User' }}</span>
+            <img :src="userAvatar" class="user-avatar" alt="User Avatar" />
+            <span class="user-name">{{ userName }}</span>
             <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none"/></svg>
           </div>
           <div v-if="showDropdown" class="dropdown-menu">
             <div class="dropdown-header">
-              <img :src="auth.user?.avatar || '/icon.png'" class="dropdown-avatar" alt="User Avatar" />
-              <div class="dropdown-username">{{ auth.user?.username || 'User' }}</div>
+              <img :src="userAvatar" class="dropdown-avatar" alt="User Avatar" />
+              <div class="dropdown-username">{{ userName }}</div>
             </div>
             <hr />
             <router-link to="/profile" class="dropdown-item">My Profile</router-link>
@@ -57,7 +58,7 @@ async function handleLogout() {
         </div>
       </div>
       <div v-else>
-        <router-link to="auth/login">
+        <router-link to="/auth/login">
           <button class="login-btn">Login</button>
         </router-link>
       </div>

@@ -3,7 +3,7 @@ import { reactive } from "vue";
 export const auth = reactive({
   userRole: "guest",
   isLoggedIn: false,
-  user: null as null | { username?: string; email?: string; avatar?: string },
+  user: null as null | { username?: string; email?: string; imageUrl?: string },
 });
 
 export async function checkUser() {

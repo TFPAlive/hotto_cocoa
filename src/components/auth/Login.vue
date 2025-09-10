@@ -11,6 +11,7 @@ const error = ref("");
 const loading = ref(false);
 
 async function handleLogin() {
+  router.push("/auth/logging-in"); // Redirect to logging-in page first
   loading.value = true;
   error.value = "";
 

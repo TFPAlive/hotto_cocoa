@@ -28,6 +28,8 @@ const routes = [
     children: [
       { path: "login", component: () => import("@/components/auth/Login.vue") },
       { path: "register", component: () => import("@/components/auth/Register.vue") },
+      { path: "logging-out", component: () => import("@/components/auth/LoggingOut.vue") },
+      { path: "logging-in", component: () => import("@/components/auth/LoggingIn.vue") }
     ]
   },
   // Move catch-all route here to avoid conflict with /admin

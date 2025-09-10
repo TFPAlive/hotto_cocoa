@@ -6,7 +6,6 @@ export default async function products(req, res) {
     const [rows] = await connection.execute("SELECT * FROM Product");
     res.status(200).json(rows);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
