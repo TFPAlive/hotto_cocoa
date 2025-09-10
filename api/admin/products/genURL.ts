@@ -1,8 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { Storage } from '@google-cloud/storage'
 
-const storage = new Storage({ keyFilename: './gcs-key.json' })
+const storage =
+  process.env.GCS_KEY
+    ? new Storage({ credentials: JSON.parse(process.env.GCS_KEY) })
+    : new Storage({ keyFilename: './gcs-key.json' })
+
 const bucketName = 'hottochoco'
+const folderName = 'Products'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
@@ -12,18 +17,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const { fileName, fileType } = req.query
-    const uniqueName = `${Date.now()}-${fileName}`
+    const uniqueName = `${folderName}/${Date.now()}-${fileName}`
 
-    const [url] = await storage
-      .bucket(bucketName)
-      .file(uniqueName)
-      .getSignedUrl({
-        version: 'v4',
-        action: 'write',
-        expires: Date.now() + 15 * 60 * 1000,
-        contentType: String(fileType),
-      })
+    const file = storage.bucket(bucketName).file(uniqueName)
 
+    const [url] = await file.getSignedUrl({
+      version: 'v4',
+      action: 'write',
+      expires: Date.now() + 15 * 60 * 1000,
+      contentType: String(fileType),
+    })
+
+    // return signed URL and the final public URL
     res.status(200).json({
       uploadUrl: url,
       publicUrl: `https://storage.googleapis.com/${bucketName}/${uniqueName}`,

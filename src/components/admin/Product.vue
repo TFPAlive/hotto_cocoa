@@ -63,7 +63,6 @@ function resetForm() {
 
 async function onSubmit() {
   let success = false
-  console.log(isEditing.value, editingId.value)
   if (isEditing.value && editingId.value) {
     success = await editProduct(String(editingId.value), form.value)
   } else {

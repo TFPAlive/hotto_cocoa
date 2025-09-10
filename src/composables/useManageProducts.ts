@@ -47,10 +47,10 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 		loading.value = true
 		error.value = null
 		try {
-			let imageUrl = product.imageUrl
+            let imageUrl = product.imageUrl
 			if (product.file) {
 				// Get signed URL from backend
-				const uploadRes = await fetch(`/api/genURL?fileName=${product.file.name}&fileType=${product.file.type}`)
+				const uploadRes = await fetch(`/api/admin/products/genURL?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
 				if (!uploadRes.ok) throw new Error('Failed to get upload URL')
 				const { uploadUrl, publicUrl } = await uploadRes.json()
 				// Upload file to GCS

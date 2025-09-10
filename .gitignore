@@ -31,3 +31,7 @@ coverage
 *.tsbuildinfo
 
 .vercel
+
+#Keys and database
+gcs-key.json
+cors.json
