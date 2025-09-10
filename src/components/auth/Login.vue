@@ -57,7 +57,7 @@ async function handleLogin() {
   <p v-if="error" class="error">{{ error }}</p>
     <div class="register-link-row">
       <span>Don't have an account?</span>
-      <router-link to="/register" class="register-link">Register Here</router-link>
+      <router-link to="auth/register" class="register-link">Register Here</router-link>
     </div>
   </div>
 </template>

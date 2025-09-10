@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "@/layouts/MainLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
+import AuthenticationLayout from "@/layouts/Authentication.vue";
 
 const routes = [
   {
@@ -9,8 +10,6 @@ const routes = [
     children: [
       { path: "", component: () => import("@/components/views/Home.vue") },
       { path: "design", component: () => import("@/components/views/Design.vue") },
-      { path: "login", component: () => import("@/components/auth/Login.vue") },
-      { path: "register", component: () => import("@/components/auth/Register.vue") },
       // ...other normal pages
     ]
   },
@@ -21,6 +20,14 @@ const routes = [
       { path: "", component: () => import("@/components/admin/Landing.vue") },
       { path: "product", component: () => import("@/components/admin/Product.vue") },
       // ...other admin pages
+    ]
+  },
+  {
+    path: "/auth" ,
+    component: AuthenticationLayout,
+    children: [
+      { path: "login", component: () => import("@/components/auth/Login.vue") },
+      { path: "register", component: () => import("@/components/auth/Register.vue") },
     ]
   },
   // Move catch-all route here to avoid conflict with /admin
