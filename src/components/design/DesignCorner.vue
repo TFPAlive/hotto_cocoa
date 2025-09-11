@@ -3,6 +3,7 @@
   import RightPointIcon from '../icons/IconPointRight.vue'
   import StarRating from './StarRating.vue'
   import { ref } from 'vue'
+  import { onMounted } from 'vue'
 
   const sweetness = ref(3.5)
   const calories = ref(2)
@@ -19,43 +20,58 @@
     'Coasters',
     'Packing styles'
   ])
-  const selectedCategory = ref('Cups & Mugs')
+  const selectedCategory = ref(categories.value[0])
+  const categoryButtonsRef = ref<HTMLElement | null>(null)
+
+  function scrollCategoryLeft() {
+    if (categoryButtonsRef.value) {
+      categoryButtonsRef.value.scrollBy({ left: -200, behavior: 'smooth' })
+    }
+  }
+
+  function scrollCategoryRight() {
+    if (categoryButtonsRef.value) {
+      categoryButtonsRef.value.scrollBy({ left: 200, behavior: 'smooth' })
+    }
+  }
 </script>
 
 <template>
   <div class="design-corner-layout">
-    <div class="design-corner-left">
-      <div class="cup-image-placeholder">
-        <!-- Cup image goes here -->
-      </div>
-      <div class="rating-bars">
-        <div class="rating-row">
-          <span>Sweetness level</span>
-          <StarRating v-model="sweetness" />
+    <div class="design-corner-holder">
+      <div class="design-corner-left">
+        <div class="cup-image-placeholder">
+          <!-- Cup image goes here -->
         </div>
-        <div class="rating-row">
-          <span>Calories level</span>
-          <StarRating v-model="calories" />
+        <div class="rating-bars">
+          <div class="rating-row">
+            <span>Sweetness level</span>
+            <StarRating v-model="sweetness" />
+          </div>
+          <div class="rating-row">
+            <span>Calories level</span>
+            <StarRating v-model="calories" />
+          </div>
         </div>
       </div>
-    </div>
-    <div class="design-corner-right">
-      <div class="category">
-        <div class="left-button"> <LeftPointIcon /></div>
-        <div class="category-buttons">
-        <button
-          v-for="cat in categories"
-          :key="cat"
-          :class="{ active: selectedCategory === cat }"
-          @click="selectedCategory = cat"
-        >
-          {{ cat }}
-        </button>
+      <div class="design-corner-right">
+        <div class="category">
+          <div class="left-button" @click="scrollCategoryLeft"><LeftPointIcon /></div>
+          <div class="category-buttons" ref="categoryButtonsRef">
+            <button
+              v-for="cat in categories"
+              :key="cat"
+              :class="{ active: selectedCategory === cat }"
+              @click="selectedCategory = cat"
+            >
+              {{ cat }}
+            </button>
+          </div>
+          <div class="right-button" @click="scrollCategoryRight"><RightPointIcon /></div>
         </div>
-        <div class="right-button"> <RightPointIcon /></div>
-      </div>
-      <div class="options-placeholder">
-        <!-- Product options go here -->
+        <div class="options-placeholder">
+          <!-- Product options go here -->
+        </div>
       </div>
     </div>
   </div>
@@ -63,12 +79,18 @@
 
 <style scoped>
 .design-corner-layout {
-  display: flex;
   gap: 32px;
   background: var(--main-bg-color);
   padding: 32px;
 }
+.design-corner-holder {
+  display: flex;
+  flex-direction: row;
+  max-width: 1000px;
+  margin: 0 auto;
+}
 .design-corner-left {
+  width: 20%;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -98,7 +120,7 @@
   font-size: 1.1rem;
 }
 .design-corner-right {
-  width: 80%;
+  width: 70%;
   flex: 2;
   display: flex;
   flex-direction: column;
@@ -111,8 +133,12 @@
 .category-buttons {
   display: flex;
   gap: 18px;
-  width: max-content;
-  overflow-x: hidden;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.category-buttons::-webkit-scrollbar {
+  display: none;
 }
 .category-buttons button {
   background: #fff;

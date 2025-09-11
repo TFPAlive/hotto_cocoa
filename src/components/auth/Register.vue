@@ -78,7 +78,7 @@ async function handleRegister() {
     <p v-if="error" class="error">{{ error }}</p>
     <div class="login-link-row">
       <span>Already have an account?</span>
-      <router-link to="auth/login" class="login-link">Login Now</router-link>
+      <router-link to="login" class="login-link">Login Now</router-link>
     </div>
   </div>
 </template>

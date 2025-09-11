@@ -11,7 +11,6 @@ const error = ref("");
 const loading = ref(false);
 
 async function handleLogin() {
-  router.push("/auth/logging-in"); // Redirect to logging-in page first
   loading.value = true;
   error.value = "";
 
@@ -20,6 +19,8 @@ async function handleLogin() {
       identifier: identifier.value,
       password: password.value,
     }, { withCredentials: true });
+
+    router.push("/auth/logging-in"); // Redirect to logging-in page first
 
     const { role } = res.data;
 
@@ -31,7 +32,13 @@ async function handleLogin() {
       router.push("/");
     }
   } catch (err: any) {
-    error.value = err.response?.data?.message || "Login failed";
+    // Show a friendly error for invalid credentials
+    if (err.response && (err.response.status === 401 || err.response.status === 400)) {
+      error.value = "Incorrect Email/Username or Password. Please try again";
+    } else {
+      error.value = err.response?.data?.message || "Login failed";
+    }
+    router.push("/auth/login");
   } finally {
     loading.value = false;
   }
@@ -42,6 +49,7 @@ async function handleLogin() {
 <template>
   <div class="login">
     <h2>Login</h2>
+    <p v-if="error" class="error-message">{{ error }}</p>
     <form @submit.prevent="handleLogin">
       <div>
         <label>Email/Username:</label>
@@ -54,11 +62,10 @@ async function handleLogin() {
       <button type="submit">Login</button>
     </form>
 
-  <p v-if="loading" class="loading-text">Logging in...</p>
-  <p v-if="error" class="error">{{ error }}</p>
+    <p v-if="loading" class="loading-text">Logging in...</p>
     <div class="register-link-row">
       <span>Don't have an account?</span>
-      <router-link to="auth/register" class="register-link">Register Here</router-link>
+      <router-link to="register" class="register-link">Register Here</router-link>
     </div>
   </div>
 </template>
