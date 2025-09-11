@@ -12,6 +12,19 @@ const editingId = ref<number | null>(null)
 const drawerOpen = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const filePreviewUrl = ref<string | undefined>(undefined)
+const categories = ref([
+    'mugs & cups',
+    'drink bases',
+    'choco bombs',
+    'dipped cookies',
+    'top-cream',
+    'marshmallows',
+    'sprinkles',
+    'spoons & candy canes',
+    'straw',
+    'coasters',
+    'packing styles'
+  ])
 
 function triggerFileInput() {
   fileInput.value?.click()
@@ -38,7 +51,21 @@ function openDrawerForAdd() {
 }
 
 function openDrawerForEdit(product: Product) {
-  form.value = { name: product.name, price: product.price, description: product.description, material: product.material, keyword: product.keyword, category: product.category, imageUrl: product.imageUrl, file: undefined }
+  // If the product's category is not in the categories list, set to '' (disabled option)
+  let cat = product.category
+  if (cat && !categories.value.includes(cat)) {
+    cat = ''
+  }
+  form.value = {
+    name: product.name,
+    price: product.price,
+    description: product.description,
+    material: product.material,
+    keyword: product.keyword,
+    category: cat,
+    imageUrl: product.imageUrl,
+    file: undefined
+  }
   isEditing.value = true
   editingId.value = product.id
   filePreviewUrl.value = undefined
@@ -156,7 +183,10 @@ async function onDeleteProduct(id: number) {
           </div>
           <div>
             <label>Category:</label>
-            <input v-model="form.category" />
+            <select v-model="form.category" class="styled-select">
+              <option value="" disabled>Select category</option>
+              <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+            </select>
           </div>
           <div>
             <label>Image:</label>
@@ -226,8 +256,8 @@ th, td {
 .drawer {
   position: fixed;
   top: 0;
-  right: -420px;
-  width: 400px;
+  right: -500px;
+  width: 500px;
   height: 100vh;
   background: #fff;
   box-shadow: -2px 0 16px #a0522d22;
@@ -308,4 +338,22 @@ th, td {
   font-size: 0.9rem;
   text-align: center;
 }
+/* Match select style to input/textarea */
+.styled-select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #23281a;
+  font-size: 1rem;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  transition: border 0.2s;
+}
+.styled-select:focus {
+  outline: none;
+  border: 1.5px solid #a0522d;
+}
+
 </style>

@@ -167,4 +167,14 @@ button[type="submit"]:hover {
   margin-top: 12px;
   font-size: 1rem;
 }
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 75%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a0522d;
+}
 </style>

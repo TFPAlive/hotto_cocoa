@@ -1,39 +1,41 @@
 <script setup lang="ts">
-  import LeftPointIcon from '../icons/IconPointLeft.vue'
-  import RightPointIcon from '../icons/IconPointRight.vue'
-  import StarRating from './StarRating.vue'
-  import { ref } from 'vue'
-  import { onMounted } from 'vue'
+import LeftPointIcon from '../icons/IconPointLeft.vue'
+import RightPointIcon from '../icons/IconPointRight.vue'
+import StarRating from './StarRating.vue'
+import { ref } from 'vue'
+import type { Product } from '@/types'
+import { useProducts } from '@/composables/useProducts'
 
-  const sweetness = ref(3.5)
-  const calories = ref(2)
-  const categories = ref([
-    'Cups & Mugs',
-    'Drink bases',
-    'Choco bombs',
-    'Dipped cookies',
-    'Top-cream',
-    'Marshmallows',
-    'Sprinkles',
-    'Spoons & Candy canes',
-    'Straw',
-    'Coasters',
-    'Packing styles'
-  ])
-  const selectedCategory = ref(categories.value[0])
-  const categoryButtonsRef = ref<HTMLElement | null>(null)
+const { products } = useProducts()
+const sweetness = ref(3.5)
+const calories = ref(2)
+const categories = ref([
+  'Mugs & Cups',
+  'Drink bases',
+  'Choco bombs',
+  'Dipped cookies',
+  'Top-cream',
+  'Marshmallows',
+  'Sprinkles',
+  'Spoons & Candy canes',
+  'Straw',
+  'Coasters',
+  'Packing styles'
+])
+const selectedCategory = ref(categories.value[0])
+const categoryButtonsRef = ref<HTMLElement | null>(null)
 
-  function scrollCategoryLeft() {
-    if (categoryButtonsRef.value) {
-      categoryButtonsRef.value.scrollBy({ left: -200, behavior: 'smooth' })
-    }
+function scrollCategoryLeft() {
+  if (categoryButtonsRef.value) {
+    categoryButtonsRef.value.scrollBy({ left: -200, behavior: 'smooth' })
   }
+}
 
-  function scrollCategoryRight() {
-    if (categoryButtonsRef.value) {
-      categoryButtonsRef.value.scrollBy({ left: 200, behavior: 'smooth' })
-    }
+function scrollCategoryRight() {
+  if (categoryButtonsRef.value) {
+    categoryButtonsRef.value.scrollBy({ left: 200, behavior: 'smooth' })
   }
+}
 </script>
 
 <template>
@@ -70,7 +72,15 @@
           <div class="right-button" @click="scrollCategoryRight"><RightPointIcon /></div>
         </div>
         <div class="options-placeholder">
-          <!-- Product options go here -->
+          <div class="image-list">
+            <div class="image-cell"
+              v-for="product in products.filter(product => product.category === selectedCategory.toLocaleLowerCase())"
+              :key="product.id"
+            >
+              <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
+              <div v-else class="image-placeholder">No Image</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -178,5 +188,27 @@
   justify-content: center;
   transition: color 0.2s;
 }
-
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-top: 16px;
+}
+.image-cell {
+  flex: 0 0 20%;
+  max-width: 20%;
+  box-sizing: border-box;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
 </style>
