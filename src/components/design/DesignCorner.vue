@@ -18,7 +18,7 @@ const categories = ref([
   'Marshmallows',
   'Sprinkles',
   'Spoons & Candy canes',
-  'Straw',
+  'Straws',
   'Coasters',
   'Packing styles'
 ])
