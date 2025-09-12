@@ -3,7 +3,6 @@ import LeftPointIcon from '../icons/IconPointLeft.vue'
 import RightPointIcon from '../icons/IconPointRight.vue'
 import StarRating from './StarRating.vue'
 import { ref } from 'vue'
-import type { Product } from '@/types'
 import { useProducts } from '@/composables/useProducts'
 
 const { products } = useProducts()
