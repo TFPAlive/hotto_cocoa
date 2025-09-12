@@ -122,7 +122,6 @@ async function onDeleteProduct(id: number) {
     <table>
       <thead>
         <tr>
-          <th>ID</th>
           <th>Image</th>
           <th>Name</th>
           <th>Price</th>
@@ -135,7 +134,6 @@ async function onDeleteProduct(id: number) {
       </thead>
       <tbody>
         <tr v-for="product in products" :key="product.id">
-          <td>{{ product.id }}</td>
           <td>
             <div class="image-cell">
               <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />

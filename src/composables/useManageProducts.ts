@@ -13,7 +13,7 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 			let imageUrl = product.imageUrl
 			if (product.file) {
 				// Get signed URL from backend
-				const uploadRes = await fetch(`/api/genURL?fileName=${product.file.name}&fileType=${product.file.type}`)
+				const uploadRes = await fetch(`/api/admin/products/genURL?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
 				if (!uploadRes.ok) throw new Error('Failed to get upload URL')
 				const { uploadUrl, publicUrl } = await uploadRes.json()
 				// Upload file to GCS
@@ -60,6 +60,10 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 					body: product.file
 				})
 				if (!putRes.ok) throw new Error('Failed to upload file')
+				if (product.imageUrl) {
+					const deleteRes = await fetch(`/api/admin/products/deleteFiles?fileName=${encodeURIComponent(product.imageUrl?.split('/').pop() || '')}`, { method: 'DELETE' })
+					if (!deleteRes.ok) console.warn('Failed to delete old image')
+				}
 				imageUrl = publicUrl
 			}
 			// Send product data to API
