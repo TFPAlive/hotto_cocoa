@@ -26,8 +26,24 @@ const categories = ref([
     'packing styles'
   ])
 
+
 function triggerFileInput() {
   fileInput.value?.click()
+}
+
+function onImageCellDrop(e: DragEvent) {
+  e.preventDefault()
+  if (!e.dataTransfer) return
+  const file = e.dataTransfer.files && e.dataTransfer.files[0]
+  if (file && file.type.startsWith('image/')) {
+    form.value.file = file
+    if (filePreviewUrl.value) URL.revokeObjectURL(filePreviewUrl.value)
+    filePreviewUrl.value = URL.createObjectURL(file) || undefined
+  }
+}
+
+function onImageCellDragOver(e: DragEvent) {
+  e.preventDefault()
 }
 
 function onFileChange(e: Event) {
@@ -189,12 +205,15 @@ async function onDeleteProduct(id: number) {
           <div>
             <label>Image:</label>
             <input ref="fileInput" type="file" accept="image/*" style="display:none" @change="onFileChange" />
-            <div class="image-cell clickable" style="margin-top:8px;" @click="triggerFileInput">
+            <div class="image-cell clickable" style="margin-top:8px;"
+              @click="triggerFileInput"
+              @drop="onImageCellDrop"
+              @dragover="onImageCellDragOver"
+            >
               <img v-if="form.file" :src="filePreviewUrl" alt="Preview" />
               <img v-else-if="form.imageUrl" :src="form.imageUrl" alt="Preview" />
               <div v-else class="image-placeholder">Click to add</div>
             </div>
-            <input v-model="form.imageUrl" placeholder="https://..." style="margin-top:8px;" />
           </div>
           <div class="drawer-actions">
             <button type="submit">{{ isEditing ? 'Update' : 'Add' }} Product</button>
