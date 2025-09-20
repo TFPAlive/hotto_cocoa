@@ -7,25 +7,25 @@ const repeatCount = ref(7)
 
 <template>
   <div class="banner">
-    <div class="banner-track banner-track-1">
-      <div class="banner-track-inner">
-        <template v-for="n in repeatCount" :key="'a' + n">
+    <div class="banner-track">
+      <template v-for="n in repeatCount" :key="'a' + n">
+        <div class="banner-track-inner">
           <span class="banner-text">Summer Campaign</span>
           <span class="banner-icon" aria-label="sun">
             <IconCampaign />
           </span>
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
-    <div class="banner-track banner-track-2">
-      <div class="banner-track-inner">
-        <template v-for="n in repeatCount" :key="'b' + n">
+    <div aria-hidden class="banner-track">
+      <template v-for="n in repeatCount" :key="'a' + n">
+        <div class="banner-track-inner">
           <span class="banner-text">Summer Campaign</span>
           <span class="banner-icon" aria-label="sun">
             <IconCampaign />
           </span>
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@ const repeatCount = ref(7)
 .banner {
   width: 100vw;
   height: 50px;
-  overflow: hidden;
+  overflow: auto;
   background: var(--main-bg-color);
   display: flex;
   align-items: center;
@@ -42,28 +42,20 @@ const repeatCount = ref(7)
   border-top: 1px solid var(--font-color);
   border-bottom: 1px solid var(--font-color);
 }
+.banner::-webkit-scrollbar {
+  display: none;
+}
 /* Two tracks for seamless looping */
 .banner-track {
   width: auto;
   height: 50px;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-.banner-track-1 {
-  animation: banner-scroll-1 20s linear infinite;
-  z-index: 1;
-}
-.banner-track-2 {
-  animation: banner-scroll-2 20s linear infinite;
-  z-index: 2;
+  display: flex;
+  animation: scroll 10s linear infinite;
 }
 .banner-track-inner {
   display: flex;
   align-items: center;
   white-space: nowrap;
-  will-change: transform;
   height: 100%;
 }
 .banner-text {
@@ -81,20 +73,8 @@ const repeatCount = ref(7)
   align-items: center;
   margin-right: 20px;
 }
-@keyframes banner-scroll-1 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(1952.12px);
-  }
-}
-@keyframes banner-scroll-2 {
-  0% {
-    transform: translateX(-1952.12px);
-  }
-  100% {
-    transform: translateX(0);
-  }
+@keyframes scroll {
+  from { translate: 0; }
+  to { translate: -100%; }
 }
 </style>
