@@ -23,16 +23,26 @@ const categories = ref([
 ])
 const selectedCategory = ref(categories.value[0])
 const categoryButtonsRef = ref<HTMLElement | null>(null)
+const selectedProducts = ref(
+  categories.value.reduce((acc: Record<string, any>, cat) => {
+    acc[cat.toLowerCase()] = null
+    return acc
+  }, {})
+)
 
 function scrollCategoryLeft() {
   if (categoryButtonsRef.value) {
     categoryButtonsRef.value.scrollBy({ left: -200, behavior: 'smooth' })
   }
 }
-
 function scrollCategoryRight() {
   if (categoryButtonsRef.value) {
     categoryButtonsRef.value.scrollBy({ left: 200, behavior: 'smooth' })
+  }
+}
+function selectProduct(product: { category?: string; id?: any; imageUrl?: string }) {
+  if (product.category) {
+    selectedProducts.value[product.category.toLowerCase()] = product
   }
 }
 </script>
@@ -71,13 +81,16 @@ function scrollCategoryRight() {
           <div class="right-button" @click="scrollCategoryRight"><RightPointIcon /></div>
         </div>
         <div class="options-placeholder">
-          <div class="image-list">
-            <div class="image-cell"
-              v-for="product in products.filter(product => product.category === selectedCategory.toLocaleLowerCase())"
-              :key="product.id"
-            >
-              <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
-              <div v-else class="image-placeholder">No Image</div>
+          <div v-for="cat in categories" :key="cat" v-show="selectedCategory === cat">
+            <div class="image-list">
+              <div class="image-cell"
+                v-for="product in products.filter(p => p.category && p.category.toLowerCase() === cat.toLowerCase())"
+                :key="product.id"
+                @click="selectProduct(product)"
+              >
+                <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
+                <div v-else class="image-placeholder">No Image</div>
+              </div>
             </div>
           </div>
         </div>
@@ -209,5 +222,9 @@ img {
   max-height: 100%;
   object-fit: cover;
   border-radius: 8px;
+}
+.image-cell.selected {
+  border: 2px solid #ff8800;
+  border-radius: 12px;
 }
 </style>
