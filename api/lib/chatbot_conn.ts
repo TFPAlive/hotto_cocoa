@@ -1,8 +1,9 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.CHATBOT_API_KEY || "");
 
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ error: "Method not allowed" });
@@ -33,6 +34,9 @@ export default async function handler(req, res) {
     res.status(200).json({ reply: result.response.text() });
   } catch (err) {
     console.error("Chatbot API error:", err);
-    res.status(500).json({ error: err.message || "Internal server error" });
+    const errorMessage = typeof err === "object" && err !== null && "message" in err
+      ? (err as { message?: string }).message
+      : undefined;
+    res.status(500).json({ error: errorMessage || "Internal server error" });
   }
 }

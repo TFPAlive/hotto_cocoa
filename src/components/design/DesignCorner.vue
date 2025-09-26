@@ -2,8 +2,10 @@
 import LeftPointIcon from '../icons/IconPointLeft.vue'
 import RightPointIcon from '../icons/IconPointRight.vue'
 import StarRating from './StarRating.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useProducts } from '@/composables/useProducts'
+import { useAddCart } from '@/composables/useAddCart'
+import { auth } from '@/composables/useAuth'
 
 const { products } = useProducts()
 const sweetness = ref(3.5)
@@ -45,6 +47,15 @@ function selectProduct(product: { category?: string; id?: any; imageUrl?: string
     selectedProducts.value[product.category.toLowerCase()] = product
   }
 }
+function addToCart() { 
+  const { adding, error, addToCart } = useAddCart(selectedProducts.value)
+  addToCart()
+  if (error.value) {
+    console.error('Failed to add to cart:', error.value)
+  } else {
+    console.log('Added to cart successfully')
+  }
+}
 </script>
 
 <template>
@@ -63,6 +74,20 @@ function selectProduct(product: { category?: string; id?: any; imageUrl?: string
             <span>Calories level</span>
             <StarRating v-model="calories" />
           </div>
+        </div>
+        <div class="price">
+          <h2>Total Price</h2>
+          <p>
+            {{
+              Object.values(selectedProducts).reduce((sum, prod) => {
+                return sum + (prod?.price || 0)
+              }, 0)
+            }} 円
+          </p>
+        </div>
+        <div class="button-holder">
+          <button class="order-this">Order This</button>
+          <button class="add-to-cart-btn" @click="addToCart">Add to Cart</button>
         </div>
       </div>
       <div class="design-corner-right">
@@ -86,6 +111,7 @@ function selectProduct(product: { category?: string; id?: any; imageUrl?: string
               <div class="image-cell"
                 v-for="product in products.filter(p => p.category && p.category.toLowerCase() === cat.toLowerCase())"
                 :key="product.id"
+                :class="{ selected: selectedProducts[cat.toLowerCase()]?.id === product.id }"
                 @click="selectProduct(product)"
               >
                 <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
@@ -181,10 +207,12 @@ function selectProduct(product: { category?: string; id?: any; imageUrl?: string
 .options-placeholder {
   background: #23281a;
   border-radius: 12px;
-  min-height: 220px;
+  min-height: 500px;
+  max-height: 500px;
   padding: 24px;
   color: #fff;
   box-shadow: 0 1px 6px #e0c3a044;
+  overflow-y: auto;
 }
 /* Star rating styles */
 .star-rating {
@@ -226,5 +254,56 @@ img {
 .image-cell.selected {
   border: 2px solid #ff8800;
   border-radius: 12px;
+}
+.order-this {
+  background: #a0522d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.order-this:hover {
+  background: #7a3a1d;
+}
+.add-to-cart-btn {
+  background: #ff8800;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-to-cart-btn:hover {
+  background: #e67600;
+}
+.price {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 32px;
+  width: 100%;
+}
+.price h2 {
+  margin-right: 12px;
+  font-size: 2rem;
+}
+.price p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ff8800;
+}
+.button-holder {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+.button-holder button {
+  width: 40%;
+  margin: 0 10px;
+  font-size: 1rem;
 }
 </style>

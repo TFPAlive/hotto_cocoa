@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import CartIcon from '../icons/IconCart.vue'
 import CloseIcon from '../icons/IconClose.vue'
+import { useCart } from '@/composables/useCart'
 import { ref } from 'vue'
 
 const showCart = ref(false)
 const cartCount = ref(0)
+
+const { cartItems, calculateTotalPrice } = useCart()
+
 function toggleCart() {
   showCart.value = !showCart.value
 }
@@ -27,6 +31,7 @@ function toggleCart() {
 					</div>
 					<div class="cart-drawer-body">
 						<p>Your cart is empty.</p>
+            
 					</div>
 				</div>
 			</div>

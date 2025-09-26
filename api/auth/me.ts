@@ -18,14 +18,13 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
     }
 
     const [rows] = await connection.execute<any[]>(
-      "SELECT username, email, imageUrl, role FROM User WHERE user_id = ?",
+      "SELECT user_id, username, email, imageUrl, role FROM User WHERE user_id = ?",
       [result.user.userId] // adjust to match your JWT payload
     );
 
     if (!rows || rows.length === 0) {
       return res.json({ user: { role: "guest" } });
     }
-
     // Merge DB user data
     return res.json({ user: rows[0] });
   } catch (err) {

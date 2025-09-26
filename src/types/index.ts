@@ -16,3 +16,13 @@ export interface User {
   role: 'admin' | 'user' | 'guest'
   avatar?: string
 }
+
+export interface CartItem {
+  id: number
+  productId: number
+  name: string
+  description?: string
+  price: number
+  imageUrl?: string
+  quantity: number
+}
