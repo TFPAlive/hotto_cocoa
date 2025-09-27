@@ -2,7 +2,7 @@
 import LeftPointIcon from '../icons/IconPointLeft.vue'
 import RightPointIcon from '../icons/IconPointRight.vue'
 import StarRating from './StarRating.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, nextTick } from 'vue'
 import { useProducts } from '@/composables/useProducts'
 import { useAddCart } from '@/composables/useAddCart'
 
@@ -30,15 +30,26 @@ const selectedProducts = ref(
     return acc
   }, {})
 )
+const showTooltip = ref(false)
+const tooltipPosition = ref({ x: 0, y: 0 })
+const showDTooltip = ref(false)
+const hoveredProduct = ref<any>(null)
+const isDragging = ref(false)
+const startX = ref(0)
+const scrollLeft = ref(0)
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
 
 function scrollCategoryLeft() {
   if (categoryButtonsRef.value) {
     categoryButtonsRef.value.scrollBy({ left: -200, behavior: 'smooth' })
+    setTimeout(updateScrollButtons, 300) // Wait for scroll animation to complete
   }
 }
 function scrollCategoryRight() {
   if (categoryButtonsRef.value) {
     categoryButtonsRef.value.scrollBy({ left: 200, behavior: 'smooth' })
+    setTimeout(updateScrollButtons, 300) // Wait for scroll animation to complete
   }
 }
 function selectProduct(product: { category?: string; productid?: any; imageurl?: string }) {
@@ -55,13 +66,87 @@ function addToCart() {
     console.log('Added to cart successfully')
   }
 }
+function createDrink() {
+  alert('Create Drink functionality is not implemented yet.')
+}
+function showChoiceTooltip(event: MouseEvent) {
+  showTooltip.value = true
+  tooltipPosition.value = { x: event.clientX + 10, y: event.clientY + 10 }
+}
+function hideChoiceTooltip() {
+  showTooltip.value = false
+}
+function updateTooltipPosition(event: MouseEvent) {
+  if (showTooltip.value) {
+    tooltipPosition.value = { x: event.clientX + 10, y: event.clientY + 10 }
+  }
+}
+function resetSelections() {
+  selectedProducts.value = categories.value.reduce((acc: Record<string, any>, cat) => {
+    acc[cat.toLowerCase()] = null
+    return acc
+  }, {})
+  sweetness.value = 3.5
+  calories.value = 2
+}
+function showDetailsTooltip(event: MouseEvent, product: any) {
+  showDTooltip.value = true
+  hoveredProduct.value = product
+}
+function hideDetailsTooltip() {
+  showDTooltip.value = false
+  hoveredProduct.value = null
+}
+
+function startDrag(e: MouseEvent) {
+  isDragging.value = true
+  if (categoryButtonsRef.value) {
+    startX.value = e.pageX - categoryButtonsRef.value.offsetLeft
+    scrollLeft.value = categoryButtonsRef.value.scrollLeft
+    categoryButtonsRef.value.style.cursor = 'grabbing'
+  }
+}
+
+function drag(e: MouseEvent) {
+  if (!isDragging.value || !categoryButtonsRef.value) return
+  e.preventDefault()
+  const x = e.pageX - categoryButtonsRef.value.offsetLeft
+  const walk = (x - startX.value) * 2 // Multiply by 2 for faster scrolling
+  categoryButtonsRef.value.scrollLeft = scrollLeft.value - walk
+}
+
+function endDrag() {
+  isDragging.value = false
+  if (categoryButtonsRef.value) {
+    categoryButtonsRef.value.style.cursor = 'grab'
+  }
+  updateScrollButtons()
+}
+
+function updateScrollButtons() {
+  if (!categoryButtonsRef.value) return
+  
+  const element = categoryButtonsRef.value
+  canScrollLeft.value = element.scrollLeft > 0
+  canScrollRight.value = element.scrollLeft < (element.scrollWidth - element.clientWidth)
+}
+
+onMounted(() => {
+  nextTick(() => {
+    updateScrollButtons()
+  })
+})
 </script>
 
 <template>
   <div class="design-corner-layout">
     <div class="design-corner-holder">
       <div class="design-corner-left">
-        <div class="cup-image-placeholder">
+        <div class="cup-image-placeholder" 
+          @mouseenter="showChoiceTooltip"
+          @mouseleave="hideChoiceTooltip"
+          @mousemove="updateTooltipPosition"
+        >
           <!-- Cup image goes here -->
         </div>
         <div class="rating-bars">
@@ -85,14 +170,20 @@ function addToCart() {
           </p>
         </div>
         <div class="button-holder">
-          <button class="order-this">Order This</button>
+          <button class="create-drink" @click="createDrink">Create Drink</button>
           <button class="add-to-cart-btn" @click="addToCart">Add to Cart</button>
         </div>
       </div>
       <div class="design-corner-right">
         <div class="category">
-          <div class="left-button" @click="scrollCategoryLeft"><LeftPointIcon /></div>
-          <div class="category-buttons" ref="categoryButtonsRef">
+            <div class="left-button" @click="scrollCategoryLeft" v-show="canScrollLeft"><LeftPointIcon /></div>
+          <div class="category-buttons" ref="categoryButtonsRef"
+            @mousedown="startDrag"
+            @mousemove="drag"
+            @mouseup="endDrag"
+            @mouseleave="endDrag"
+            @scroll="updateScrollButtons"
+          >
             <button
               v-for="cat in categories"
               :key="cat"
@@ -102,7 +193,7 @@ function addToCart() {
               {{ cat }}
             </button>
           </div>
-          <div class="right-button" @click="scrollCategoryRight"><RightPointIcon /></div>
+          <div class="right-button" @click="scrollCategoryRight" v-show="canScrollRight"><RightPointIcon /></div>
         </div>
         <div class="options-placeholder">
           <div v-for="cat in categories" :key="cat" v-show="selectedCategory === cat">
@@ -112,14 +203,49 @@ function addToCart() {
                 :key="product.productid"
                 :class="{ selected: selectedProducts[cat.toLowerCase()]?.productid === product.productid }"
                 @click="selectProduct(product)"
+                @mouseenter="(event) => showDetailsTooltip(event, product)"
+                @mouseleave="hideDetailsTooltip"
               >
                 <img v-if="product.imageurl" :src="product.imageurl" alt="Product Image" />
                 <div v-else class="image-placeholder">No Image</div>
               </div>
             </div>
           </div>
+          <div class="description">
+            <div v-if="showDTooltip" class="description-tooltip">
+              <div v-if="hoveredProduct" class="product-details">
+                <h4>{{ hoveredProduct.name || 'Unknown Product' }}</h4>
+                <p class="product-description">{{ hoveredProduct.description || 'No description available' }}</p>
+                <div class="product-info">
+                  <span class="price">Price: {{ hoveredProduct.price || 0 }} 円</span>
+                  <span class="category">Category: {{ hoveredProduct.category || 'Unknown' }}</span>
+                  <span v-if="hoveredProduct.material" class="material">Material: {{ hoveredProduct.material }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    
+    <!-- Tooltip table for selected choices -->
+    <div v-if="showTooltip" class="choice-tooltip" :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Product</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(product, category) in selectedProducts" :key="category">
+            <td v-if="product">{{ category.charAt(0).toUpperCase() + category.slice(1) }}</td>
+            <td v-if="product">{{ product.name || 'Unknown' }}</td>
+            <td v-if="product">{{ product.price || 0 }} 円</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -133,7 +259,7 @@ function addToCart() {
 .design-corner-holder {
   display: flex;
   flex-direction: row;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 .design-corner-left {
@@ -183,6 +309,8 @@ function addToCart() {
   overflow-x: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
 }
 .category-buttons::-webkit-scrollbar {
   display: none;
@@ -207,7 +335,6 @@ function addToCart() {
   background: #23281a;
   border-radius: 12px;
   min-height: 500px;
-  max-height: 500px;
   padding: 24px;
   color: #fff;
   box-shadow: 0 1px 6px #e0c3a044;
@@ -254,7 +381,7 @@ img {
   border: 2px solid #ff8800;
   border-radius: 12px;
 }
-.order-this {
+.create-drink {
   background: #a0522d;
   color: #fff;
   border: none;
@@ -263,7 +390,7 @@ img {
   cursor: pointer;
   transition: background 0.2s;
 }
-.order-this:hover {
+.create-drink:hover {
   background: #7a3a1d;
 }
 .add-to-cart-btn {
@@ -304,5 +431,82 @@ img {
   width: 40%;
   margin: 0 10px;
   font-size: 1rem;
+}
+
+/* Tooltip styles */
+.choice-tooltip {
+  position: fixed;
+  background: rgba(35, 40, 26, 0.95);
+  border: 1px solid #a0522d;
+  border-radius: 8px;
+  padding: 12px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.choice-tooltip table {
+  border-collapse: collapse;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.choice-tooltip th,
+.choice-tooltip td {
+  padding: 6px 12px;
+  text-align: left;
+  border-bottom: 1px solid #666;
+}
+
+.choice-tooltip th {
+  background: #a0522d;
+  font-weight: bold;
+  color: #fff;
+}
+
+.choice-tooltip tr:last-child td {
+  border-bottom: none;
+}
+
+/* Description tooltip styles */
+.description-tooltip {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #a0522d;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  max-width: 100%;
+  color: #fff;
+  backdrop-filter: blur(2px);
+}
+
+.product-details h4 {
+  margin: 0 0 8px 0;
+  color: #ff8800;
+  font-size: 1.1rem;
+}
+
+.product-description {
+  margin: 0 0 12px 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #e0e0e0;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-info span {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.product-info .price {
+  color: #ff8800;
+  font-weight: bold;
 }
 </style>

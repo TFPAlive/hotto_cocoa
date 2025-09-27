@@ -10,7 +10,7 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 		loading.value = true
 		error.value = null
 		try {
-			let imageUrl = product.imageUrl
+			let imageurl = product.imageurl
 			if (product.file) {
 				// Get signed URL from backend
 				const uploadRes = await fetch(`/api/admin/products/genURL?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
@@ -23,13 +23,13 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 					body: product.file
 				})
 				if (!putRes.ok) throw new Error('Failed to upload file')
-				imageUrl = publicUrl
+				imageurl = publicUrl
 			}
 			// Send product data to API
 			const res = await fetch('/api/admin/products', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ...product, imageUrl })
+				body: JSON.stringify({ ...product, imageurl })
 			})
 			if (!res.ok) throw new Error('Failed to add product')
 			await fetchProducts()
@@ -47,7 +47,7 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 		loading.value = true
 		error.value = null
 		try {
-            let imageUrl = product.imageUrl
+            let imageurl = product.imageurl
 			if (product.file) {
 				// Get signed URL from backend
 				const uploadRes = await fetch(`/api/admin/products/genURL?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
@@ -60,17 +60,17 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 					body: product.file
 				})
 				if (!putRes.ok) throw new Error('Failed to upload file')
-				if (product.imageUrl) {
-					const deleteRes = await fetch(`/api/admin/products/deleteFiles?fileName=${encodeURIComponent(product.imageUrl?.split('/').pop() || '')}`, { method: 'DELETE' })
+				if (product.imageurl) {
+					const deleteRes = await fetch(`/api/admin/products/deleteFiles?fileName=${encodeURIComponent(product.imageurl?.split('/').pop() || '')}`, { method: 'DELETE' })
 					if (!deleteRes.ok) console.warn('Failed to delete old image')
 				}
-				imageUrl = publicUrl
+				imageurl = publicUrl
 			}
 			// Send product data to API
 			const res = await fetch(`/api/admin/products/${id}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ ...product, imageUrl })
+				body: JSON.stringify({ ...product, imageurl })
 			})
 			if (!res.ok) throw new Error('Failed to update product')
 			await fetchProducts()

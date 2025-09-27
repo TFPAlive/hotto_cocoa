@@ -6,9 +6,9 @@ import type { Product } from '@/types'
 
 const { products, fetchProducts } = useProducts()
 const { addProduct, editProduct, deleteProduct, error } = useManageProducts(fetchProducts)
-const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageUrl?: string; file?: File }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '' })
+const form = ref<{ name: string; description?: string; price: number; material?: string; keyword?: string; category?: string; imageurl?: string; file?: File }>({ name: '', price: 0, description: '', material: '', keyword: '', category: '', imageurl: '' })
 const isEditing = ref(false)
-const editingId = ref<number | null>(null)
+const editingid = ref<number | null>(null)
 const drawerOpen = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const filePreviewUrl = ref<string | undefined>(undefined)
@@ -79,11 +79,11 @@ function openDrawerForEdit(product: Product) {
     material: product.material,
     keyword: product.keyword,
     category: cat,
-    imageUrl: product.imageUrl,
+    imageurl: product.imageurl,
     file: undefined
   }
   isEditing.value = true
-  editingId.value = product.id
+  editingid.value = product.productid
   filePreviewUrl.value = undefined
   drawerOpen.value = true
 }
@@ -98,18 +98,18 @@ function closeDrawer() {
 }
 
 function resetForm() {
-  form.value = { name: '', price: 0, description: '', material: '', keyword: '', category: '', imageUrl: '', file: undefined }
+  form.value = { name: '', price: 0, description: '', material: '', keyword: '', category: '', imageurl: '', file: undefined }
   isEditing.value = false
-  editingId.value = null
+  editingid.value = null
 }
 
 
 async function onSubmit() {
   let success = false
-  if (isEditing.value && editingId.value) {
-    success = await editProduct(String(editingId.value), form.value)
+  if (isEditing.value && editingid.value) {
+    success = await editProduct(String(editingid.value), { ...form.value, productid: editingid.value as number })
   } else {
-    success = await addProduct(form.value)
+    success = await addProduct({ ...form.value, productid: 0 })
   }
   if (success) {
     closeDrawer()
@@ -121,7 +121,7 @@ async function onSubmit() {
 async function onDeleteProduct(id: number) {
   const ok = await deleteProduct(String(id))
   if (ok) {
-    if (editingId.value === id) resetForm()
+    if (editingid.value === id) resetForm()
   } else {
     alert(error.value || 'Error deleting product')
   }
@@ -149,10 +149,10 @@ async function onDeleteProduct(id: number) {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="product in products" :key="product.id">
+        <tr v-for="product in products" :key="product.productid">
           <td>
             <div class="image-cell">
-              <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
+              <img v-if="product.imageurl" :src="product.imageurl" alt="Product Image" />
               <div v-else class="image-placeholder">No Image</div>
             </div>
           </td>
@@ -164,7 +164,7 @@ async function onDeleteProduct(id: number) {
           <td>{{ product.category }}</td>
           <td>
             <button @click="openDrawerForEdit(product)">Edit</button>
-            <button @click="onDeleteProduct(product.id)">Delete</button>
+            <button @click="onDeleteProduct(product.productid)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -211,7 +211,7 @@ async function onDeleteProduct(id: number) {
               @dragover="onImageCellDragOver"
             >
               <img v-if="form.file" :src="filePreviewUrl" alt="Preview" />
-              <img v-else-if="form.imageUrl" :src="form.imageUrl" alt="Preview" />
+              <img v-else-if="form.imageurl" :src="form.imageurl" alt="Preview" />
               <div v-else class="image-placeholder">Click to add</div>
             </div>
           </div>
