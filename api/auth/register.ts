@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const passwordHash = await bcrypt.hash(password, 10);
 
     await conn.execute(
-      `INSERT INTO User (username, email, password_hash, role) VALUES (?, ?, ?, 'user')`,
+      `INSERT INTO User (username, email, passwordhash, role) VALUES (?, ?, ?, 'user')`,
       [username, email, passwordHash]
     );
 
@@ -26,7 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const newUser = rows[0];
 
     return res.json(createAuthCookie(res, {
-      userId: newUser.user_id,
+      userid: newUser.userid,
       email: newUser.email,
       role: newUser.role
     }));

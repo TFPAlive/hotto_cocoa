@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { getConnection } from '../lib/db_conn'
 
-type Item = { productId: number; quantity: number }
+type Item = { productid: number; quantity: number }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -15,23 +15,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let items: Item[] = []
     if (Array.isArray(body.products)) {
       items = body.products
-    } else if (body.productId || body.quantity != null) {
-      items = [{ productId: Number(body.productId), quantity: Number(body.quantity) }]
+    } else if (body.productid || body.quantity != null) {
+      items = [{ productid: Number(body.productid), quantity: Number(body.quantity) }]
     }
 
     // Basic validation: integer ids and positive quantities
     items = items
-      .map(it => ({ productId: Number(it.productId), quantity: Number(it.quantity) }))
-      .filter(it => Number.isInteger(it.productId) && Number.isInteger(it.quantity) && it.quantity > 0)
+      .map(it => ({ productid: Number(it.productid), quantity: Number(it.quantity) }))
+      .filter(it => Number.isInteger(it.productid) && Number.isInteger(it.quantity) && it.quantity > 0)
 
     if (items.length === 0) {
       return res.status(400).json({ error: 'Product ID and quantity are required' })
     }
 
     // === AUTH — adjust to your auth system ===
-    const userId = Number(body.userId)
-    if (!userId || !Number.isInteger(userId) || userId <= 0) {
-      return res.status(401).json({ error: 'Unauthorized: valid userId required' })
+    const userid = Number(body.userid)
+    if (!userid || !Number.isInteger(userid) || userid <= 0) {
+      return res.status(401).json({ error: 'Unauthorized: valid userid required' })
     }
 
     const conn = await getConnection()
@@ -41,43 +41,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       await conn.query('START TRANSACTION')
 
       // Get or create cart
-      const [cartRows] = await conn.query('SELECT * FROM Cart WHERE user_id = ? LIMIT 1', [userId]) as any
-      let cartId: number
+      const [cartRows] = await conn.query('SELECT * FROM Cart WHERE userid = ? LIMIT 1', [userid]) as any
+      let cartid: number
       if (!cartRows || cartRows.length === 0) {
         const [insertResult] = await conn.query(
-          'INSERT INTO Cart (user_id, created_at, updated_at) VALUES (?, NOW(), NOW())',
-          [userId]
+          'INSERT INTO Cart (userid, createdat, updatedat) VALUES (?, NOW(), NOW())',
+          [userid]
         ) as any
-        cartId = insertResult.insertId
+        cartid = insertResult.insertId
       } else {
-        cartId = cartRows[0].cart_id
-        await conn.query('UPDATE Cart SET updated_at = NOW() WHERE cart_id = ?', [cartId])
+        cartid = cartRows[0].cartid
+        await conn.query('UPDATE Cart SET updatedat = NOW() WHERE cartid = ?', [cartid])
       }
 
       // For each item: ensure product exists, then insert or update CartItem
       for (const it of items) {
-        const [productRows] = await conn.query('SELECT price FROM Product WHERE id = ? LIMIT 1', [it.productId]) as any
+        const [productRows] = await conn.query('SELECT price FROM Product WHERE productid = ? LIMIT 1', [it.productid]) as any
         if (!productRows || productRows.length === 0) {
           await conn.query('ROLLBACK')
-          return res.status(404).json({ error: `Product ${it.productId} not found` })
+          return res.status(404).json({ error: `Product ${it.productid} not found` })
         }
         const price = productRows[0].price
 
         const [existing] = await conn.query(
-          'SELECT * FROM CartItem WHERE cart_id = ? AND product_id = ? LIMIT 1',
-          [cartId, it.productId]
+          'SELECT * FROM CartItem WHERE cartid = ? AND productid = ? LIMIT 1',
+          [cartid, it.productid]
         ) as any
 
         if (existing && existing.length > 0) {
           await conn.query(
-            'UPDATE CartItem SET quantity = quantity + ?, price = ? WHERE cart_item_id = ?',
-            [it.quantity, price, existing[0].cart_item_id]
+            'UPDATE CartItem SET quantity = quantity + ?, price = ? WHERE cartitemid = ?',
+            [it.quantity, price, existing[0].cartitemid]
           )
         } else {
           await conn.query(
-            `INSERT INTO CartItem (cart_id, product_id, quantity, price)
+            `INSERT INTO CartItem (cartid, productid, quantity, price)
              VALUES (?, ?, ?, ?)`,
-            [cartId, it.productId, it.quantity, price]
+            [cartid, it.productid, it.quantity, price]
           )
         }
       }
@@ -86,14 +86,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Return updated cart items
       const [cartItems] = await conn.query(
-        `SELECT ci.cart_item_id, ci.product_id, ci.quantity, ci.price, p.name, p.imageUrl
+        `SELECT ci.cartitemid, ci.productid, ci.quantity, ci.price, p.name, p.imageurl
          FROM CartItem ci
-         JOIN Product p ON ci.product_id = p.id
-         WHERE ci.cart_id = ?`,
-        [cartId]
+         JOIN Product p ON ci.productid = p.productid
+         WHERE ci.cartid = ?`,
+        [cartid]
       ) as any
 
-      return res.status(200).json({ cartId, userId, items: cartItems })
+      return res.status(200).json({ cartid, userId, items: cartItems })
 
     } catch (dbErr) {
       console.error('DB error:', dbErr)

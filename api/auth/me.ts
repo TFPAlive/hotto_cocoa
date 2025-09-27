@@ -13,13 +13,13 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
     const connection = await getConnection();
 
     // Assuming your JWT payload has `id` or `userId`
-    if (!result.user || !result.user.userId) {
+    if (!result.user || !result.user.userid) {
       return res.json({ user: { role: "guest" } });
     }
 
     const [rows] = await connection.execute<any[]>(
-      "SELECT user_id, username, email, imageUrl, role FROM User WHERE user_id = ?",
-      [result.user.userId] // adjust to match your JWT payload
+      "SELECT userid, username, email, imageurl, role FROM User WHERE userid = ?",
+      [result.user.userid] // adjust to match your JWT payload
     );
 
     if (!rows || rows.length === 0) {

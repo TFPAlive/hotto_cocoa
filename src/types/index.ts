@@ -1,28 +1,28 @@
 export interface Product {
-  id: number
+  productid: number
   name: string
   description?: string
   price: number
   material?: string
   keyword?: string
   category?: string
-  imageUrl?: string
+  imageurl?: string
 }
 
 export interface User {
-  id: number
+  userid: number
   username: string
   email: string
   role: 'admin' | 'user' | 'guest'
-  avatar?: string
+  avatar: string
 }
 
 export interface CartItem {
   id: number
-  productId: number
+  productid: number
   name: string
-  description?: string
+  description: string
   price: number
-  imageUrl?: string
+  imageurl: string
   quantity: number
 }

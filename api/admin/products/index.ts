@@ -11,17 +11,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.status(500).json({ error: 'Failed to fetch products' })
     }
   } else if (req.method === 'POST') {
-    const { name, description, price, material, keyword, category, imageUrl } = req.body
+    const { name, description, price, material, keyword, category, imageurl } = req.body
     if (!name || price == null) {
       return res.status(400).json({ error: 'Name and price are required' })
     }
     try {
       const conn = await getConnection()
       const [result]: any = await conn.query(
-        'INSERT INTO Product (name, description, price, material, keyword, category, imageUrl) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [name, description ?? '', price, material ?? '', keyword ?? '', category ?? '', imageUrl ?? '']
+        'INSERT INTO Product (name, description, price, material, keyword, category, imageurl) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [name, description ?? '', price, material ?? '', keyword ?? '', category ?? '', imageurl ?? '']
       )
-      res.status(201).json({ id: result?.insertId, name, description, price, material, keyword, category, imageUrl })
+      res.status(201).json({ id: result?.insertId, name, description, price, material, keyword, category, imageurl })
     } catch (err) {
       res.status(500).json({ error: 'Failed to add product' })
     }

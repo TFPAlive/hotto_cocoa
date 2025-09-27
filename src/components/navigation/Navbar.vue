@@ -9,7 +9,7 @@ import { ref, computed } from 'vue';
 const router = useRouter();
 const showDropdown = ref(false);
 const userName = computed(() => auth.user?.username || 'User');
-const userAvatar = computed(() => auth.user?.imageUrl || '/default-avatar.png');
+const userAvatar = computed(() => auth.user?.imageurl || '/default-avatar.png');
 
 async function handleLogout() {
   try {

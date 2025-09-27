@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 export function createAuthCookie(
   res: VercelResponse,
-  user: { userId: number; email: string; role: string }
+  user: { userid: number; email: string; role: string }
 ) {
   const token = jwt.sign(user, JWT_SECRET, { expiresIn: "1h" });
 

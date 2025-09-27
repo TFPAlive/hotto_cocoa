@@ -5,7 +5,6 @@ import StarRating from './StarRating.vue'
 import { computed, ref } from 'vue'
 import { useProducts } from '@/composables/useProducts'
 import { useAddCart } from '@/composables/useAddCart'
-import { auth } from '@/composables/useAuth'
 
 const { products } = useProducts()
 const sweetness = ref(3.5)
@@ -42,7 +41,7 @@ function scrollCategoryRight() {
     categoryButtonsRef.value.scrollBy({ left: 200, behavior: 'smooth' })
   }
 }
-function selectProduct(product: { category?: string; id?: any; imageUrl?: string }) {
+function selectProduct(product: { category?: string; productid?: any; imageurl?: string }) {
   if (product.category) {
     selectedProducts.value[product.category.toLowerCase()] = product
   }
@@ -110,11 +109,11 @@ function addToCart() {
             <div class="image-list">
               <div class="image-cell"
                 v-for="product in products.filter(p => p.category && p.category.toLowerCase() === cat.toLowerCase())"
-                :key="product.id"
-                :class="{ selected: selectedProducts[cat.toLowerCase()]?.id === product.id }"
+                :key="product.productid"
+                :class="{ selected: selectedProducts[cat.toLowerCase()]?.productid === product.productid }"
                 @click="selectProduct(product)"
               >
-                <img v-if="product.imageUrl" :src="product.imageUrl" alt="Product Image" />
+                <img v-if="product.imageurl" :src="product.imageurl" alt="Product Image" />
                 <div v-else class="image-placeholder">No Image</div>
               </div>
             </div>

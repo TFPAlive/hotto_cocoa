@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 export interface AuthRequest extends VercelRequest {
   user?: {
-    userId: number;
+    userid: number;
     email: string;
     role: string;
   };

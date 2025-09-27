@@ -9,7 +9,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Get single product
       try {
         const conn = await getConnection()
-        const [rows] = await conn.query('SELECT * FROM Product WHERE id = ?', [id])
+        const [rows] = await conn.query('SELECT * FROM Product WHERE productid = ?', [id])
         if (Array.isArray(rows) && rows.length > 0) {
           res.status(200).json(rows[0])
         } else {
@@ -23,14 +23,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   } else if (req.method === 'PUT') {
     if (!id) return res.status(400).json({ error: 'Product id is required' })
-    const { name, description, price, material, keyword, category, imageUrl } = req.body
+    const { name, description, price, material, keyword, category, imageurl } = req.body
     try {
       const conn = await getConnection()
       await conn.query(
-        'UPDATE Product SET name = ?, price = ?, description = ?, material = ?, keyword = ?, category = ?, imageUrl = ? WHERE id = ?',
-        [name, price, description ?? '', material ?? '', keyword ?? '', category ?? '', imageUrl ?? '', id]
+        'UPDATE Product SET name = ?, price = ?, description = ?, material = ?, keyword = ?, category = ?, imageurl = ? WHERE productid = ?',
+        [name, price, description ?? '', material ?? '', keyword ?? '', category ?? '', imageurl ?? '', id]
       )
-      res.status(200).json({ id, name, description, price, material, keyword, category, imageUrl })
+      res.status(200).json({ id, name, description, price, material, keyword, category, imageurl })
     } catch (err) {
       console.error(err)
       res.status(500).json({ error: 'Failed to update product' })
@@ -39,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!id) return res.status(400).json({ error: 'Product id is required' })
     try {
       const conn = await getConnection()
-      await conn.query('DELETE FROM Product WHERE id = ?', [id])
+      await conn.query('DELETE FROM Product WHERE productid = ?', [id])
       res.status(204).end()
     } catch (err) {
       console.error(err)

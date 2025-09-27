@@ -27,13 +27,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const user = rows[0];
-    const match = await bcrypt.compare(password, user.password_hash);
+    const match = await bcrypt.compare(password, user.passwordhash);
     if (!match) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     return res.json(createAuthCookie(res, {
-      userId: user.user_id,
+      userid: user.userid,
       email: user.email,
       role: user.role
     }));

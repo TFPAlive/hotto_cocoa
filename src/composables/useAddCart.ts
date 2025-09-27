@@ -22,7 +22,7 @@ export function useAddCart(selectedProducts: Record<string, Product | undefined>
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ products, userId: auth.user?.user_id }),
+                body: JSON.stringify({ products, userid: auth.user?.userid }),
             })
 
             if (!res.ok) {
