@@ -2,7 +2,8 @@
 import LeftPointIcon from '../icons/IconPointLeft.vue'
 import RightPointIcon from '../icons/IconPointRight.vue'
 import StarRating from './StarRating.vue'
-import { computed, ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
+import { useCreateDrink } from '@/composables/useCreateDrink'
 import { useProducts } from '@/composables/useProducts'
 import { useAddCart } from '@/composables/useAddCart'
 
@@ -39,6 +40,7 @@ const startX = ref(0)
 const scrollLeft = ref(0)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
+const drinkName = ref('Your Custom Drink')
 
 function scrollCategoryLeft() {
   if (categoryButtonsRef.value) {
@@ -67,7 +69,17 @@ function addToCart() {
   }
 }
 function createDrink() {
-  alert('Create Drink functionality is not implemented yet.')
+  const { createDrink, error } = useCreateDrink(selectedProducts.value, drinkName.value, 
+    Object.values(selectedProducts.value).reduce((sum, prod) => {
+      return sum + (prod?.price || 0)
+    }, 0)
+  )
+  createDrink()
+  if (error.value) {
+    console.error('Failed to create drink:', error.value)
+  } else {
+    console.log('Drink created successfully')
+  }
 }
 function showChoiceTooltip(event: MouseEvent) {
   showTooltip.value = true
@@ -86,6 +98,7 @@ function resetSelections() {
     acc[cat.toLowerCase()] = null
     return acc
   }, {})
+  drinkName.value = 'Your Custom Drink'
   sweetness.value = 3.5
   calories.value = 2
 }
@@ -97,7 +110,6 @@ function hideDetailsTooltip() {
   showDTooltip.value = false
   hoveredProduct.value = null
 }
-
 function startDrag(e: MouseEvent) {
   isDragging.value = true
   if (categoryButtonsRef.value) {
@@ -106,7 +118,6 @@ function startDrag(e: MouseEvent) {
     categoryButtonsRef.value.style.cursor = 'grabbing'
   }
 }
-
 function drag(e: MouseEvent) {
   if (!isDragging.value || !categoryButtonsRef.value) return
   e.preventDefault()
@@ -114,7 +125,6 @@ function drag(e: MouseEvent) {
   const walk = (x - startX.value) * 2 // Multiply by 2 for faster scrolling
   categoryButtonsRef.value.scrollLeft = scrollLeft.value - walk
 }
-
 function endDrag() {
   isDragging.value = false
   if (categoryButtonsRef.value) {
@@ -122,7 +132,6 @@ function endDrag() {
   }
   updateScrollButtons()
 }
-
 function updateScrollButtons() {
   if (!categoryButtonsRef.value) return
   
@@ -130,7 +139,6 @@ function updateScrollButtons() {
   canScrollLeft.value = element.scrollLeft > 0
   canScrollRight.value = element.scrollLeft < (element.scrollWidth - element.clientWidth)
 }
-
 onMounted(() => {
   nextTick(() => {
     updateScrollButtons()
@@ -148,6 +156,15 @@ onMounted(() => {
           @mousemove="updateTooltipPosition"
         >
           <!-- Cup image goes here -->
+        </div>
+        <div class="drink-name-holder">
+          <input 
+            v-model="drinkName" 
+            type="text" 
+            class="drink-name-input"
+            placeholder="Enter drink name..."
+            maxlength="50"
+          />
         </div>
         <div class="rating-bars">
           <div class="rating-row">
@@ -172,6 +189,7 @@ onMounted(() => {
         <div class="button-holder">
           <button class="create-drink" @click="createDrink">Create Drink</button>
           <button class="add-to-cart-btn" @click="addToCart">Add to Cart</button>
+          <button class="reset-btn" @click="resetSelections">Reset</button>
         </div>
       </div>
       <div class="design-corner-right">
@@ -278,6 +296,35 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.drink-name-holder {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.drink-name-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #a0522d;
+  color: #ffe680;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px 0;
+  outline: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.drink-name-input:focus {
+  border-bottom-color: #ff8800;
+  color: #fff;
+}
+
+.drink-name-input::placeholder {
+  color: #888;
+  font-weight: normal;
 }
 .rating-bars {
   width: 100%;
@@ -409,7 +456,6 @@ img {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 32px;
   width: 100%;
 }
 .price h2 {
@@ -423,13 +469,13 @@ img {
 }
 .button-holder {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   width: 100%;
 }
 .button-holder button {
-  width: 40%;
-  margin: 0 10px;
+  width: 70%;
+  margin: 10px 10px;
   font-size: 1rem;
 }
 
@@ -508,5 +554,14 @@ img {
 .product-info .price {
   color: #ff8800;
   font-weight: bold;
+}
+.reset-btn {
+  background: #555;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 </style>

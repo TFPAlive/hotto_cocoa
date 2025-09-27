@@ -14,7 +14,7 @@ export function useAddCart(selectedProducts: Record<string, Product | undefined>
             const products = Object.values(selectedProducts)
                 .filter((p): p is Product => !!p)
                 .map(p => ({
-                    productId: p.id,       // adjust if your Product type uses a different key
+                    productid: p.productid,       // adjust if your Product type uses a different key
                     quantity: 1,  // make sure Product has this field
                 }))
 
@@ -25,9 +25,7 @@ export function useAddCart(selectedProducts: Record<string, Product | undefined>
                 body: JSON.stringify({ products, userid: auth.user?.userid }),
             })
 
-            if (!res.ok) {
-                throw new Error('Failed to add to cart')
-            }
+            if (!res.ok) throw new Error('Failed to add to cart')
         } catch (err: any) {
             error.value = err.message || 'Unknown error'
         } finally {
