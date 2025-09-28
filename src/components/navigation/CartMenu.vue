@@ -4,10 +4,9 @@ import CloseIcon from '../icons/IconClose.vue'
 import { useCart } from '@/composables/useCart'
 import { ref } from 'vue'
 
+const { cartItems, calculateTotalPrice, fetchCartItems } = useCart()
 const showCart = ref(false)
-const cartCount = ref(0)
-
-const { cartItems, calculateTotalPrice } = useCart()
+const cartCount = cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
 
 function toggleCart() {
   showCart.value = !showCart.value

@@ -11,21 +11,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const body = req.body || {}
-    // Accept either { products: [...] } or single { productId, quantity }
-    let items: Item[] = []
-    if (Array.isArray(body.products)) {
-      items = body.products
-    } else if (body.productid || body.quantity != null) {
-      items = [{ productid: Number(body.productid), quantity: Number(body.quantity) }]
-    }
+   
+    // Extract and validate products
+    const item = { drinkid: Number(body.drinkid), quantity: 1 }
 
-    // Basic validation: integer ids and positive quantities
-    items = items
-      .map(it => ({ productid: Number(it.productid), quantity: Number(it.quantity) }))
-      .filter(it => Number.isInteger(it.productid) && Number.isInteger(it.quantity) && it.quantity > 0)
-
-    if (items.length === 0) {
-      return res.status(400).json({ error: 'Product ID and quantity are required' })
+    if (!item.drinkid || item.quantity <= 0) {
+      return res.status(400).json({ error: 'Product ID is required' })
     }
 
     // === AUTH — adjust to your auth system ===
@@ -54,46 +45,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         await conn.query('UPDATE Cart SET updatedat = NOW() WHERE cartid = ?', [cartid])
       }
 
-      // For each item: ensure product exists, then insert or update CartItem
-      for (const it of items) {
-        const [productRows] = await conn.query('SELECT price FROM Product WHERE productid = ? LIMIT 1', [it.productid]) as any
-        if (!productRows || productRows.length === 0) {
-          await conn.query('ROLLBACK')
-          return res.status(404).json({ error: `Product ${it.productid} not found` })
-        }
-        const price = productRows[0].price
+      const [productRows] = await conn.query('SELECT baseprice FROM Drink WHERE drinkid = ? LIMIT 1', [item.drinkid]) as any
+      if (!productRows || productRows.length === 0) {
+        await conn.query('ROLLBACK')
+        return res.status(404).json({ error: `Drink ${item.drinkid} not found` })
+      }
+      const price = productRows[0].baseprice
 
-        const [existing] = await conn.query(
-          'SELECT * FROM CartItem WHERE cartid = ? AND productid = ? LIMIT 1',
-          [cartid, it.productid]
-        ) as any
-
-        if (existing && existing.length > 0) {
-          await conn.query(
-            'UPDATE CartItem SET quantity = quantity + ?, price = ? WHERE cartitemid = ?',
-            [it.quantity, price, existing[0].cartitemid]
-          )
-        } else {
-          await conn.query(
-            `INSERT INTO CartItem (cartid, productid, quantity, price)
-             VALUES (?, ?, ?, ?)`,
-            [cartid, it.productid, it.quantity, price]
-          )
-        }
+      const [existing] = await conn.query(
+        'SELECT * FROM CartItem WHERE cartid = ? AND drinkid = ? LIMIT 1',
+        [cartid, item.drinkid]
+      ) as any
+      if (existing && existing.length > 0) {
+        await conn.query(
+          'UPDATE CartItem SET quantity = quantity + ?, price = ? WHERE cartitemid = ?',
+          [item.quantity, price, existing[0].cartitemid]
+        )
+      } else {
+        await conn.query(
+          `INSERT INTO CartItem (cartid, drinkid, quantity, price)
+           VALUES (?, ?, ?, ?)`,
+          [cartid, item.drinkid, item.quantity, price]
+        )
       }
 
       await conn.query('COMMIT')
 
       // Return updated cart items
       const [cartItems] = await conn.query(
-        `SELECT ci.cartitemid, ci.productid, ci.quantity, ci.price, p.name, p.imageurl
+        `SELECT ci.cartitemid, ci.drinkid, ci.quantity, ci.price, ud.name, d.imageurl
          FROM CartItem ci
-         JOIN Product p ON ci.productid = p.productid
+         JOIN Drink d ON ci.drinkid = d.drinkid
+         JOIN UserDrink ud ON ci.drinkid = ud.drinkid
          WHERE ci.cartid = ?`,
         [cartid]
       ) as any
 
-      return res.status(200).json({ cartid, userId, items: cartItems })
+      return res.status(200).json({ cartid, userid, items: cartItems })
 
     } catch (dbErr) {
       console.error('DB error:', dbErr)

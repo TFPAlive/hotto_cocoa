@@ -8,14 +8,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Allow', ['POST'])
     return res.status(405).end(`Method ${req.method} Not Allowed`)
   }
-
-  const connection = await getConnection()
   
   try {
     const body = req.body
     
     // Extract drink details
-    const { drinkname, description, imageurl } = body
+    const { drinkname, description, imageurl, uniqueid } = body
     
     // Validate required fields
     if (!drinkname || typeof drinkname !== 'string') {
@@ -40,43 +38,63 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'At least one valid product with positive quantity is required' })
     }
 
+    // Base price is optional, default to 0 if not provided or invalid
     const baseprice = body.price && typeof body.price === 'number' ? body.price : 0
 
+    // === AUTH — adjust to your auth system ===
+    const userid = Number(body.userid)
+    if (!userid || !Number.isInteger(userid) || userid <= 0) {
+      return res.status(401).json({ error: 'Unauthorized: valid userid required' })
+    }
+
     // Start transaction
-    await connection.beginTransaction()
+    const conn = await getConnection()
 
     try {
-      // Insert into Drink table
-      const insertDrinkQuery = `
-        INSERT INTO Drink (name, description, baseprice, createdat, imageurl)
-        VALUES (?, ?, ?, NOW(), ?)
-      `
-      const [ drinkResult ] = await connection.execute(insertDrinkQuery, [
-        drinkname,
-        description || null,
-        baseprice,
-        imageurl || null
-      ])
+      // Start transaction
+      await conn.query('START TRANSACTION')
 
-      // Get the inserted drink ID
-      const drinkid = (drinkResult as any).insertId
-      
-      // Insert into DrinkProduct table
-      const insertDrinkProductQuery = `
-        INSERT INTO DrinkProduct (drinkid, productid, quantity)
-        VALUES (?, ?, ?)
-      `
+      let drinkid: number
+      const [uniqueIdRows] = await conn.query('SELECT drinkid FROM Drink WHERE uniqueid = ?', [uniqueid]) as any
+      if (!uniqueIdRows || uniqueIdRows.length === 0) {
+        // Insert into Drink table
+        const [drinkResult] = await conn.query('INSERT INTO Drink (description, baseprice, createdat, imageurl, uniqueid) VALUES (?, ?, NOW(), ?, ?)', [
+          description || null,
+          baseprice,
+          imageurl || null,
+          uniqueid
+        ]) as any
 
-      for (const item of items) {
-        await connection.execute(insertDrinkProductQuery, [
+        // Get the inserted drink ID
+        drinkid = (drinkResult as any).insertId
+        
+        // Insert into DrinkProduct table
+        for (const it of items) {
+          console.log('Inserting into DrinkProduct:', { drinkid, productid: it.productid, quantity: it.quantity })
+          await conn.query('INSERT INTO DrinkProduct (drinkid, productid, quantity) VALUES (?, ?, ?)', [
+            drinkid,
+            it.productid,
+            it.quantity
+          ])
+        }
+      } else {
+        drinkid = uniqueIdRows[0].drinkid
+      }
+
+      //Insert UserDrink table
+      const [uniqueNameRows] = await conn.query('SELECT * FROM UserDrink WHERE userid = ? AND drinkid = ? LIMIT 1', [userid, drinkid]) as any
+      if (uniqueNameRows && uniqueNameRows.length > 0) {
+        // User already has this drink combination, skip insertion and return success
+      } else {
+        await conn.query('INSERT INTO UserDrink (userid, drinkid, name, createdat) VALUES (?, ?, ?, NOW())', [
+          userid,
           drinkid,
-          item.productid,
-          item.quantity
+          drinkname
         ])
       }
 
       // Commit transaction
-      await connection.commit()
+      await conn.query('COMMIT')
 
       // Return success response with the created drink
       res.status(201).json({
@@ -91,9 +109,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       })
 
+      return res
+
     } catch (transactionError) {
       // Rollback transaction on error
-      await connection.rollback()
+      await conn.rollback()
       throw transactionError
     }
 
@@ -103,7 +123,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'
     })
-  } finally {
-    await connection.end()
   }
 }

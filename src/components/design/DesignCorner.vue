@@ -59,17 +59,33 @@ function selectProduct(product: { category?: string; productid?: any; imageurl?:
     selectedProducts.value[product.category.toLowerCase()] = product
   }
 }
-function addToCart() { 
-  const { adding, error, addToCart } = useAddCart(selectedProducts.value)
-  addToCart()
-  if (error.value) {
-    console.error('Failed to add to cart:', error.value)
+async function addToCart() {
+  const { createDrink, error, drinkid } = useCreateDrink(
+    selectedProducts.value,
+    drinkName.value,
+    Object.values(selectedProducts.value).reduce((sum, prod) => {
+      return sum + (prod?.price || 0)
+    }, 0)
+  )
+
+  await createDrink() // wait until drink is created
+
+  if (error.value || !drinkid.value) {
+    console.error('Failed to create drink:', error.value)
+    return
+  }
+
+  const { error: cartError, addToCart } = useAddCart(drinkid.value)
+  await addToCart()
+
+  if (cartError.value) {
+    console.error('Failed to add to cart:', cartError.value)
   } else {
     console.log('Added to cart successfully')
   }
 }
 function createDrink() {
-  const { createDrink, error } = useCreateDrink(selectedProducts.value, drinkName.value, 
+  const { createDrink, error, drinkid } = useCreateDrink(selectedProducts.value, drinkName.value, 
     Object.values(selectedProducts.value).reduce((sum, prod) => {
       return sum + (prod?.price || 0)
     }, 0)

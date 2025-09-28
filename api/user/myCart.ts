@@ -9,7 +9,11 @@ export default async function cart(req: VercelRequest, res: VercelResponse) {
             return res.status(400).json({ error: "Missing userId parameter" });
         }
         const [rows] = await connection.execute(
-            "SELECT c.id as cartid, p.id as productid, p.name, p.description, p.price, p.imageurl, c.quantity FROM Cart c JOIN Product p ON c.productid = p.id WHERE c.userid = ?",
+            "SELECT ci.cartitemid, ci.drinkid, d.name, d.description, d.baseprice AS price, ci.quantity " +
+            "FROM CartItem ci " +
+            "JOIN Cart c ON ci.cartid = c.cartid " +
+            "JOIN Drink d ON ci.drinkid = d.drinkid " +
+            "WHERE c.userid = ?",
             [userId]
         );
         res.status(200).json(rows);
