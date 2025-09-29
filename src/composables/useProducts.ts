@@ -24,10 +24,5 @@ export function useProducts() {
 
 	onMounted(fetchProducts)
 
-	return {
-		products,
-		loading,
-		error,
-		fetchProducts,
-  }
+	return { products, loading, error, fetchProducts }
 }

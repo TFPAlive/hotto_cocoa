@@ -112,11 +112,5 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 		}
 	}
 
-	return {
-		addProduct,
-		editProduct,
-		deleteProduct,
-		loading,
-		error
-	}
+	return { addProduct, editProduct, deleteProduct, loading, error }
 }

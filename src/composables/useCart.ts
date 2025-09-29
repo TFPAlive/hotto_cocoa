@@ -31,12 +31,5 @@ export function useCart() {
 		}, 0)
 	}
 
-	return {
-		cartItems,
-		loading,
-		error,
-		totalPrice,
-		calculateTotalPrice,
-		fetchCartItems
-	}
+	return { cartItems, totalPrice, calculateTotalPrice, fetchCartItems }
 }
