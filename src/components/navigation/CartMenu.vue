@@ -21,7 +21,7 @@
     async function loadCartItemProducts() {
         for (const item of cartItems.value) {
             if (item.drinkid && !cartItemProducts.value[item.drinkid]) {
-                const products = await fetchDrinkProducts(item.drinkid)
+                const products = await fetchDrinkProducts()
                 cartItemProducts.value[item.drinkid] = products
             }
         }
@@ -127,6 +127,7 @@
         flex: 1;
         padding: 24px;
         color: var(--font-color);
+        overflow: auto;
     }
 
     .cart-item {

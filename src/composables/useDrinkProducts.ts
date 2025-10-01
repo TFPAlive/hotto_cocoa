@@ -4,9 +4,9 @@ import type { Drink } from '@/types'
 export function useDrinkProducts() {
     const drinkProducts = ref<Drink[]>([])
 
-    const fetchDrinkProducts = async (drinkid: number) => {
+    const fetchDrinkProducts = async () => {
         try {
-            const response = await fetch(`/api/user/drinkProducts?drinkid=${drinkid}`)
+            const response = await fetch(`/api/user/drinkProducts`)
             if (!response.ok) throw new Error("Failed to fetch drink products")
             const data = await response.json()
             drinkProducts.value = data
