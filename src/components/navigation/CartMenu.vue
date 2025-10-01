@@ -1,23 +1,28 @@
 <script setup lang="ts">
     import CartIcon from '../icons/IconCart.vue'
     import CloseIcon from '../icons/IconClose.vue'
-    import { useCart } from '@/composables/useCart'
-    import { ref } from 'vue'
-	
-    const { cartItems, calculateTotalPrice, fetchCartItems } = useCart()
+    import { useMyCart } from '@/composables/useMyCart'
+    import { ref, onMounted, computed } from 'vue'
+    import type { Drink } from '@/types'
+
+    const { cartItems, totalPrice, fetchCartItems } = useMyCart()
     const showCart = ref(false)
-    const cartCount = cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+    const cartCount = computed(() =>
+        cartItems.value.reduce((sum: number, item) => sum + item.quantity, 0)
+    )
 
     function toggleCart() {
         showCart.value = !showCart.value
     }
+
+    onMounted(async () => { await fetchCartItems() })
 </script>
 <template>
     <div class="cart-container">
         <button class="icon-btn" aria-label="Cart" @click="toggleCart">
             <CartIcon />
         </button>
-        <span v-if="cartCount > 0" class="cart-badge">{{ cartCount }}</span>
+        <span v-if="cartCount >= 0" class="cart-badge">{{ cartCount }}</span>
         <transition name="cart-drawer">
             <div v-if="showCart" class="cart-drawer" @click.self="toggleCart">
                 <div class="cart-drawer-content">
@@ -28,7 +33,17 @@
                         </button>
                     </div>
                     <div class="cart-drawer-body">
-                        <p>Your cart is empty.</p>
+                        <div v-if="cartItems.length === 0">Your cart is empty.</div>
+                        <div v-else>
+                            <pre>{{ cartItems }}</pre>
+                            <div v-for="item in cartItems" :key="item.cartitemid" class="cart-item">
+                                <h3>{{ item.name }}</h3>
+                                <p>Quantity: {{ item.quantity }}</p>
+                                <p>Base Price: ${{ item.price }}</p>
+                            </div>
+                            <hr />
+                            <p>Total Price: ${{ totalPrice }}</p>
+                        </div>
                     </div>
                 </div>
             </div>

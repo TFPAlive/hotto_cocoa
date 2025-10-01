@@ -18,11 +18,20 @@ export interface User {
 }
 
 export interface CartItem {
-	id: number
-	productid: number
+  cartitemid: number
+  drinkid: number
+  quantity: number
+  price: number
+  name: string
+  imageurl: string | null
+}
+
+export interface Drink {
+	drinkid: number
 	name: string
-	description: string
-	price: number
-	imageurl: string
-	quantity: number
+	description?: string
+	imageurl?: string
+	baseprice: number
+	uniqueid: string
+	products: { productid: number; name: string; quantity: number }[]
 }

@@ -1,35 +1,33 @@
-import { ref } from "vue"
-import type { CartItem, Product } from "@/types"
+import { ref, onMounted } from "vue"
+import type { CartItem } from "@/types"
 
 export function useCart() {
-	const cartItems = ref<CartItem[]>([])
-	const loading = ref(false)
-	const error = ref<string | null>(null)
-	const totalPrice = ref(0)
+    const cartItems = ref<CartItem[]>([])
+    const loading = ref(false)
+    const error = ref<string | null>(null)
 
-	const fetchCartItems = async (userId: string) => {
-		loading.value = true
-		error.value = null
+    const fetchCartItems = async () => {
+        loading.value = true
+        error.value = null
 
-		try {
-			const response = await fetch(`/api/user/myCart?userId=${userId}`)
-			if (!response.ok) {
-				throw new Error("Failed to fetch cart items")
-			}
-			const data = await response.json()
-			cartItems.value = data
-		} catch (err: any) {
-			error.value = err.message
-		} finally {
-			loading.value = false
-		}
-	}
+        try {
+            const response = await fetch('/api/admin/carts')
+            if (!response.ok) throw new Error('Failed to fetch cart items')
+            const data = await response.json()
+            cartItems.value = data
+        } catch (err: any) {
+            error.value = err.message
+        } finally {
+            loading.value = false
+        }
+    }
 
-	const calculateTotalPrice = () => {
-		totalPrice.value = cartItems.value.reduce((acc, item) => {
-		return acc + item.price * item.quantity
-		}, 0)
-	}
+    onMounted(fetchCartItems)
 
-	return { cartItems, totalPrice, calculateTotalPrice, fetchCartItems }
+    return {
+        cartItems,
+        loading,
+        error,
+        fetchCartItems
+    }
 }

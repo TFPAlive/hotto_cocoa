@@ -1,5 +1,6 @@
 import { ref } from "vue"
 import { auth } from "@/composables/useAuth"
+import { useMyCart } from "./useMyCart"
 import type { Product } from "@/types"
 
 export function useAddCart(drinkid: any) {
@@ -24,6 +25,7 @@ export function useAddCart(drinkid: any) {
         } finally {
             adding.value = false
         }
+        await useMyCart().fetchCartItems()
     }
 
     return { adding, error, addToCart }

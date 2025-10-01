@@ -23,9 +23,9 @@ export function useCreateDrink(selectedProducts: Record<string, Product | undefi
 			for (const p of products) uniqueid += p.productid.toString().padStart(4, '0')
 
 			const res = await fetch('/api/user/createDrink', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ drinkname, products, price, userid: auth.user?.userid, uniqueid }),
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ drinkname, products, price, userid: auth.user?.userid, uniqueid }),
 			})
 
 			if (!res.ok) throw new Error('Network response was not ok')
