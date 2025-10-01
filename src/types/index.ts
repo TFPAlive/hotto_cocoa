@@ -28,10 +28,10 @@ export interface CartItem {
 
 export interface Drink {
 	drinkid: number
-	name: string
 	description?: string
 	imageurl?: string
 	baseprice: number
 	uniqueid: string
-	products: { productid: number; name: string; quantity: number }[]
+	productids: number[]
+	name: string
 }

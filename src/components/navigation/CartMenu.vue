@@ -2,11 +2,14 @@
     import CartIcon from '../icons/IconCart.vue'
     import CloseIcon from '../icons/IconClose.vue'
     import { useMyCart } from '@/composables/useMyCart'
+    import { useDrinkProducts } from '@/composables/useDrinkProducts'
     import { ref, onMounted, computed } from 'vue'
     import type { Drink } from '@/types'
 
     const { cartItems, totalPrice, fetchCartItems } = useMyCart()
+    const { drinkProducts, fetchDrinkProducts } = useDrinkProducts()
     const showCart = ref(false)
+    const cartItemProducts = ref<Record<number, any[]>>({})
     const cartCount = computed(() =>
         cartItems.value.reduce((sum: number, item) => sum + item.quantity, 0)
     )
@@ -15,7 +18,19 @@
         showCart.value = !showCart.value
     }
 
-    onMounted(async () => { await fetchCartItems() })
+    async function loadCartItemProducts() {
+        for (const item of cartItems.value) {
+            if (item.drinkid && !cartItemProducts.value[item.drinkid]) {
+                const products = await fetchDrinkProducts(item.drinkid)
+                cartItemProducts.value[item.drinkid] = products
+            }
+        }
+    }
+
+    onMounted(async () => { 
+        await fetchCartItems()
+        await loadCartItemProducts()
+    })
 </script>
 <template>
     <div class="cart-container">
@@ -38,8 +53,18 @@
                             <div v-for="item in cartItems" :key="item.cartitemid" class="cart-item">
                                 <h3>{{ item.name }}</h3>
                                 <p>Quantity: {{ item.quantity }}</p>
+                                <div v-if="cartItemProducts[item.drinkid]" class="product-list">
+                                    <p><strong>Products used:</strong></p>
+                                    <ul>
+                                        <li v-for="product in cartItemProducts[item.drinkid]" :key="product.productid">
+                                            {{ product.name }} (ID: {{ product.productid }})
+                                        </li>
+                                    </ul>
+                                </div>
                                 <p>Base Price: ${{ item.price }}</p>
                             </div>
+                        </div>
+                        <div v-if="cartItems.length > 0" class="cart-total">
                             <hr />
                             <p>Total Price: ${{ totalPrice }}</p>
                         </div>
@@ -102,6 +127,29 @@
         flex: 1;
         padding: 24px;
         color: var(--font-color);
+    }
+
+    .cart-item {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .product-list {
+        margin: 10px 0;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+    }
+
+    .product-list ul {
+        margin: 5px 0 0 0;
+        padding-left: 20px;
+    }
+
+    .product-list li {
+        margin: 2px 0;
+        font-size: 0.9rem;
     }
 
     @keyframes cart-slide-in {
