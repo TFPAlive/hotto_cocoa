@@ -35,7 +35,6 @@
                     <div class="cart-drawer-body">
                         <div v-if="cartItems.length === 0">Your cart is empty.</div>
                         <div v-else>
-                            <pre>{{ cartItems }}</pre>
                             <div v-for="item in cartItems" :key="item.cartitemid" class="cart-item">
                                 <h3>{{ item.name }}</h3>
                                 <p>Quantity: {{ item.quantity }}</p>
