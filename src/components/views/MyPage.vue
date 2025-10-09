@@ -6,7 +6,7 @@
     const route = useRoute();
     const router = useRouter();
     const activeSection = ref('orders')
-    
+
     onMounted(() => {
         document.title = "My Page | Hotto Choco"
         // Check if there's a section in the URL query
@@ -73,9 +73,7 @@
                 <h2>Browsing History</h2>
                 <p>Content for browsing history will go here...</p>
             </div>
-            <div v-if="activeSection === 'addresses'" class="content-section">
-                <Address />
-            </div>
+            <Address v-if="activeSection === 'addresses'" />
             <div v-if="activeSection === 'languages'" class="content-section">
                 <h2>Languages/Currencies</h2>
                 <p>Content for languages and currencies will go here...</p>
@@ -109,7 +107,7 @@
         width: 250px;
         flex-shrink: 0;
         position: relative;
-        z-index: 2;
+        z-index: 1;
     }
 
     .menu-section {

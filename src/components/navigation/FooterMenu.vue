@@ -33,7 +33,6 @@
         padding: 2rem 4vw 1.5rem 4vw;
         box-sizing: border-box;
         gap: 2vw;
-        z-index: 999;
     }
 
     .footer-section {

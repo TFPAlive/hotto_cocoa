@@ -100,7 +100,7 @@
             flex-direction: column;
             align-items: flex-start;
             padding: 1rem 2rem;
-            z-index: 1001;
+            z-index: 2;
             opacity: 1;
             transform: translateY(0);
             max-height: 500px;

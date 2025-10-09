@@ -76,7 +76,7 @@
         position: sticky;
         top: 0;
         left: 0;
-        z-index: 1000;
+        z-index: 2;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -185,7 +185,7 @@
         border-radius: 10px;
         box-shadow: 0 4px 24px #0002;
         padding: 0.5rem 0;
-        z-index: 2000;
+        z-index: 2;
         display: flex;
         flex-direction: column;
         animation: fadeIn 0.18s;
