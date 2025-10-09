@@ -2,8 +2,11 @@
     import { ref } from "vue"
     import { useManageCart } from "@/composables/useManageCart";
 </script>
+
 <template>
 
 </template>
+
 <style scoped>
+
 </style>

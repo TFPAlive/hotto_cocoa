@@ -10,6 +10,8 @@ const routes = [
 		children: [
 			{ path: "", component: () => import("@/components/views/Home.vue") },
 			{ path: "design", component: () => import("@/components/views/Design.vue") },
+			{ path: "mypage", component: () => import("@/components/views/MyPage.vue")},
+			{ path: "checkout", component: () => import("@/components/views/Checkout.vue") }
 			// ...other normal pages
 		]
 	},

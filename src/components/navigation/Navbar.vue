@@ -51,10 +51,10 @@
                             <div class="dropdown-username">{{ userName }}</div>
                         </div>
                         <hr />
-                        <router-link to="/profile" class="dropdown-item">My Profile</router-link>
-                        <router-link to="/address" class="dropdown-item">My Address</router-link>
-                        <router-link to="/cart" class="dropdown-item">My Cart</router-link>
-                        <router-link to="/favorite" class="dropdown-item">My Favorite</router-link>
+                        <router-link to="/mypage" class="dropdown-item">My Profile</router-link>
+                        <router-link to="/mypage?section=addresses" class="dropdown-item">My Address</router-link>
+                        <router-link to="/mypage?section=cart" class="dropdown-item">My Cart</router-link>
+                        <router-link to="/mypage?section=favorite" class="dropdown-item">My Favorite</router-link>
                         <hr />
                         <button class="dropdown-logout" @click="handleLogout">Sign Out</button>
                     </div>
