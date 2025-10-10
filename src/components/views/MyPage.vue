@@ -5,7 +5,7 @@
 
     const route = useRoute();
     const router = useRouter();
-    const activeSection = ref('orders')
+    const activeSection = ref('profile')
 
     onMounted(() => {
         document.title = "My Page | Hotto Choco"
@@ -36,9 +36,9 @@
     <div class="mypage-container">
         <div class="sidebar">
             <div class="menu-section">
+                <div class="menu-item" :class="{ active: activeSection === 'profile' }" @click="setActiveSection('profile')"> Your profile </div>
                 <div class="menu-item" :class="{ active: activeSection === 'orders' }" @click="setActiveSection('orders')"> Your orders </div>
                 <div class="menu-item" :class="{ active: activeSection === 'reviews' }" @click="setActiveSection('reviews')"> Your reviews </div>
-                <div class="menu-item" :class="{ active: activeSection === 'profile' }" @click="setActiveSection('profile')"> Your profile </div>
                 <div class="menu-item" :class="{ active: activeSection === 'favorite' }" @click="setActiveSection('favorite')"> Your favorite </div>
                 <div class="menu-item" :class="{ active: activeSection === 'history' }" @click="setActiveSection('history')"> Browsing history </div>
                 <div class="menu-item" :class="{ active: activeSection === 'addresses' }" @click="setActiveSection('addresses')"> Addresses </div>
@@ -188,13 +188,13 @@
                 transparent 355px,
                 #a0522d 355px,
                 #a0522d 387px,
-                transparent 389px,
-                transparent 450px,
-                #a0522d 450px,
+                transparent 387px,
+                transparent 490px,
+                #a0522d 490px,
                 #a0522d 522px,
                 transparent 522px,
-                transparent 572px,
-                #a0522d 572px,
+                transparent 574px,
+                #a0522d 574px,
                 #a0522d 100%);
         z-index: 2;
     }

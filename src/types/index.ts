@@ -35,3 +35,16 @@ export interface Drink {
 	productids: number[]
 	name: string
 }
+
+export interface Address {
+	addressid: number;
+	userid?: number;
+	name: string;
+	postalcode: string;
+	prefecture: string;
+	city: string;
+	town: string;
+	building?: string;
+	phone: string;
+	isdefault: boolean;
+}

@@ -4,10 +4,11 @@
     import axios from "axios";
     import { auth, checkUser } from "@/composables/useAuth";
     import { useRouter } from 'vue-router';
-    import { ref, computed } from 'vue';
+    import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 
     const router = useRouter();
     const showDropdown = ref(false);
+    const dropdownRoot = ref<HTMLElement | null>(null);
     const userName = computed(() => auth.user?.username || 'User');
     const userAvatar = computed(() => auth.user?.imageurl || '/default-avatar.png');
 	
@@ -23,6 +24,22 @@
         } catch (err) {
             console.error("Logout failed", err);
         }
+
+        function onDocumentClick(e: MouseEvent) {
+            const root = dropdownRoot.value
+            if (!root) return
+            const target = e.target as Node | null
+            if (target && root.contains(target)) return // clicked inside -> ignore
+            showDropdown.value = false
+        }
+
+        onMounted(() => {
+            document.addEventListener('click', onDocumentClick)
+        })
+
+        onBeforeUnmount(() => {
+            document.removeEventListener('click', onDocumentClick)
+        })
     }
 </script>
 <template>
@@ -37,7 +54,7 @@
         <div class="navbar-right">
             <CartMenu />
             <div v-if="auth.isLoggedIn" class="user-dropdown-wrapper">
-                <div class="user-dropdown">
+                <div class="user-dropdown" ref="dropdownRoot">
                     <div class="user-trigger" @click="showDropdown = !showDropdown">
                         <img :src="userAvatar" class="user-avatar" alt="User Avatar" />
                         <span class="user-name">{{ userName }}</span>
@@ -51,10 +68,10 @@
                             <div class="dropdown-username">{{ userName }}</div>
                         </div>
                         <hr />
-                        <router-link to="/mypage" class="dropdown-item">My Profile</router-link>
-                        <router-link to="/mypage?section=addresses" class="dropdown-item">My Address</router-link>
-                        <router-link to="/mypage?section=cart" class="dropdown-item">My Cart</router-link>
-                        <router-link to="/mypage?section=favorite" class="dropdown-item">My Favorite</router-link>
+                        <router-link to="/mypage?section=profile" class="dropdown-item" @click="showDropdown = !showDropdown">My Profile</router-link>
+                        <router-link to="/mypage?section=addresses" class="dropdown-item" @click="showDropdown = !showDropdown">My Address</router-link>
+                        <router-link to="/mypage?section=orders" class="dropdown-item" @click="showDropdown = !showDropdown">My Orders</router-link>
+                        <router-link to="/mypage?section=favorite" class="dropdown-item" @click="showDropdown = !showDropdown">My Favorite</router-link>
                         <hr />
                         <button class="dropdown-logout" @click="handleLogout">Sign Out</button>
                     </div>

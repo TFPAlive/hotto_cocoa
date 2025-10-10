@@ -1,44 +1,30 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { auth } from '@/composables/useAuth'
+import { useAddresses } from '@/composables/useAddresses'
+import { useAddAddress } from '@/composables/useAddAddress';
+import type { Address } from '@/types';
 
-interface Address {
-  id: number;
-  name: string;
-  postalCode: string;
-  prefecture: string;
-  city: string;
-  town: string;
-  building?: string;
-  phoneNumber: string;
-  isDefault: boolean;
-}
+const { addresses, loading, error, fetchAddresses } = useAddresses()
 
-const addresses = ref<Address[]>([
-  {
-    id: 1,
-    name: "田中 太郎",
-    postalCode: "100-0001",
-    prefecture: "東京都",
-    city: "千代田区",
-    town: "千代田1-1-1",
-    building: "千代田マンション 302号室",
-    phoneNumber: "03-1234-5678",
-    isDefault: true
-  }
-])
+onMounted(() => {
+  fetchAddresses()
+})
+
+// `addresses` is provided by the `useAddresses` composable (fetched from backend)
 
 const showAddressForm = ref(false)
 const editingAddress = ref<Address | null>(null)
 const newAddress = ref<Address>({
-  id: 0,
+  addressid: 0,
   name: "",
-  postalCode: "",
+  postalcode: "",
   prefecture: "",
   city: "",
   town: "",
   building: "",
-  phoneNumber: "",
-  isDefault: false
+  phone: "",
+  isdefault: false
 })
 
 const prefectures = [
@@ -54,15 +40,15 @@ const prefectures = [
 function openAddForm() {
   editingAddress.value = null
   newAddress.value = {
-    id: 0,
+    addressid: 0,
     name: "",
-    postalCode: "",
+    postalcode: "",
     prefecture: "",
     city: "",
     town: "",
     building: "",
-    phoneNumber: "",
-    isDefault: false
+    phone: "",
+    isdefault: false
   }
   showAddressForm.value = true
 }
@@ -78,41 +64,104 @@ function closeForm() {
   editingAddress.value = null
 }
 
-function saveAddress() {
+async function saveAddress() {
   if (editingAddress.value) {
-    // Edit existing address
-    const index = addresses.value.findIndex(addr => addr.id === editingAddress.value!.id)
+    // Edit existing address locally for now
+    const index = addresses.value.findIndex(addr => addr.addressid === editingAddress.value!.addressid)
     if (index !== -1) {
       addresses.value[index] = { ...newAddress.value }
     }
   } else {
-    // Add new address
-    newAddress.value.id = Date.now()
-    addresses.value.push({ ...newAddress.value })
+    // Add new address via backend composable
+    // useAddAddress has a slightly different type signature in the composable;
+    // cast to any here to avoid type mismatch and delegate validation to the backend
+    const { adding, error: addError, addAddress } = useAddAddress(newAddress.value as any)
+
+    await addAddress()
+
+    if (addError.value) {
+      console.error('Add address error:', addError.value)
+    } else {
+      // Refresh addresses from backend
+      await fetchAddresses()
+    }
   }
-  
-  // If this is set as default, remove default from others
-  if (newAddress.value.isDefault) {
+
+  // If this is set as default, remove default from others locally
+  if (newAddress.value.isdefault) {
     addresses.value.forEach(addr => {
-      if (addr.id !== newAddress.value.id) {
-        addr.isDefault = false
+      if (addr.addressid !== newAddress.value.addressid) {
+        addr.isdefault = false
       }
     })
   }
-  
+
   closeForm()
 }
 
-function deleteAddress(id: number) {
-  if (confirm('この住所を削除しますか？')) {
-    addresses.value = addresses.value.filter(addr => addr.id !== id)
+async function deleteAddress(addressid: number) {
+  if (!confirm('この住所を削除しますか？')) return
+
+  try {
+    const userid = auth.user?.userid
+    if (!userid) throw new Error('未ログインまたは無効なユーザー')
+
+    const res = await fetch('/api/user/deleteAddress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ addressid, userid })
+    })
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body?.error || '削除に失敗しました')
+    }
+
+    // Refresh addresses after successful delete
+    await fetchAddresses()
+  } catch (err: any) {
+    console.error('Delete address error:', err)
+    alert(err.message || '削除中にエラーが発生しました')
   }
 }
 
-function setAsDefault(id: number) {
-  addresses.value.forEach(addr => {
-    addr.isDefault = addr.id === id
-  })
+const settingDefaultId = ref<number | null>(null)
+
+async function setAsDefault(addressid: number) {
+  const userid = auth.user?.userid
+  if (!userid) {
+    alert('未ログインまたは無効なユーザー')
+    return
+  }
+
+  // Optimistic update: mark local addresses immediately
+  const prevStates = addresses.value.map(a => ({ addressid: a.addressid, isdefault: a.isdefault }))
+  addresses.value.forEach(a => { a.isdefault = a.addressid === addressid })
+
+  settingDefaultId.value = addressid
+
+  try {
+    const res = await fetch('/api/user/setDefaultAddress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userid, addressid })
+    })
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body?.error || 'デフォルト設定に失敗しました')
+    }
+  } catch (err: any) {
+    console.error('Set default address error:', err)
+    // revert optimistic update
+    prevStates.forEach(s => {
+      const found = addresses.value.find(a => a.addressid === s.addressid)
+      if (found) found.isdefault = s.isdefault
+    })
+    alert(err.message || 'デフォルト設定中にエラーが発生しました')
+  } finally {
+    settingDefaultId.value = null
+  }
 }
 
 function formatPostalCode(value: string) {
@@ -145,12 +194,12 @@ function onPostalCodeInput(event: Event) {
     fetchAddressData(cleaned)
   }
   
-  newAddress.value.postalCode = formatPostalCode(target.value)
+  newAddress.value.postalcode = formatPostalCode(target.value)
 }
 
-async function fetchAddressData(postalCode: string) {
+async function fetchAddressData(postalcode: string) {
   try {
-    const response = await fetch(`https://jp-postal-code-api.ttskch.com/api/v1/${postalCode}.json`)
+    const response = await fetch(`https://jp-postal-code-api.ttskch.com/api/v1/${postalcode}.json`)
     
     if (!response.ok) {
       console.error('Failed to fetch address data:', response.status)
@@ -173,7 +222,7 @@ async function fetchAddressData(postalCode: string) {
         town: `${addressInfo.address2 || ''}${addressInfo.address3 || ''}`.trim()
       })
     } else {
-      console.log('No address data found for postal code:', postalCode)
+      console.log('No address data found for postal code:', postalcode)
     }
   } catch (error) {
     console.error('Error fetching address data:', error)
@@ -182,7 +231,7 @@ async function fetchAddressData(postalCode: string) {
 
 function onPhoneNumberInput(event: Event) {
   const target = event.target as HTMLInputElement
-  newAddress.value.phoneNumber = formatPhoneNumber(target.value)
+  newAddress.value.phone = formatPhoneNumber(target.value)
 }
 </script>
 
@@ -197,11 +246,21 @@ function onPhoneNumberInput(event: Event) {
       </div>
       
       <div class="address-list">
+        <div v-if="loading" class="no-addresses">
+          読み込み中...
+        </div>
+        <div v-else-if="error" class="no-addresses">
+          エラー: {{ error }}
+        </div>
+        <div v-else-if="addresses.length === 0" class="no-addresses">
+          住所が登録されていません。
+        </div>
+        <div v-else>
         <div 
           v-for="address in addresses" 
-          :key="address.id" 
+          :key="address.addressid" 
           class="address-card"
-          :class="{ default: address.isDefault }"
+          :class="{ default: address.isdefault }"
         >
           <div class="address-header-card">
             <div class="address-name">{{ address.name }}</div>
@@ -209,8 +268,8 @@ function onPhoneNumberInput(event: Event) {
               <button class="edit-btn" @click="openEditForm(address)">編集</button>
               <button 
                 class="delete-btn" 
-                @click="deleteAddress(address.id)"
-                :disabled="address.isDefault"
+                @click="deleteAddress(address.addressid)"
+                :disabled="address.isdefault"
               >
                 削除
               </button>
@@ -218,26 +277,29 @@ function onPhoneNumberInput(event: Event) {
           </div>
           
           <div class="address-details">
-            <div class="postal-code">〒{{ address.postalCode }}</div>
+            <div class="postal-code">〒{{ address.postalcode }}</div>
             <div class="address-line">
               {{ address.prefecture }}{{ address.city }}{{ address.town }}
             </div>
             <div v-if="address.building" class="building">{{ address.building }}</div>
-            <div class="phone">TEL: {{ address.phoneNumber }}</div>
+            <div class="phone">TEL: {{ address.phone }}</div>
           </div>
           
           <div class="address-footer">
-            <div v-if="address.isDefault" class="default-badge">
+            <div v-if="address.isdefault" class="default-badge">
               デフォルト配送先
             </div>
             <button 
               v-else 
               class="set-default-btn" 
-              @click="setAsDefault(address.id)"
+              @click="setAsDefault(address.addressid)"
+              :disabled="address.isdefault || settingDefaultId === address.addressid"
             >
-              デフォルトに設定
+              <span v-if="settingDefaultId === address.addressid">設定中…</span>
+              <span v-else>デフォルトに設定</span>
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -262,10 +324,10 @@ function onPhoneNumberInput(event: Event) {
           </div>
           
           <div class="form-row">
-            <label for="postalCode">郵便番号 *</label>
+            <label for="postalcode">郵便番号 *</label>
             <input 
-              id="postalCode"
-              v-model="newAddress.postalCode"
+              id="postalcode"
+              v-model="newAddress.postalcode"
               type="text"
               placeholder="100-0001"
               maxlength="8"
@@ -317,10 +379,10 @@ function onPhoneNumberInput(event: Event) {
           </div>
           
           <div class="form-row">
-            <label for="phoneNumber">電話番号 *</label>
+            <label for="phone">電話番号 *</label>
             <input 
-              id="phoneNumber"
-              v-model="newAddress.phoneNumber"
+              id="phone"
+              v-model="newAddress.phone"
               type="tel"
               placeholder="03-1234-5678"
               @input="onPhoneNumberInput"
@@ -332,7 +394,7 @@ function onPhoneNumberInput(event: Event) {
             <label>
               <input 
                 type="checkbox" 
-                v-model="newAddress.isDefault"
+                v-model="newAddress.isdefault"
               />
               デフォルトの配送先として設定
             </label>
@@ -358,7 +420,7 @@ function onPhoneNumberInput(event: Event) {
   overflow-x: hidden;
   overflow-y: visible;
   width: 100%;
-  height: 100%;
+  height: 914px;
   min-height: 600px;
 }
 
@@ -367,11 +429,8 @@ function onPhoneNumberInput(event: Event) {
   top: 0;
   left: 0;
   width: -webkit-fill-available;
-  height: 100%;
   transition: transform 0.4s ease-in-out;
   padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .main-content.slide-left {
@@ -434,6 +493,7 @@ function onPhoneNumberInput(event: Event) {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  margin: 10px 0;
 }
 
 .address-card:hover {
@@ -538,8 +598,6 @@ function onPhoneNumberInput(event: Event) {
   right: 0;
   width: -webkit-fill-available;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transform: translateX(100%);
   transition: transform 0.4s ease-in-out;
   overflow-y: auto;

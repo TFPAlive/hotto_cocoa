@@ -4,10 +4,9 @@
     import { useMyCart } from '@/composables/useMyCart'
     import { useDrinkProducts } from '@/composables/useDrinkProducts'
     import { ref, onMounted, computed } from 'vue'
-    import type { Drink } from '@/types'
 
     const { cartItems, totalPrice, fetchCartItems } = useMyCart()
-    const { drinkProducts, fetchDrinkProducts } = useDrinkProducts()
+    const { fetchDrinkProducts } = useDrinkProducts()
     const showCart = ref(false)
     const cartItemProducts = ref<Record<number, any[]>>({})
     const cartCount = computed(() =>
