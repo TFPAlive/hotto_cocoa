@@ -58,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(500).json({ error: 'Failed to add address' })
         }
 
-        res.status(201).json({ addressid: insertId, ...address })
+        res.status(201).json({ address })
     } catch (error) {
         console.error('Error adding address:', error)
         res.status(500).json({ error: 'Internal Server Error' })

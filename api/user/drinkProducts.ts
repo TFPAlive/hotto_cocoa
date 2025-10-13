@@ -7,7 +7,7 @@ export default async function drinkProducts(req: VercelRequest, res: VercelRespo
         
         // Join DrinkProduct with Product table to get product details
         const [rows] = await connection.execute(`SELECT 
-                dp.productid, dp.quantity,
+                dp.drinkid, dp.productid, dp.quantity,
                 p.name, p.price, p.category, p.description
             FROM DrinkProduct dp
             INNER JOIN Product p ON dp.productid = p.productid`);

@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { auth } from '@/composables/useAuth'
 import { useAddresses } from '@/composables/useAddresses'
 import { useAddAddress } from '@/composables/useAddAddress';
 import type { Address } from '@/types';
 
+
 const { addresses, loading, error, fetchAddresses } = useAddresses()
+const router = useRouter()
+const route = useRoute()
+const returnFromCheckout = ref(false)
 
 onMounted(() => {
   fetchAddresses()
+  try {
+    // If user came from checkout we expect ?from=checkout or hash '#section=addresses'
+    const hash = String(route.hash || '')
+    if (route.query?.from === 'checkout' || String(route.query?.section) === 'addresses' ) {
+      returnFromCheckout.value = true
+    }
+  } catch (_) {}
 })
 
 // `addresses` is provided by the `useAddresses` composable (fetched from backend)
@@ -97,6 +109,11 @@ async function saveAddress() {
   }
 
   closeForm()
+  // If user added a new address and set it as default while coming from checkout,
+  // redirect back to checkout so they can continue payment flow.
+  if (newAddress.value.isdefault && returnFromCheckout.value) {
+    router.push('/checkout')
+  }
 }
 
 async function deleteAddress(addressid: number) {
@@ -161,6 +178,10 @@ async function setAsDefault(addressid: number) {
     alert(err.message || 'デフォルト設定中にエラーが発生しました')
   } finally {
     settingDefaultId.value = null
+    if (returnFromCheckout.value) {
+      // navigate back to checkout after default set when coming from checkout
+      router.push('/checkout')
+    }
   }
 }
 

@@ -2,6 +2,7 @@
     import CartIcon from '../icons/IconCart.vue'
     import CloseIcon from '../icons/IconClose.vue'
     import { useMyCart } from '@/composables/useMyCart'
+    import { auth } from '@/composables/useAuth'
     import { useDrinkProducts } from '@/composables/useDrinkProducts'
     import { ref, onMounted, computed } from 'vue'
 
@@ -17,12 +18,90 @@
         showCart.value = !showCart.value
     }
 
-    async function loadCartItemProducts() {
-        for (const item of cartItems.value) {
-            if (item.drinkid && !cartItemProducts.value[item.drinkid]) {
-                const products = await fetchDrinkProducts()
-                cartItemProducts.value[item.drinkid] = products
+    // Increment cart item quantity locally and persist via addCart endpoint
+    async function incrementItem(item: any) {
+        const previous = item.quantity
+        // optimistic UI
+        item.quantity = (item.quantity || 0) + 1
+        try {
+            const res = await fetch('/api/user/addCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ drinkid: item.drinkid, userid: auth.user?.userid }),
+            })
+            if (!res.ok) throw new Error('Failed to increment cart item')
+            // We don't re-fetch; back-end persisted. Optionally we could merge returned data.
+        } catch (err) {
+            // revert optimistic change
+            item.quantity = previous
+            console.error('Failed to increment cart item', err)
+        }
+    }
+
+    // Decrement cart item quantity locally and persist via removeCartItem endpoint
+    async function decrementItem(item: any) {
+        const previous = item.quantity
+        const cartitemid = item.cartitemid
+
+        if (previous <= 1) {
+            // optimistic remove from local list
+            const idx = cartItems.value.findIndex((ci: any) => ci.cartitemid === cartitemid)
+            let removed: any = null
+            if (idx !== -1) removed = cartItems.value.splice(idx, 1)[0]
+            try {
+                const res = await fetch('/api/user/removeCartItem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ cartitemid, userid: auth.user?.userid }),
+                })
+                if (!res.ok) throw new Error('Failed to remove cart item')
+            } catch (err) {
+                // revert removal
+                if (removed) cartItems.value.splice(idx, 0, removed)
+                console.error('Failed to remove cart item', err)
             }
+        } else {
+            // optimistic decrement
+            item.quantity = previous - 1
+            try {
+                const res = await fetch('/api/user/removeCartItem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ cartitemid, userid: auth.user?.userid }),
+                })
+                if (!res.ok) throw new Error('Failed to decrement cart item')
+            } catch (err) {
+                // revert optimistic change
+                item.quantity = previous
+                console.error('Failed to decrement cart item', err)
+            }
+        }
+    }
+
+    async function loadCartItemProducts() {
+        // Fetch all drink-product mappings once, then group by drinkid
+        try {
+            const allProducts = await fetchDrinkProducts()
+            // allProducts expected to be an array with { drinkid, productid, ... }
+            const map: Record<number, any[]> = {}
+            for (const p of allProducts) {
+                const id = Number(p.drinkid)
+                if (!map[id]) map[id] = []
+                map[id].push(p)
+            }
+
+            // Populate cartItemProducts for items that exist in the cart
+            for (const item of cartItems.value) {
+                if (item.drinkid) {
+                    const id = Number(item.drinkid)
+                    cartItemProducts.value[id] = map[id] || []
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load drink products for cart items', err)
         }
     }
 
@@ -57,7 +136,11 @@
                                     </div>
                                     <h3>{{ item.name }}</h3>
                                 </div>
-                                <p>Quantity: {{ item.quantity }}</p>
+                                <div class="qty-control">
+                                    <button class="qty-btn" @click="decrementItem(item)" aria-label="Decrease">−</button>
+                                    <span class="qty-value">{{ item.quantity }}</span>
+                                    <button class="qty-btn" @click="incrementItem(item)" aria-label="Increase">+</button>
+                                </div>
                                 <div v-if="cartItemProducts[item.drinkid]" class="product-list">
                                     <p><strong>Products used:</strong></p>
                                     <ul>
@@ -72,6 +155,9 @@
                         <div v-if="cartItems.length > 0" class="cart-total">
                             <hr />
                             <p>Total Price: ${{ totalPrice }}</p>
+                            <div class="checkout-actions">
+                                <router-link to="/checkout" class="checkout-btn">Go To Payment</router-link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -226,5 +312,51 @@
         height: 100%;
         object-fit: cover;
         border-radius: 8px;
+    }
+
+    .qty-control {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
+    }
+
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: 1px solid rgba(0,0,0,0.12);
+        background: var(--main-bg-color);
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .qty-value {
+        min-width: 28px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .checkout-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .checkout-btn {
+        background: #c9b37c;
+        border: none;
+        padding: 10px 16px;
+        color: #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .checkout-btn:hover {
+        filter: brightness(0.95);
     }
 </style>
