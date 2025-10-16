@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref } from "vue"; 
+    import { onMounted, ref } from 'vue'
 
     const stats = ref({
         orders: 0,
@@ -7,12 +7,25 @@
         users: 0,
         revenue: 0
     });
-    const recentOrders = ref([
-        { id: 'ORD001', user: 'John Doe', total: 120, status: 'Shipped', date: '2024-06-10' },
-        { id: 'ORD002', user: 'Jane Smith', total: 75, status: 'Processing', date: '2024-06-09' },
-        { id: 'ORD003', user: 'Alice Brown', total: 200, status: 'Delivered', date: '2024-06-08' },
-        { id: 'ORD004', user: 'Bob Lee', total: 50, status: 'Cancelled', date: '2024-06-07' }
-    ]);
+    const recentOrders = ref<any[]>([]);
+    const loading = ref(true)
+    const error = ref<string | null>(null)
+
+    onMounted(async () => {
+        try {
+            loading.value = true
+            const res = await fetch('/api/admin/dashboard')
+            if (!res.ok) throw new Error('Failed to load dashboard')
+            const body = await res.json()
+            stats.value = body.stats || stats.value
+            recentOrders.value = body.recentOrders || []
+        } catch (err: any) {
+            console.error('Failed to fetch dashboard', err)
+            error.value = err?.message || String(err)
+        } finally {
+            loading.value = false
+        }
+    })
 </script>
 
 <template>
@@ -49,10 +62,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="order in recentOrders" :key="order.id">
-                        <td>{{ order.id }}</td>
-                        <td>{{ order.user }}</td>
-                        <td>${{ order.total }}</td>
+                    <tr v-for="order in recentOrders" :key="order.orderid">
+                        <td>{{ order.orderid }}</td>
+                        <td>{{ order.username || '—' }}</td>
+                        <td>${{ order.totalamount }}</td>
                         <td>{{ order.status }}</td>
                         <td>{{ order.date }}</td>
                     </tr>

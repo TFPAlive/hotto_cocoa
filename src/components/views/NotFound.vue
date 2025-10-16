@@ -4,6 +4,10 @@ import { onMounted } from 'vue'
 onMounted(() => {
   document.title = '404 Not Found | Hotto Choco'
 })
+
+function goBack() {
+  window.history.back();
+}
 </script>
 
 <template>
@@ -12,7 +16,7 @@ onMounted(() => {
     <p class="not-found-message">
       Oops! The page you're looking for doesn't exist.
     </p>
-    <router-link to="/" class="home-link">Go back to Home</router-link>
+    <a href="" class="home-link" @click.prevent="goBack()">Go Back</a>
   </div>
 </template>
 

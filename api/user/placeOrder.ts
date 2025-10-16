@@ -19,32 +19,94 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!['paypay', 'card', 'convenience'].includes(paymentMethod)) return res.status(400).json({ error: 'Unsupported payment method' })
     if (!items.length) return res.status(400).json({ error: 'No items in order' })
 
-    // Minimal DB check (optional): ensure address belongs to user
+    // Begin DB transaction: create Order and OrderItem rows
+    const conn = await getConnection()
     try {
-      const conn = await getConnection()
-      const [rows] = await conn.execute('SELECT addressid FROM Address WHERE addressid = ? AND userid = ?', [addressid, userid])
+      await conn.beginTransaction()
+
+      // Ensure address belongs to the user
+      const [addrRows] = await conn.execute('SELECT addressid FROM Address WHERE addressid = ? AND userid = ?', [addressid, userid])
       // @ts-ignore
-      if (!Array.isArray(rows) || (rows as any).length === 0) {
+      if (!Array.isArray(addrRows) || (addrRows as any).length === 0) {
+        await conn.rollback()
         return res.status(404).json({ error: 'Address not found for user' })
       }
-    } catch (dbErr) {
-      console.warn('DB address check skipped or failed:', dbErr)
-    }
 
-    // Create a mock order record or token here. For now, return payment-specific mock data.
-    if (paymentMethod === 'paypay') {
-      return res.status(200).json({ paymentUrl: 'https://paypay.example.com/checkout?token=mock_paypay_token_123' })
-    }
+      // Fetch cart item details for the given cartitem ids and ensure they belong to the user
+      const cartItemIds = items.map((it: any) => Number(it.cartitemid)).filter((id: number) => Number.isFinite(id))
+      if (cartItemIds.length === 0) {
+        await conn.rollback()
+        return res.status(400).json({ error: 'Invalid cart items' })
+      }
 
-    if (paymentMethod === 'card') {
-      return res.status(200).json({ token: 'mock_card_token_abc123', message: 'Proceed to card capture (mock)' })
-    }
+      const placeholders = cartItemIds.map(() => '?').join(',')
+      const [cartRows] = await conn.execute(
+        `SELECT ci.cartitemid, ci.drinkid, ci.quantity, ci.price FROM CartItem ci JOIN UserDrink ud ON ci.drinkid = ud.drinkid WHERE ci.cartitemid IN (${placeholders}) AND ud.userid = ?`,
+        [...cartItemIds, userid]
+      )
 
-    if (paymentMethod === 'convenience') {
-      return res.status(200).json({ instructions: 'Pay at any participating convenience store using code: 1234-5678 (mock)' })
-    }
+      // @ts-ignore
+      const cartArray = Array.isArray(cartRows) ? (cartRows as any) : []
+      if (cartArray.length !== cartItemIds.length) {
+        await conn.rollback()
+        return res.status(400).json({ error: 'Some cart items are invalid or do not belong to the user' })
+      }
 
-    return res.status(500).json({ error: 'Unhandled payment method' })
+      // Compute total amount
+      let totalAmount = 0
+      for (const r of cartArray) {
+        const price = Number(r.price) || 0
+        const qty = Number(r.quantity) || 0
+        totalAmount += price * qty
+      }
+
+      // Insert into Order table
+      const [orderResult] = await conn.execute(
+        'INSERT INTO `Order` (userid, status, totalamount, createdat, updatedat, addressid, paymentmethod) VALUES (?, ?, ?, NOW(), NOW(), ?, ?)',
+        [userid, 'pending', totalAmount, addressid, paymentMethod]
+      )
+      // @ts-ignore
+      const orderid = (orderResult as any).insertId
+      if (!orderid) {
+        await conn.rollback()
+        return res.status(500).json({ error: 'Failed to create order' })
+      }
+
+      // Insert order items
+      for (const r of cartArray) {
+        await conn.execute(
+          'INSERT INTO OrderItem (orderid, drinkid, quantity, price) VALUES (?, ?, ?, ?)',
+          [orderid, r.drinkid, r.quantity, r.price]
+        )
+      }
+
+      // Clear entire cart for the user (delete CartItem rows that belong to this user)
+      await conn.execute(
+        `DELETE ci FROM CartItem ci JOIN UserDrink ud ON ci.drinkid = ud.drinkid WHERE ud.userid = ?`,
+        [userid]
+      )
+
+      await conn.commit()
+
+      // Return payment initiation data including orderid
+      if (paymentMethod === 'paypay') {
+        return res.status(200).json({ orderid, paymentUrl: `https://paypay.example.com/checkout?order=${orderid}&token=mock_paypay_token_123` })
+      }
+
+      if (paymentMethod === 'card') {
+        return res.status(200).json({ orderid, token: `mock_card_token_order_${orderid}`, message: 'Proceed to card capture (mock)' })
+      }
+
+      if (paymentMethod === 'convenience') {
+        return res.status(200).json({ orderid, instructions: `Pay at any participating convenience store using code: ORD-${orderid}-1234 (mock)` })
+      }
+
+      return res.status(500).json({ error: 'Unhandled payment method' })
+    } catch (txErr) {
+      console.error('Transaction error in placeOrder:', txErr)
+      try { await conn.rollback() } catch (rbErr) { console.error('Rollback error:', rbErr) }
+      return res.status(500).json({ error: 'Failed to create order' })
+    }
   } catch (err) {
     console.error('placeOrder error:', err)
     return res.status(500).json({ error: 'Internal server error' })
