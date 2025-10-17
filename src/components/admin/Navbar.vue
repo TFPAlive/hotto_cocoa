@@ -19,7 +19,7 @@
 <template>
     <header class="navbar">
         <div class="navbar-left">
-            <router-link to="/" class="navbar-home-link">
+            <router-link to="/dashboard" class="navbar-home-link">
                 <img src="/icon.png" alt="Hotto Choco Icon" class="site-icon" />
                 <span class="site-name">Hotto Choco</span>
             </router-link>
