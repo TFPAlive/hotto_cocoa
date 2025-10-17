@@ -11,7 +11,7 @@ export function useAddAddress(address: Omit<Address, 'addressid'>) {
         adding.value = true
         error.value = null
         try {
-            const res = await fetch('/api/user/addAddress', {
+                const res = await fetch('/api/user/address?action=add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

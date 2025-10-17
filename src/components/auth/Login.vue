@@ -15,7 +15,7 @@
         loading.value = true;
         error.value = "";
         try {
-            const res = await axios.post("/api/auth/login", { identifier: identifier.value, password: password.value }, { withCredentials: true });
+            const res = await axios.post("/api/auth?action=login", { identifier: identifier.value, password: password.value }, { withCredentials: true });
             router.push("/auth/logging-in"); // Redirect to logging-in page first
             const { role } = res.data;
             await checkUser();

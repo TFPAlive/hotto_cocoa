@@ -23,7 +23,7 @@
             return;
         }
         try {
-            const res = await axios.post("/api/auth/register", { username: username.value, email: email.value, password: password.value }, { withCredentials: true });
+            const res = await axios.post("/api/auth?action=register", { username: username.value, email: email.value, password: password.value }, { withCredentials: true });
             const { role } = res.data;
             await checkUser();
             if (role === "admin") {

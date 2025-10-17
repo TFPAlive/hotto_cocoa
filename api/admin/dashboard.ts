@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { getConnection } from '../lib/db_conn'
-import { AuthRequest, verifyToken } from "../lib/authMiddleware";
+import { AuthRequest, verifyToken } from "../lib/auth";
 
 export default async function handler(req: AuthRequest, res: VercelResponse) {
   if (!verifyToken(req, "admin")) return res.status(403).end("Forbidden");

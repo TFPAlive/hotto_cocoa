@@ -10,7 +10,7 @@ const fetchAddresses = async () => {
     loading.value = true
     error.value = null
     try {
-        const response = await fetch(`/api/user/addresses?userid=${auth.user?.userid}`, { credentials: 'include' })
+    const response = await fetch(`/api/user/address?userid=${auth.user?.userid}`, { credentials: 'include' })
         if (!response.ok) throw new Error("Failed to fetch addresses")
         const data = await response.json()
         addresses.value = Array.isArray(data) ? data as Address[] : []

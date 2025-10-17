@@ -6,7 +6,7 @@ export function useDrinkProducts() {
 
     const fetchDrinkProducts = async () => {
         try {
-            const response = await fetch(`/api/user/drinkProducts`)
+            const response = await fetch(`/api/user/products?action=drinkProducts`)
             if (!response.ok) throw new Error("Failed to fetch drink products")
             const data = await response.json()
             drinkProducts.value = data

@@ -6,7 +6,6 @@ import { useAddresses } from '@/composables/useAddresses'
 import { useAddAddress } from '@/composables/useAddAddress';
 import type { Address } from '@/types';
 
-
 const { addresses, loading, error, fetchAddresses } = useAddresses()
 const router = useRouter()
 const route = useRoute()
@@ -123,7 +122,7 @@ async function deleteAddress(addressid: number) {
     const userid = auth.user?.userid
     if (!userid) throw new Error('未ログインまたは無効なユーザー')
 
-    const res = await fetch('/api/user/deleteAddress', {
+  const res = await fetch('/api/user/address?action=delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ addressid, userid })
@@ -158,7 +157,7 @@ async function setAsDefault(addressid: number) {
   settingDefaultId.value = addressid
 
   try {
-    const res = await fetch('/api/user/setDefaultAddress', {
+  const res = await fetch('/api/user/address?action=setDefault', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userid, addressid })

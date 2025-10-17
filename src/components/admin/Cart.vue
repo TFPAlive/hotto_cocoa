@@ -1,10 +1,9 @@
 <script setup lang="ts">
     import { ref } from "vue"
-    import { useManageCart } from "@/composables/useManageCart";
 </script>
 
 <template>
-
+WIP - Admin Cart Management
 </template>
 
 <style scoped>

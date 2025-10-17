@@ -22,7 +22,7 @@ export function useCreateDrink(selectedProducts: Record<string, Product | undefi
 			let uniqueid = ''
 			for (const p of products) uniqueid += p.productid.toString().padStart(4, '0')
 
-			const res = await fetch('/api/user/createDrink', {
+			const res = await fetch('/api/user/products?action=create', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ drinkname, products, price, userid: auth.user?.userid, uniqueid }),

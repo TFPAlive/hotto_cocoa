@@ -8,7 +8,7 @@ export const auth = reactive({
 
 export async function checkUser() {
     try {
-        const res = await fetch("/api/auth/me", { credentials: "include" });
+    const res = await fetch("/api/auth?action=me", { credentials: "include" });
         const data = await res.json();
     auth.userRole = data.user?.role || "guest";
     auth.isLoggedIn = auth.userRole !== "guest";

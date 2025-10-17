@@ -8,7 +8,7 @@
     async function handleLogout() {
         try {
             router.push("/auth/logging-out"); // Redirect to logging-out page first
-            await axios.post("/api/auth/logout", {}, { withCredentials: true });
+            await axios.post("/api/auth?action=logout", {}, { withCredentials: true });
             await checkUser(); // update global state after logout
             router.push("/");
         } catch (err) {

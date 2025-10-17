@@ -16,7 +16,7 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 
 			if (product.file) {
 				// Get signed URL from backend
-				const uploadRes = await fetch(`/api/admin/products/genURL?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
+				const uploadRes = await fetch(`/api/admin/products/file?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
 				if (!uploadRes.ok) throw new Error('Failed to get upload URL')
 				const { uploadUrl, publicUrl } = await uploadRes.json()
 
@@ -57,7 +57,7 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
             let imageurl = product.imageurl
 			if (product.file) {
 				// Get signed URL from backend
-				const uploadRes = await fetch(`/api/admin/products/genURL?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
+				const uploadRes = await fetch(`/api/admin/products/file?fileName=${encodeURIComponent(product.file.name)}&fileType=${encodeURIComponent(product.file.type)}`)
 				if (!uploadRes.ok) throw new Error('Failed to get upload URL')
 				const { uploadUrl, publicUrl } = await uploadRes.json()
 
@@ -71,7 +71,7 @@ export function useManageProducts(fetchProducts: () => Promise<void>) {
 				if (!putRes.ok) throw new Error('Failed to upload file')
 
 				if (product.imageurl) {
-					const deleteRes = await fetch(`/api/admin/products/deleteFiles?fileName=${encodeURIComponent(product.imageurl?.split('/').pop() || '')}`, { method: 'DELETE' })
+					const deleteRes = await fetch(`/api/admin/products/file?fileName=${encodeURIComponent(product.imageurl?.split('/').pop() || '')}`, { method: 'DELETE' })
 					if (!deleteRes.ok) console.warn('Failed to delete old image')
 				}
 				imageurl = publicUrl

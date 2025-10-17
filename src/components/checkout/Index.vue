@@ -125,7 +125,7 @@ async function setAsDefault(addressid: number) {
   selectedAddressId.value = addressid
 
   try {
-    const res = await fetch('/api/user/setDefaultAddress', {
+        const res = await fetch('/api/user/address?action=setDefault', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userid, addressid })

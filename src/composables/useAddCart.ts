@@ -12,7 +12,7 @@ export function useAddCart(drinkid: any) {
         error.value = null
         try {
             
-            const res = await fetch('/api/user/addCart', {
+                const res = await fetch('/api/user/cart?action=add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

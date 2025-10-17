@@ -22,9 +22,9 @@
     async function incrementItem(item: any) {
         const previous = item.quantity
         // optimistic UI
-        item.quantity = (item.quantity || 0) + 1
+            item.quantity = (item.quantity || 0) + 1
         try {
-            const res = await fetch('/api/user/addCart', {
+                const res = await fetch('/api/user/cart?action=add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -50,7 +50,7 @@
             let removed: any = null
             if (idx !== -1) removed = cartItems.value.splice(idx, 1)[0]
             try {
-                const res = await fetch('/api/user/removeCartItem', {
+                    const res = await fetch('/api/user/cart?action=remove', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -66,7 +66,7 @@
             // optimistic decrement
             item.quantity = previous - 1
             try {
-                const res = await fetch('/api/user/removeCartItem', {
+                    const res = await fetch('/api/user/cart?action=remove', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

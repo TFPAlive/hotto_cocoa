@@ -14,7 +14,7 @@ const totalPrice = computed(() =>
 const fetchCartItems = async () => {
   loading.value = true
   try {
-    const response = await fetch(`/api/user/myCart?userid=${auth.user?.userid}`)
+  const response = await fetch(`/api/user/cart?userid=${auth.user?.userid}`)
     if (!response.ok) throw new Error("Failed to fetch cart items")
     cartItems.value = await response.json()
   } catch (err: any) {
