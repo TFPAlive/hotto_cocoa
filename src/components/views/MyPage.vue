@@ -2,6 +2,15 @@
     import { ref, onMounted, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import Address from '../mypage/Address.vue';
+    import Profile from '../mypage/Profile.vue';
+    import Orders from '../mypage/Orders.vue';
+    import Reviews from '../mypage/Reviews.vue';
+    import Favorites from '../mypage/Favorites.vue';
+    import History from '../mypage/History.vue';
+    import Payment from '../mypage/Payment.vue';
+    import Security from '../mypage/Security.vue';
+    import Permissions from '../mypage/Permissions.vue';
+    import Languages from '../mypage/Languages.vue';
 
     const route = useRoute();
     const router = useRouter();
@@ -53,43 +62,16 @@
             </div>
         </div>
         <div class="content-area">
-            <div v-if="activeSection === 'orders'" class="content-section">
-                <h2>Your Orders</h2>
-                <p>Content for orders will go here...</p>
-            </div>
-            <div v-if="activeSection === 'reviews'" class="content-section">
-                <h2>Your Reviews</h2>
-                <p>Content for reviews will go here...</p>
-            </div>
-            <div v-if="activeSection === 'profile'" class="content-section">
-                <h2>Your Profile</h2>
-                <p>Content for profile will go here...</p>
-            </div>
-            <div v-if="activeSection === 'favorite'" class="content-section">
-                <h2>Your Favorites</h2>
-                <p>Content for favorites will go here...</p>
-            </div>
-            <div v-if="activeSection === 'history'" class="content-section">
-                <h2>Browsing History</h2>
-                <p>Content for browsing history will go here...</p>
-            </div>
+            <Profile v-if="activeSection === 'profile'" />
+            <Orders v-if="activeSection === 'orders'" />
+            <Reviews v-if="activeSection === 'reviews'" />
+            <Favorites v-if="activeSection === 'favorite'" />
+            <History v-if="activeSection === 'history'" />
             <Address v-if="activeSection === 'addresses'" />
-            <div v-if="activeSection === 'languages'" class="content-section">
-                <h2>Languages/Currencies</h2>
-                <p>Content for languages and currencies will go here...</p>
-            </div>
-            <div v-if="activeSection === 'payment'" class="content-section">
-                <h2>Payment Methods</h2>
-                <p>Content for payment methods will go here...</p>
-            </div>
-            <div v-if="activeSection === 'security'" class="content-section">
-                <h2>Account Security</h2>
-                <p>Content for account security will go here...</p>
-            </div>
-            <div v-if="activeSection === 'permissions'" class="content-section">
-                <h2>Permissions</h2>
-                <p>Content for permissions will go here...</p>
-            </div>
+            <Languages v-if="activeSection === 'languages'" />
+            <Payment v-if="activeSection === 'payment'" />
+            <Security v-if="activeSection === 'security'" />
+            <Permissions v-if="activeSection === 'permissions'" />
         </div>
     </div>
 </template>
