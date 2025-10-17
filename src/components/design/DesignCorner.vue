@@ -3,9 +3,8 @@
     import RightPointIcon from '../icons/IconPointRight.vue'
     import StarRating from './StarRating.vue'
     import { ref, onMounted, nextTick } from 'vue'
-    import { useCreateDrink } from '@/composables/useCreateDrink'
     import { useProducts } from '@/composables/useProducts'
-    import { useAddCart } from '@/composables/useAddCart'
+    import { auth } from '@/composables/useAuth'
 
     const { products } = useProducts()
     const sweetness = ref(3.5)
@@ -53,34 +52,67 @@
             selectedProducts.value[product.category.toLowerCase()] = product
         }
     }
+    // Inlined createDrink + addToCart logic (previously useCreateDrink + useAddCart)
+    const creating = ref(false)
+    const createError = ref<string | null>(null)
+    const drinkid = ref<number | null>(null)
+
+    async function createDrink() {
+        creating.value = true
+        createError.value = null
+        try {
+            const products = Object.values(selectedProducts.value)
+                .filter((p): p is any => !!p)
+                .map(p => ({ productid: p.productid, quantity: 1 }))
+
+            let uniqueid = ''
+            for (const p of products) uniqueid += String(p.productid).padStart(4, '0')
+
+            const res = await fetch('/api/user/products?action=create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ drinkname: drinkName.value, products, price: Object.values(selectedProducts.value).reduce((sum, prod) => sum + (prod?.price || 0), 0), userid: auth.user?.userid, uniqueid }),
+            })
+
+            if (!res.ok) throw new Error('Network response was not ok')
+
+            const output = await res.json()
+            drinkid.value = output.drink?.drinkid || null
+        } catch (err) {
+            createError.value = 'Failed to create drink'
+            console.error(err)
+        } finally {
+            creating.value = false
+        }
+    }
+
+    const adding = ref(false)
+    const addError = ref<string | null>(null)
+
     async function addToCart() {
-        const { createDrink, error, drinkid } = useCreateDrink(selectedProducts.value, drinkName.value, Object.values(selectedProducts.value).reduce((sum, prod) => {
-            return sum + (prod?.price || 0)
-        }, 0))
-        await createDrink() // wait until drink is created
-        if (error.value || !drinkid.value) {
-            console.error('Failed to create drink:', error.value)
-            return
-        }
-        const { error: cartError, addToCart } = useAddCart(drinkid.value)
-        await addToCart()
-        if (cartError.value) {
-            console.error('Failed to add to cart:', cartError.value)
-        } else {
-            console.log('Added to cart successfully')
-        }
-    }
-    function createDrink() {
-        const { createDrink, error } = useCreateDrink(selectedProducts.value, drinkName.value, Object.values(selectedProducts.value).reduce((sum, prod) => {
-            return sum + (prod?.price || 0)
-        }, 0))
-        createDrink()
-        if (error.value) {
-            console.error('Failed to create drink:', error.value)
-        } else {
-            console.log('Drink created successfully')
+        // ensure drink exists
+        await createDrink()
+        if (createError.value || !drinkid.value) return
+
+        adding.value = true
+        addError.value = null
+        try {
+            const res = await fetch('/api/user/cart?action=add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ drinkid: drinkid.value, userid: auth.user?.userid }),
+            })
+            if (!res.ok) throw new Error('Failed to add to cart')
+            // trigger any cart refresh via global composables (if needed)
+        } catch (err: any) {
+            addError.value = err.message || 'Unknown error'
+            console.error('Failed to add to cart:', addError.value)
+        } finally {
+            adding.value = false
         }
     }
+    // legacy wrapper removed; createDrink is implemented above (inlined)
     function showChoiceTooltip(event: MouseEvent) {
         showTooltip.value = true
         tooltipPosition.value = { x: event.clientX + 10, y: event.clientY + 10 }

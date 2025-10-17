@@ -1,9 +1,30 @@
 <script setup lang="ts">
     import { ref } from "vue";
-    import { useChatbot } from "@/composables/useChatbot";
 
     const prompt = ref("");
-    const { reply, loading, sendMessage } = useChatbot();
+    const reply = ref<string | null>(null);
+    const loading = ref(false);
+
+    const sendMessage = async (promptText: string) => {
+        loading.value = true;
+        try {
+            const res = await fetch("/api/lib/chatbot_conn", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: promptText }),
+            });
+            const data = await res.json();
+            if (data.reply) {
+                reply.value = data.reply;
+            } else if (data.error) {
+                reply.value = "Oops! Something went wrong.";
+            }
+        } catch (err) {
+            reply.value = "Network error, please try again.";
+        } finally {
+            loading.value = false;
+        }
+    };
     // Greeting shown only once, before any messages
     const greeting = `Hi! I'm the Hotto Choco box chat.
 Let's do our best for your perfect drink. 

@@ -3,7 +3,6 @@ import { onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { auth } from '@/composables/useAuth'
 import { useAddresses } from '@/composables/useAddresses'
-import { useAddAddress } from '@/composables/useAddAddress';
 import type { Address } from '@/types';
 
 const { addresses, loading, error, fetchAddresses } = useAddresses()
@@ -37,6 +36,9 @@ const newAddress = ref<Address>({
   phone: "",
   isdefault: false
 })
+
+const adding = ref(false)
+const addError = ref<string | null>(null)
 
 const prefectures = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -83,18 +85,24 @@ async function saveAddress() {
       addresses.value[index] = { ...newAddress.value }
     }
   } else {
-    // Add new address via backend composable
-    // useAddAddress has a slightly different type signature in the composable;
-    // cast to any here to avoid type mismatch and delegate validation to the backend
-    const { adding, error: addError, addAddress } = useAddAddress(newAddress.value as any)
-
-    await addAddress()
-
-    if (addError.value) {
-      console.error('Add address error:', addError.value)
-    } else {
+    // Add new address via inlined logic (previously in useAddAddress)
+    adding.value = true
+    addError.value = null
+    try {
+      const res = await fetch('/api/user/address?action=add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ userid: auth.user?.userid, ...newAddress.value }),
+      })
+      if (!res.ok) throw new Error('Failed to add address')
       // Refresh addresses from backend
       await fetchAddresses()
+    } catch (err: any) {
+      addError.value = err.message || 'Unknown error'
+      console.error('Add address error:', addError.value)
+    } finally {
+      adding.value = false
     }
   }
 

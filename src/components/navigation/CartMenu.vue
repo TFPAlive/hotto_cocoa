@@ -3,11 +3,22 @@
     import CloseIcon from '../icons/IconClose.vue'
     import { useMyCart } from '@/composables/useMyCart'
     import { auth } from '@/composables/useAuth'
-    import { useDrinkProducts } from '@/composables/useDrinkProducts'
     import { ref, onMounted, computed } from 'vue'
 
     const { cartItems, totalPrice, fetchCartItems } = useMyCart()
-    const { fetchDrinkProducts } = useDrinkProducts()
+    const drinkProducts = ref<any[]>([])
+    const fetchDrinkProducts = async () => {
+        try {
+            const response = await fetch(`/api/user/products?action=drinkProducts`)
+            if (!response.ok) throw new Error('Failed to fetch drink products')
+            const data = await response.json()
+            drinkProducts.value = data
+            return data
+        } catch (error) {
+            console.error(error)
+            return []
+        }
+    }
     const showCart = ref(false)
     const cartItemProducts = ref<Record<number, any[]>>({})
     const cartCount = computed(() =>
