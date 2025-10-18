@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { auth } from '@/composables/useAuth'
+import { formatPrice } from '@/utils/currency'
 import type { Order, OrderItem } from '@/types'
 
 const loading = ref(false)
@@ -70,12 +71,7 @@ function formatDate(dateString: string) {
   })
 }
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat('ja-JP', {
-    style: 'currency',
-    currency: 'JPY'
-  }).format(price)
-}
+
 
 function viewOrderDetails(order: Order) {
   selectedOrder.value = order

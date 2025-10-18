@@ -11,7 +11,7 @@ export function useManageOrders(fetchOrders: () => Promise<void>) {
 		error.value = null
 		
 		try {
-			const res = await fetch(`/api/admin/orders/${orderId}/status`, {
+			const res = await fetch(`/api/admin/orders/${orderId}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',

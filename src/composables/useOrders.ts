@@ -28,6 +28,8 @@ export function useOrders() {
 					created_at: order.createdat || order.created_at || '',
 					updated_at: order.updatedat || order.updated_at || '',
 					shipping_address: order.shipping_address || '',
+                    shipping_name: order.shipping_name || '',
+                    shipping_phone: order.shipping_phone || '',
 					items: order.items || []
 				}))
 			} else if (Array.isArray(data)) {

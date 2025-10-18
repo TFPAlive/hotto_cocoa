@@ -75,6 +75,8 @@ export interface Order {
   updated_at: string
   shipping_address: string
   items: OrderItem[]
+  shipping_name: string
+  shipping_phone: string
 }
 
 export interface Review {

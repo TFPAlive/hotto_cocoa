@@ -83,6 +83,7 @@
 
     function openOrderModal(order: Order) {
         selectedOrder.value = order
+        console.log('Opening order modal for:', order)
         showOrderModal.value = true
     }
 
@@ -142,12 +143,6 @@
         return new Date(dateString).toLocaleDateString() + ' ' + new Date(dateString).toLocaleTimeString()
     }
 
-    function formatCurrency(amount: number) {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'JPY'
-        }).format(amount)
-    }
 </script>
 
 <template>
@@ -177,7 +172,7 @@
                 <p>Delivered</p>
             </div>
             <div class="stat-card revenue">
-                <h3>{{ formatCurrency(orderStats.revenue) }}</h3>
+                <h3>{{ formatPrice(orderStats.revenue) }}</h3>
                 <p>Revenue</p>
             </div>
         </div>
@@ -253,7 +248,7 @@
                         </td>
                         <td class="order-id">#{{ order.orderid }}</td>
                         <td>{{ order.userid }}</td>
-                        <td class="total-amount">{{ formatCurrency(order.total) }}</td>
+                        <td class="total-amount">{{ formatPrice(order.total) }}</td>
                         <td>
                             <select 
                                 :value="order.status" 
@@ -304,15 +299,14 @@
                                         {{ getStatusLabel(selectedOrder.status) }}
                                     </span>
                                 </div>
-                                <div><strong>Total:</strong> {{ formatCurrency(selectedOrder.total) }}</div>
-                                <div><strong>Created:</strong> {{ formatDate(selectedOrder.created_at) }}</div>
-                                <div><strong>Updated:</strong> {{ formatDate(selectedOrder.updated_at) }}</div>
                             </div>
                         </div>
                         
                         <div class="info-section">
                             <h3>Shipping Address</h3>
+                            <p>{{ selectedOrder.shipping_name }}</p>
                             <p>{{ selectedOrder.shipping_address }}</p>
+                            <p>{{ selectedOrder.shipping_phone }}</p>
                         </div>
                         
                         <div class="info-section">
@@ -324,8 +318,8 @@
                                     <div class="item-details">
                                         <h4>{{ item.name }}</h4>
                                         <p>Quantity: {{ item.quantity }}</p>
-                                        <p>Price: {{ formatCurrency(item.price) }}</p>
-                                        <p>Total: {{ formatCurrency(item.price * item.quantity) }}</p>
+                                        <p>Price: {{ formatPrice(item.price) }}</p>
+                                        <p>Total: {{ formatPrice(item.price * item.quantity) }}</p>
                                     </div>
                                 </div>
                             </div>
