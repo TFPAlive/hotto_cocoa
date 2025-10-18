@@ -37,7 +37,6 @@
         </transition>
     </button>
     <div class="navbar-center" :class="{ collapsed: !showNav }">
-        <router-link to="/admin/user" class="nav-btn">User</router-link>
         <router-link to="/admin/order" class="nav-btn">Order</router-link>
         <router-link to="/admin/drink" class="nav-btn">Drink</router-link>
         <router-link to="/admin/product" class="nav-btn">Product</router-link>

@@ -1,11 +1,14 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { getConnection } from '../../lib/db_conn'
+import { AuthRequest, verifyToken } from '../../lib/auth'
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: AuthRequest, res: VercelResponse) {
+	if (!verifyToken(req, "admin")) return res.status(403).end("Forbidden")
+	
 	if (req.method === 'GET') {
 		try {
 			const conn = await getConnection()
-			const [rows] = await conn.query('SELECT * FROM products')
+			const [rows] = await conn.query('SELECT * FROM Product')
 			res.status(200).json(rows)
 		} catch (err) {
 			res.status(500).json({ error: 'Failed to fetch products' })

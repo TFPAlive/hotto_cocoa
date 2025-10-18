@@ -5,6 +5,7 @@
     import { ref, onMounted, nextTick } from 'vue'
     import { useProducts } from '@/composables/useProducts'
     import { auth } from '@/composables/useAuth'
+    import { formatPrice } from '@/utils/currency'
 
     const { products } = useProducts()
     const sweetness = ref(3.5)
@@ -201,10 +202,10 @@
                     <h2>Total Price</h2>
                     <p>
             {{
-              Object.values(selectedProducts).reduce((sum, prod) => {
+              formatPrice(Object.values(selectedProducts).reduce((sum, prod) => {
                 return sum + (prod?.price || 0)
-              }, 0)
-            }} 円
+              }, 0))
+            }}
           </p>
                 </div>
                 <div class="button-holder">
@@ -242,7 +243,7 @@
                                 <h4>{{ hoveredProduct.name || 'Unknown Product' }}</h4>
                                 <p class="product-description">{{ hoveredProduct.description || 'No description available' }}</p>
                                 <div class="product-info">
-                                    <span class="price">Price: {{ hoveredProduct.price || 0 }} 円</span>
+                                    <span class="price">Price: {{ formatPrice(hoveredProduct.price || 0) }}</span>
                                     <span class="category">Category: {{ hoveredProduct.category || 'Unknown' }}</span>
                                     <span v-if="hoveredProduct.material" class="material">Material: {{ hoveredProduct.material }}</span>
                                 </div>
@@ -266,7 +267,7 @@
                     <tr v-for="(product, category) in selectedProducts" :key="category">
                         <td v-if="product">{{ category.charAt(0).toUpperCase() + category.slice(1) }}</td>
                         <td v-if="product">{{ product.name || 'Unknown' }}</td>
-                        <td v-if="product">{{ product.price || 0 }} 円</td>
+                        <td v-if="product">{{ formatPrice(product.price || 0) }}</td>
                     </tr>
                 </tbody>
             </table>

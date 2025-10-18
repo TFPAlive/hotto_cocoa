@@ -1,7 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { getConnection } from '../../lib/db_conn'
+import { AuthRequest, verifyToken } from '../../lib/auth'
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: AuthRequest, res: VercelResponse) {
+	if (!verifyToken(req, "admin")) return res.status(403).end("Forbidden")
+	
 	const id = req.query.id as string | undefined
 
 	if (req.method === 'GET') {

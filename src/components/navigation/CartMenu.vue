@@ -3,6 +3,7 @@
     import CloseIcon from '../icons/IconClose.vue'
     import { useMyCart } from '@/composables/useMyCart'
     import { auth } from '@/composables/useAuth'
+    import { formatPrice } from '@/utils/currency'
     import { ref, onMounted, computed } from 'vue'
 
     const { cartItems, totalPrice, fetchCartItems } = useMyCart()
@@ -160,12 +161,12 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <p>Base Price: ${{ item.price }}</p>
+                                <p>Base Price: {{ formatPrice(item.price) }}</p>
                             </div>
                         </div>
                         <div v-if="cartItems.length > 0" class="cart-total">
                             <hr />
-                            <p>Total Price: ${{ totalPrice }}</p>
+                            <p>Total Price: {{ formatPrice(totalPrice) }}</p>
                             <div class="checkout-actions">
                                 <router-link to="/checkout" class="checkout-btn">Go To Payment</router-link>
                             </div>

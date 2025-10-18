@@ -2,6 +2,7 @@
     import { ref } from 'vue'
     import { useProducts } from '@/composables/useProducts'
     import { useManageProducts } from '@/composables/useManageProducts'
+    import { formatPrice } from '@/utils/currency'
     import type { Product } from '@/types'
 
     const { products, fetchProducts } = useProducts()
@@ -130,7 +131,7 @@
                         </div>
                     </td>
                     <td>{{ product.name }}</td>
-                    <td>{{ product.price }}</td>
+                    <td>{{ formatPrice(product.price) }}</td>
                     <td>{{ product.description }}</td>
                     <td>{{ product.material }}</td>
                     <td>{{ product.keyword }}</td>

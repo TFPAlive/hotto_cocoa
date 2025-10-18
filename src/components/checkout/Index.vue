@@ -4,6 +4,7 @@ import { useMyCart } from '@/composables/useMyCart'
 import { useAddresses } from '@/composables/useAddresses'
 import { useRouter } from 'vue-router'
 import { auth } from '@/composables/useAuth'
+import { formatPrice } from '@/utils/currency'
 
 const { cartItems, totalPrice, fetchCartItems } = useMyCart()
 const { addresses, fetchAddresses, loading: addrLoading } = useAddresses()
@@ -193,7 +194,7 @@ async function setAsDefault(addressid: number) {
                         <div class="item-info">
                             <div class="item-name">{{ item.name }}</div>
                             <div class="item-qty">Qty: {{ item.quantity }}</div>
-                            <div class="item-price">${{ (item.price * item.quantity).toFixed(2) }}</div>
+                            <div class="item-price">{{ formatPrice(item.price * item.quantity) }}</div>
                         </div>
                     </div>
                 </div>
@@ -232,10 +233,10 @@ async function setAsDefault(addressid: number) {
         <aside class="checkout-side">
             <div class="summary">
                 <h3>Order summary</h3>
-                <div class="line"><span>Items total</span><span>${{ totalPrice.toFixed(2) }}</span></div>
+                <div class="line"><span>Items total</span><span>{{ formatPrice(totalPrice) }}</span></div>
                 <div class="line"><span>Shipping</span><span>FREE</span></div>
                 <hr />
-                <div class="line total"><span>Total</span><span>${{ totalPrice.toFixed(2) }}</span></div>
+                <div class="line total"><span>Total</span><span>{{ formatPrice(totalPrice) }}</span></div>
 
                 <button class="place-btn" :disabled="placing || cartItems.length === 0" @click="placeOrder">{{ placing ? 'Placing...' : 'Place order' }}</button>
             </div>

@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import { getConnection } from "../lib/db_conn";
 import { createAuthCookie, clearAuthCookie, AuthRequest, verifyToken } from "../lib/auth";
 
+function isEmail(str: string) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(str); }
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Determine action by query param `action` or by method + path
   const action = (req.query && (req.query as any).action) ? String((req.query as any).action) : null;
@@ -20,8 +22,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const { identifier, password } = req.body;
-
-    function isEmail(str: string) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(str); }
 
     try {
       const conn = await getConnection();

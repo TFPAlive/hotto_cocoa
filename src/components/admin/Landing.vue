@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { onMounted, ref } from 'vue'
+    import { formatPrice } from '@/utils/currency'
 
     const stats = ref({
         orders: 0,
@@ -45,7 +46,7 @@
                 <p>Users</p>
             </div>
             <div class="stat-card">
-                <h2>${{ stats.revenue }}</h2>
+                <h2>{{ formatPrice(stats.revenue) }}</h2>
                 <p>Revenue</p>
             </div>
         </div>
@@ -65,7 +66,7 @@
                     <tr v-for="order in recentOrders" :key="order.orderid">
                         <td>{{ order.orderid }}</td>
                         <td>{{ order.username || '—' }}</td>
-                        <td>${{ order.totalamount }}</td>
+                        <td>{{ formatPrice(order.totalamount) }}</td>
                         <td>{{ order.status }}</td>
                         <td>{{ order.date }}</td>
                     </tr>

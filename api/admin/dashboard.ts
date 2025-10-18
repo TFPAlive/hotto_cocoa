@@ -22,6 +22,11 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
     // @ts-ignore
     const products = (Array.isArray(productsCntRows) && (productsCntRows as any)[0]) ? Number((productsCntRows as any)[0].cnt) : 0
 
+    // Total drinks
+    const [drinksCntRows] = await conn.execute('SELECT COUNT(*) as cnt FROM Drink')
+    // @ts-ignore
+    const drinks = (Array.isArray(drinksCntRows) && (drinksCntRows as any)[0]) ? Number((drinksCntRows as any)[0].cnt) : 0
+
     // Total users
     const [usersCntRows] = await conn.execute('SELECT COUNT(*) as cnt FROM `User`')
     // @ts-ignore
@@ -32,6 +37,15 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
     const [revenueRows] = await conn.execute("SELECT IFNULL(SUM(totalamount),0) AS revenue FROM `Order` WHERE status IN ('paid','completed','shipped','delivered')")
     // @ts-ignore
     const revenue = (Array.isArray(revenueRows) && (revenueRows as any)[0]) ? Number((revenueRows as any)[0].revenue) : 0
+
+    // Order status distribution
+    const [statusRows] = await conn.execute(`
+      SELECT status, COUNT(*) as count 
+      FROM \`Order\` 
+      GROUP BY status
+    `)
+    // @ts-ignore
+    const orderStatusDistribution = Array.isArray(statusRows) ? (statusRows as any) : []
 
     // Recent orders (latest 10)
     const [recentRows] = await conn.execute(
@@ -44,7 +58,11 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
     // @ts-ignore
     const recent = Array.isArray(recentRows) ? (recentRows as any) : []
 
-    return res.status(200).json({ stats: { orders, products, users, revenue }, recentOrders: recent })
+    return res.status(200).json({ 
+      stats: { orders, products, drinks, users, revenue }, 
+      orderStatusDistribution,
+      recentOrders: recent 
+    })
   } catch (err) {
     console.error('admin/dashboard error:', err)
     return res.status(500).json({ error: 'Failed to fetch dashboard data' })

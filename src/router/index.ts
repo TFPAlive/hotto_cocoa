@@ -21,6 +21,8 @@ const routes = [
 		children: [
 			{ path: "", component: () => import("@/components/admin/Landing.vue") },
 			{ path: "product", component: () => import("@/components/admin/Product.vue") },
+			{ path: "drink", component: () => import("@/components/admin/Drink.vue") },
+			{ path: "order", component: () => import("@/components/admin/Order.vue") }
 			// ...other admin pages
 		]
 	},
