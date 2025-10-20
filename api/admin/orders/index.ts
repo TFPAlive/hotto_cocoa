@@ -57,7 +57,7 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
           let address: any = {}
           if (order.addressid) {
             const [addressRows] = await conn.execute(
-              'SELECT name, postalcode, prefecture, city, town, building, phone FROM Address WHERE addressid = ?',
+              'SELECT firstname, lastname, postalcode, prefecture, city, town, building, phone FROM Address WHERE addressid = ?',
               [order.addressid]
             )
             address = (addressRows as any[])[0] || {}

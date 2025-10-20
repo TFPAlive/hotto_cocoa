@@ -6,8 +6,10 @@
     import { useProducts } from '@/composables/useProducts'
     import { auth } from '@/composables/useAuth'
     import { formatPrice } from '@/utils/currency'
+    import { useMyCart } from '@/composables/useMyCart'
 
     const { products } = useProducts()
+    const { fetchCartItems } = useMyCart()
     const sweetness = ref(3.5)
     const calories = ref(2)
     const categories = ref(['Mugs & Cups', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straws', 'Coasters', 'Packing styles'])
@@ -105,7 +107,9 @@
                 body: JSON.stringify({ drinkid: drinkid.value, userid: auth.user?.userid }),
             })
             if (!res.ok) throw new Error('Failed to add to cart')
-            // trigger any cart refresh via global composables (if needed)
+            
+            // Refresh cart items to update CartMenu
+            await fetchCartItems()
         } catch (err: any) {
             addError.value = err.message || 'Unknown error'
             console.error('Failed to add to cart:', addError.value)

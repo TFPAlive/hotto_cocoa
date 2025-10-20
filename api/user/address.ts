@@ -37,7 +37,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const body = req.body || {}
           const address = {
             userid: 0,
-            name: String(body.name || '').trim(),
+            firstname: String(body.firstname || '').trim(),
+            lastname: String(body.lastname || '').trim(),
             postalcode: String(body.postalcode || '').trim(),
             prefecture: String(body.prefecture || '').trim(),
             city: String(body.city || '').trim(),
@@ -62,8 +63,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
 
             const [result] = await conn.execute(
-              'INSERT INTO Address (userid, name, postalcode, prefecture, city, town, building, phone, isdefault) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-              [userid, address.name, address.postalcode, address.prefecture, address.city, address.town, address.building, address.phone, address.isdefault] as any
+              'INSERT INTO Address (userid, firstname, lastname, postalcode, prefecture, city, town, building, phone, isdefault) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [userid, address.firstname, address.lastname, address.postalcode, address.prefecture, address.city, address.town, address.building, address.phone, address.isdefault] as any
             )
 
             // @ts-ignore

@@ -1,22 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { auth } from '@/composables/useAuth'
+import { useUserProfile } from '@/composables/useUserProfile'
 import type { User } from '@/types'
 
-const loading = ref(false)
 const saving = ref(false)
 const error = ref<string | null>(null)
 const saveSuccess = ref(false)
 
-const userProfile = ref<Partial<User>>({
-  username: '',
-  email: '',
-  phone: '',
-  firstname: '',
-  lastname: '',
-  birthdate: '',
-  gender: ''
-})
+// Use the shared profile composable
+const { userProfile, isLoading: loading, fetchProfile, updateProfile } = useUserProfile()
 
 const avatarFile = ref<File | null>(null)
 const avatarPreview = ref<string | null>(null)
@@ -35,65 +28,69 @@ onMounted(() => {
 })
 
 async function loadUserProfile() {
-  loading.value = true
   error.value = null
   
   try {
-    // Use current auth user data as starting point
-    if (auth.user) {
-      userProfile.value = { ...auth.user }
-    }
-    
-    // Fetch additional profile data from API
-    const response = await fetch('/api/user/profile', {
-      credentials: 'include'
-    })
-    
-    if (!response.ok) throw new Error('Failed to load profile')
-    
-    const data = await response.json()
-    userProfile.value = { ...userProfile.value, ...data }
+    await fetchProfile()
   } catch (err: any) {
     error.value = err.message || 'プロフィールの読み込みに失敗しました'
-  } finally {
-    loading.value = false
   }
 }
 
 async function saveProfile() {
+  if (!userProfile.value) return
+  
   saving.value = true
   error.value = null
   saveSuccess.value = false
   
   try {
-    const formData = new FormData()
+    let avatarUrl = userProfile.value.avatar
     
-    // Add profile fields
-    Object.entries(userProfile.value).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        formData.append(key, String(value))
-      }
-    })
-    
-    // Add avatar if selected
+    // Handle avatar upload first if there's a new file
     if (avatarFile.value) {
-      formData.append('avatar', avatarFile.value)
+      // Upload avatar using the unified file handler
+      const fileName = `avatar_${Date.now()}.${avatarFile.value.name.split('.').pop()}`
+      
+      // Get signed upload URL
+      const uploadResponse = await fetch(`/api/user/file?fileName=${fileName}&fileType=${avatarFile.value.type}`, {
+        credentials: 'include'
+      })
+      
+      if (!uploadResponse.ok) throw new Error('Failed to get upload URL')
+      
+      const { uploadUrl, publicUrl } = await uploadResponse.json()
+      
+      // Upload file directly to GCS
+      const uploadResult = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: avatarFile.value,
+        headers: {
+          'Content-Type': avatarFile.value.type
+        }
+      })
+      
+      if (!uploadResult.ok) throw new Error('Failed to upload avatar')
+      
+      avatarUrl = publicUrl
     }
+
+    // Prepare profile data
+    const profileData = {
+      ...userProfile.value,
+      avatar: avatarUrl
+    }
+
+    // Use the updateProfile method from the composable
+    const updatedData = await updateProfile(profileData)
     
-    const response = await fetch('/api/user/profile', {
-      method: 'PUT',
-      credentials: 'include',
-      body: formData
-    })
-    
-    if (!response.ok) throw new Error('Failed to save profile')
-    
-    const updatedData = await response.json()
-    userProfile.value = { ...userProfile.value, ...updatedData }
-    
-    // Update auth user data
+    // Update auth user data to keep it in sync
     if (auth.user) {
-      Object.assign(auth.user, updatedData)
+      Object.assign(auth.user, {
+        username: updatedData.username,
+        email: updatedData.email,
+        imageurl: updatedData.avatar
+      })
     }
     
     saveSuccess.value = true
@@ -149,6 +146,22 @@ function formatDate(dateString: string) {
   if (!dateString) return ''
   return new Date(dateString).toLocaleDateString('ja-JP')
 }
+function onPhoneNumberInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (userProfile.value) {
+    userProfile.value.phone = formatPhoneNumber(target.value)
+  }
+}
+function formatPhoneNumber(value: string) {
+  // Format as XX-XXXX-XXXX or XXX-XXX-XXXX
+  const cleaned = value.replace(/\D/g, '')
+  if (cleaned.length === 10) {
+    return cleaned.slice(0, 2) + '-' + cleaned.slice(2, 6) + '-' + cleaned.slice(6)
+  } else if (cleaned.length === 11) {
+    return cleaned.slice(0, 3) + '-' + cleaned.slice(3, 7) + '-' + cleaned.slice(7)
+  }
+  return cleaned
+}
 </script>
 
 <template>
@@ -163,7 +176,7 @@ function formatDate(dateString: string) {
       <p>プロフィールを読み込み中...</p>
     </div>
     
-    <div v-else class="profile-content">
+    <div v-else-if="userProfile" class="profile-content">
       <form @submit.prevent="saveProfile" class="profile-form">
         <!-- Avatar Section -->
         <div class="form-section">
@@ -242,6 +255,7 @@ function formatDate(dateString: string) {
                 v-model="userProfile.phone"
                 type="tel"
                 placeholder="090-1234-5678"
+                @input="onPhoneNumberInput"
               />
             </div>
           </div>
@@ -323,18 +337,22 @@ function formatDate(dateString: string) {
         <div class="info-grid">
           <div class="info-item">
             <span class="label">アカウント作成日:</span>
-            <span class="value">{{ formatDate(userProfile.created_at || '') || '不明' }}</span>
+            <span class="value">{{ formatDate(userProfile?.createdat || '') || '不明' }}</span>
           </div>
           <div class="info-item">
-            <span class="label">最終ログイン:</span>
-            <span class="value">{{ formatDate(userProfile.last_login || '') || '不明' }}</span>
+            <span class="label">最終更新日:</span>
+            <span class="value">{{ formatDate(userProfile?.updatedat || '') || '不明' }}</span>
           </div>
           <div class="info-item">
             <span class="label">ユーザーID:</span>
-            <span class="value">{{ userProfile.userid || '不明' }}</span>
+            <span class="value">{{ userProfile?.userid || '不明' }}</span>
           </div>
         </div>
       </div>
+    </div>
+    
+    <div v-else class="no-profile">
+      <p>プロフィール情報を読み込めませんでした。</p>
     </div>
   </div>
 </template>
@@ -594,6 +612,12 @@ function formatDate(dateString: string) {
 .info-item .value {
   color: #2c3e50;
   font-weight: 500;
+}
+
+.no-profile {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
 }
 
 @media (max-width: 768px) {

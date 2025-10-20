@@ -27,7 +27,8 @@ const showAddressForm = ref(false)
 const editingAddress = ref<Address | null>(null)
 const newAddress = ref<Address>({
   addressid: 0,
-  name: "",
+  firstname: "",
+  lastname: "",
   postalcode: "",
   prefecture: "",
   city: "",
@@ -54,7 +55,8 @@ function openAddForm() {
   editingAddress.value = null
   newAddress.value = {
     addressid: 0,
-    name: "",
+    firstname: "",
+    lastname: "",
     postalcode: "",
     prefecture: "",
     city: "",
@@ -291,7 +293,7 @@ function onPhoneNumberInput(event: Event) {
           :class="{ default: address.isdefault }"
         >
           <div class="address-header-card">
-            <div class="address-name">{{ address.name }}</div>
+            <div class="address-name">{{ address.firstname }} {{ address.lastname }}</div>
             <div class="address-actions">
               <button class="edit-btn" @click="openEditForm(address)">編集</button>
               <button 
@@ -340,15 +342,27 @@ function onPhoneNumberInput(event: Event) {
         </div>
         
         <form @submit.prevent="saveAddress" class="address-form">
-          <div class="form-row">
-            <label for="name">お名前 *</label>
-            <input 
-              id="name"
-              v-model="newAddress.name"
-              type="text"
-              placeholder="田中 太郎"
-              required
-            />
+          <div class="form-row form-row-split">
+            <div class="form-field">
+              <label for="firstname">名 *</label>
+              <input 
+                id="firstname"
+                v-model="newAddress.firstname"
+                type="text"
+                placeholder="田中"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="lastname">姓 *</label>
+              <input 
+                id="lastname"
+                v-model="newAddress.lastname"
+                type="text"
+                placeholder="太郎"
+                required
+              />
+            </div>
           </div>
           
           <div class="form-row">
@@ -704,7 +718,19 @@ function onPhoneNumberInput(event: Event) {
   flex-direction: column;
 }
 
-.form-row label {
+.form-row-split {
+  flex-direction: row;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-row label,
+.form-field label {
   margin-bottom: 8px;
   color: #2c3e50;
   font-weight: 500;
@@ -712,7 +738,9 @@ function onPhoneNumberInput(event: Event) {
 }
 
 .form-row input,
-.form-row select {
+.form-row select,
+.form-field input,
+.form-field select {
   padding: 12px 16px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
@@ -722,7 +750,9 @@ function onPhoneNumberInput(event: Event) {
 }
 
 .form-row input:focus,
-.form-row select:focus {
+.form-row select:focus,
+.form-field input:focus,
+.form-field select:focus {
   outline: none;
   border-color: #2196f3;
   box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);

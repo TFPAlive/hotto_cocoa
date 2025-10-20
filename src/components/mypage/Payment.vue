@@ -578,7 +578,7 @@ function formatExpiryDate(month?: number, year?: number) {
 .modal-content {
   background: white;
   border-radius: 12px;
-  max-width: 500px;
+  max-width: 600px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
@@ -625,7 +625,7 @@ function formatExpiryDate(month?: number, year?: number) {
 
 .form-row input,
 .form-row select {
-  width: 100%;
+  width: -webkit-fill-available;
   padding: 12px 16px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;

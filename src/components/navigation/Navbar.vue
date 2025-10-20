@@ -3,15 +3,26 @@
     import CartMenu from './CartMenu.vue';
     import axios from "axios";
     import { auth, checkUser } from "@/composables/useAuth";
+    import { useUserProfile } from "@/composables/useUserProfile";
     import { useRouter } from 'vue-router';
-    import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+    import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 
     const router = useRouter();
     const showDropdown = ref(false);
     const dropdownRoot = ref<HTMLElement | null>(null);
-    const userName = computed(() => auth.user?.username || 'User');
-    const userAvatar = computed(() => auth.user?.imageurl || '/default-avatar.png');
+    
+    // Use profile composable for user data
+    const { userProfile, fetchProfile, displayName, avatarUrl } = useUserProfile();
+    const userName = computed(() => displayName.value);
+    const userAvatar = computed(() => avatarUrl.value);
 	
+    // Watch for auth state changes to fetch profile
+    watch(() => auth.isLoggedIn, async (isLoggedIn) => {
+        if (isLoggedIn) {
+            await fetchProfile();
+        }
+    }, { immediate: true });
+
     async function handleLogout() {
         try {
             router.push("/auth/logging-out"); // Redirect to logging-out page first
@@ -24,23 +35,23 @@
         } catch (err) {
             console.error("Logout failed", err);
         }
-
-        function onDocumentClick(e: MouseEvent) {
-            const root = dropdownRoot.value
-            if (!root) return
-            const target = e.target as Node | null
-            if (target && root.contains(target)) return // clicked inside -> ignore
-            showDropdown.value = false
-        }
-
-        onMounted(() => {
-            document.addEventListener('click', onDocumentClick)
-        })
-
-        onBeforeUnmount(() => {
-            document.removeEventListener('click', onDocumentClick)
-        })
     }
+
+    function onDocumentClick(e: MouseEvent) {
+        const root = dropdownRoot.value
+        if (!root) return
+        const target = e.target as Node | null
+        if (target && root.contains(target)) return // clicked inside -> ignore
+        showDropdown.value = false
+    }
+
+    onMounted(() => {
+        document.addEventListener('click', onDocumentClick)
+    })
+
+    onBeforeUnmount(() => {
+        document.removeEventListener('click', onDocumentClick)
+    })
 </script>
 <template>
     <header class="navbar">
@@ -272,5 +283,8 @@
 
     .dropdown-logout:hover {
         background: #7a3a1d;
+    }
+    hr {
+        width: 90%;
     }
 </style>

@@ -46,7 +46,8 @@ export interface Drink {
 export interface Address {
 	addressid: number;
 	userid?: number;
-	name: string;
+	firstname: string;
+	lastname: string;
 	postalcode: string;
 	prefecture: string;
 	city: string;

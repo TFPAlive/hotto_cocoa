@@ -165,7 +165,7 @@ async function setAsDefault(addressid: number) {
                                 <div v-if="addresses.length === 0" class="no-addresses">No addresses found. Please add one in your account.</div>
                                 <ul v-else class="address-list-dropdown">
                                     <li v-for="addr in addresses" :key="addr.addressid" :class="{ selected: addr.addressid === selectedAddressId }" @click="selectAddress(addr.addressid), setAsDefault(addr.addressid)">
-                                        <div class="addr-name">{{ addr.name }}</div>
+                                        <div class="addr-name">{{ addr.firstname }} {{ addr.lastname }}</div>
                                         <div class="addr-line">{{ addr.prefecture }} {{ addr.city }} {{ addr.town }} {{ addr.building }}</div>
                                         <div class="addr-phone">{{ addr.phone }}</div>
                                     </li>
@@ -178,7 +178,7 @@ async function setAsDefault(addressid: number) {
                 <div v-else>
                     <div v-if="!defaultAddress">No default address found. Click Change address to select or add one.</div>
                     <div v-else class="default-address">
-                        <div class="addr-name">{{ shippingAddress?.name }}</div>
+                        <div class="addr-name">{{ shippingAddress?.firstname }} {{ shippingAddress?.lastname }}</div>
                         <div class="addr-line">〒{{ shippingAddress?.postalcode }} {{ shippingAddress?.prefecture }} {{ shippingAddress?.city }} {{ shippingAddress?.town }} {{ shippingAddress?.building }}</div>
                         <div class="addr-phone">TEL: {{ shippingAddress?.phone }}</div>
                     </div>

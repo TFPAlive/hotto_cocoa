@@ -71,8 +71,6 @@ function formatDate(dateString: string) {
   })
 }
 
-
-
 function viewOrderDetails(order: Order) {
   selectedOrder.value = order
   showOrderModal.value = true

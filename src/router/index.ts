@@ -11,7 +11,8 @@ const routes = [
 			{ path: "", component: () => import("@/components/views/Home.vue") },
 			{ path: "design", component: () => import("@/components/views/Design.vue") },
 			{ path: "mypage", component: () => import("@/components/views/MyPage.vue")},
-			{ path: "checkout", component: () => import("@/components/views/Checkout.vue") }
+			{ path: "checkout", component: () => import("@/components/views/Checkout.vue") },
+			//{ path: "store", component: () => import("@/components/views/Store.vue") }
 			// ...other normal pages
 		]
 	},

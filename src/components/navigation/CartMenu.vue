@@ -168,7 +168,7 @@
                             <hr />
                             <p>Total Price: {{ formatPrice(totalPrice) }}</p>
                             <div class="checkout-actions">
-                                <router-link to="/checkout" class="checkout-btn">Go To Payment</router-link>
+                                <router-link to="/checkout" class="checkout-btn" @click="showCart = false">Go To Payment</router-link>
                             </div>
                         </div>
                     </div>
