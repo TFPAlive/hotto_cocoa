@@ -8,10 +8,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 		const q = req.query || {}
 		const action = String((q as any).action || '')
 
-		// GET /api/user/products -> list all products
+		// GET /api/user/products -> list all products with optional filtering
 		if (req.method === 'GET' && !action) {
 			const connection = await getConnection();
-			const [rows] = await connection.execute("SELECT * FROM Product");
+			
+			// Get query parameters for filtering
+			const { search, category, sortBy } = q as any;
+			
+			let query = "SELECT * FROM Product WHERE 1=1";
+			const params: any[] = [];
+			
+			// Add search filter
+			if (search && typeof search === 'string' && search.trim()) {
+				query += " AND (name LIKE ? OR description LIKE ? OR keyword LIKE ?)";
+				const searchTerm = `%${search.trim()}%`;
+				params.push(searchTerm, searchTerm, searchTerm);
+			}
+			
+			// Add category filter
+			if (category && typeof category === 'string' && category.trim()) {
+				query += " AND category = ?";
+				params.push(category.trim());
+			}
+			
+			// Add sorting
+			switch (sortBy) {
+				case 'price-low':
+					query += " ORDER BY price ASC";
+					break;
+				case 'price-high':
+					query += " ORDER BY price DESC";
+					break;
+				case 'name':
+					query += " ORDER BY name ASC";
+					break;
+				default:
+					query += " ORDER BY productid ASC"; // Default sort by ID (featured)
+			}
+			
+			const [rows] = await connection.execute(query, params);
 			return res.status(200).json(rows);
 		}
 
