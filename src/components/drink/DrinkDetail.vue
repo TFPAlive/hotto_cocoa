@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductDetail } from '@/composables/useProductDetail'
 import { useMyCart } from '@/composables/useMyCart'
 import { auth } from '@/composables/useAuth'
 import { formatPrice } from '@/utils/currency'
@@ -11,94 +10,117 @@ const route = useRoute()
 const router = useRouter()
 const { fetchCartItems } = useMyCart()
 
-const productId = computed(() => {
+const drinkId = computed(() => {
   const id = route.params.id
   return Array.isArray(id) ? parseInt(id[0]) : parseInt(String(id))
 })
 
-const { 
-  product, 
-  reviews, 
-  loading, 
-  error, 
-  averageRating,
-  totalReviews,
-  fetchProduct,
-  fetchReviews 
-} = useProductDetail()
-
 // Component state
-const selectedImage = ref(0)
-const quantity = ref(1)
+const drink = ref<any>(null)
+const ingredients = ref<any[]>([])
+const reviews = ref<any[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
 const addingToCart = ref(false)
-const addingAsProduct = ref(false)
+const quantity = ref(1)
+
+// Review form state
 const reviewText = ref('')
 const reviewRating = ref(5)
 const submittingReview = ref(false)
 
-// Purchase mode: 'design' for drink creation, 'product' for direct purchase
-const purchaseMode = ref<'design' | 'product'>('product')
+// Computed properties
+const averageRating = computed(() => {
+  if (reviews.value.length === 0) return 0
+  const sum = reviews.value.reduce((acc, review) => acc + review.rating, 0)
+  return sum / reviews.value.length
+})
 
-// Product images (main + thumbnails)
-const productImages = computed(() => {
-  if (!product.value?.imageurl) return []
-  // For now, use the same image. In a real app, you'd have multiple images
-  return [
-    product.value.imageurl,
-    product.value.imageurl,
-    product.value.imageurl,
-    product.value.imageurl
-  ]
+const totalReviews = computed(() => reviews.value.length)
+
+const totalPrice = computed(() => {
+  if (!ingredients.value.length) return drink.value?.price || 0
+  return ingredients.value.reduce((sum, ingredient) => sum + (ingredient.price * ingredient.quantity), 0)
 })
 
 // Watch for route changes
-watch(productId, (newId) => {
+watch(drinkId, (newId) => {
   if (newId && !isNaN(newId)) {
-    fetchProduct(newId)
+    fetchDrink(newId)
+    fetchIngredients(newId)
     fetchReviews(newId)
   }
 }, { immediate: true })
 
-// Add to cart functionality
+// Fetch drink details
+async function fetchDrink(id: number) {
+  loading.value = true
+  error.value = null
+  
+  try {
+    const response = await fetch(`/api/user/products?action=drinks`)
+    if (!response.ok) throw new Error('Failed to fetch drinks')
+    
+    const drinks = await response.json()
+    const foundDrink = drinks.find((d: any) => d.drinkid === id)
+    
+    if (!foundDrink) {
+      throw new Error('Drink not found')
+    }
+    
+    drink.value = foundDrink
+  } catch (err: any) {
+    error.value = err.message
+    console.error('Error fetching drink:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Fetch drink ingredients
+async function fetchIngredients(drinkId: number) {
+  try {
+    const response = await fetch(`/api/user/products?action=drinkProducts`)
+    if (!response.ok) throw new Error('Failed to fetch ingredients')
+    
+    const allIngredients = await response.json()
+    ingredients.value = allIngredients.filter((ingredient: any) => ingredient.drinkid === drinkId)
+  } catch (err: any) {
+    console.error('Error fetching ingredients:', err)
+  }
+}
+
+// Fetch reviews (placeholder - you might need to create a specific API for drink reviews)
+async function fetchReviews(drinkId: number) {
+  try {
+    // This is a placeholder - you might need to modify your review API to handle drinks
+    const response = await fetch(`/api/user/reviews?drinkid=${drinkId}`)
+    if (response.ok) {
+      reviews.value = await response.json()
+    }
+  } catch (err: any) {
+    console.error('Error fetching reviews:', err)
+  }
+}
+
+// Add drink to cart
 async function addToCart() {
   if (!auth.isLoggedIn) {
     router.push('/auth/login')
     return
   }
 
-  if (!product.value) return
+  if (!drink.value) return
 
   addingToCart.value = true
   
   try {
-    // Create a drink with this product
-    const drinkData = {
-      drinkname: `${product.value.name} - Store Item`,
-      products: [{ productid: product.value.productid, quantity: quantity.value }],
-      price: product.value.price * quantity.value,
-      userid: auth.user?.userid,
-      uniqueid: `store-${product.value.productid}-${Date.now()}`
-    }
-
-    // Create the drink first
-    const createResponse = await fetch('/api/user/products?action=create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(drinkData)
-    })
-
-    if (!createResponse.ok) throw new Error('Failed to create drink')
-    
-    const { drink } = await createResponse.json()
-
-    // Add to cart
     const cartResponse = await fetch('/api/user/cart?action=add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ 
-        drinkid: drink.drinkid, 
+        drinkid: drink.value.drinkid,
         userid: auth.user?.userid 
       })
     })
@@ -108,50 +130,12 @@ async function addToCart() {
     // Refresh cart
     await fetchCartItems()
     
-    alert('Added to cart successfully!')
+    alert('Drink added to cart successfully!')
   } catch (error) {
     console.error('Error adding to cart:', error)
     alert('Failed to add to cart')
   } finally {
     addingToCart.value = false
-  }
-}
-
-// Add product directly to cart (new function)
-async function addProductToCart() {
-  if (!auth.isLoggedIn) {
-    router.push('/auth/login')
-    return
-  }
-
-  if (!product.value) return
-
-  addingAsProduct.value = true
-  
-  try {
-    // Add product directly to cart
-    const cartResponse = await fetch('/api/user/cart?action=add', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ 
-        productid: product.value.productid,
-        quantity: quantity.value,
-        userid: auth.user?.userid 
-      })
-    })
-
-    if (!cartResponse.ok) throw new Error('Failed to add product to cart')
-    
-    // Refresh cart
-    await fetchCartItems()
-    
-    alert('Product added to cart successfully!')
-  } catch (error) {
-    console.error('Error adding product to cart:', error)
-    alert('Failed to add product to cart')
-  } finally {
-    addingAsProduct.value = false
   }
 }
 
@@ -162,7 +146,7 @@ async function submitReview() {
     return
   }
 
-  if (!reviewText.value.trim() || !product.value) return
+  if (!reviewText.value.trim() || !drink.value) return
 
   submittingReview.value = true
 
@@ -172,7 +156,7 @@ async function submitReview() {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
-        productid: product.value.productid,
+        drinkid: drink.value.drinkid,
         userid: auth.user?.userid,
         rating: reviewRating.value,
         comment: reviewText.value.trim()
@@ -184,7 +168,7 @@ async function submitReview() {
     // Reset form and refresh reviews
     reviewText.value = ''
     reviewRating.value = 5
-    await fetchReviews(productId.value)
+    await fetchReviews(drinkId.value)
     
     alert('Review submitted successfully!')
   } catch (error) {
@@ -195,41 +179,30 @@ async function submitReview() {
   }
 }
 
-// Utility functions
-function incrementQuantity() {
-  quantity.value++
-}
-
-function decrementQuantity() {
-  if (quantity.value > 1) {
-    quantity.value--
-  }
-}
-
 onMounted(() => {
   // Additional initialization if needed
 })
 </script>
 
 <template>
-  <div class="product-detail-container">
+  <div class="drink-detail-container">
     <!-- Loading State -->
     <div v-if="loading" class="loading-state">
       <div class="loading-spinner"></div>
-      <p>Loading product...</p>
+      <p>Loading drink...</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="error-state">
-      <h2>Product Not Found</h2>
+      <h2>Drink Not Found</h2>
       <p>{{ error }}</p>
       <button @click="router.push('/store')" class="back-btn">
         ← Back to Store
       </button>
     </div>
 
-    <!-- Product Detail -->
-    <div v-else-if="product" class="product-detail">
+    <!-- Drink Detail -->
+    <div v-else-if="drink" class="drink-detail">
       <!-- Breadcrumb -->
       <nav class="breadcrumb">
         <div class="breadcrumb-path">
@@ -237,39 +210,31 @@ onMounted(() => {
           <span>/</span>
           <router-link to="/store">Store</router-link>
           <span>/</span>
-          <span>{{ product.name }}</span>
+          <span>{{ drink.name || drink.drinkname }}</span>
         </div>
         <button @click="router.push('/store')" class="back-to-store-btn">
           ← Back to Store
         </button>
       </nav>
 
-      <div class="product-content">
-        <!-- Product Images -->
-        <div class="product-images">
+      <div class="drink-content">
+        <!-- Drink Image -->
+        <div class="drink-images">
           <div class="main-image">
             <img 
-              :src="productImages[selectedImage] || '/placeholder-image.jpg'" 
-              :alt="product.name"
-              class="main-product-image"
+              :src="drink.imageurl || '/placeholder-drink.jpg'" 
+              :alt="drink.name || drink.drinkname"
+              class="main-drink-image"
             />
           </div>
-          
-          <div class="thumbnail-images" v-if="productImages.length > 1">
-            <img 
-              v-for="(image, index) in productImages.slice(0, 4)"
-              :key="index"
-              :src="image"
-              :alt="`${product.name} view ${index + 1}`"
-              :class="['thumbnail', { active: selectedImage === index }]"
-              @click="selectedImage = index"
-            />
+          <div class="drink-type-badge">
+            🍹 Custom Drink
           </div>
         </div>
 
-        <!-- Product Info -->
-        <div class="product-info">
-          <h1 class="product-title">{{ product.name }}</h1>
+        <!-- Drink Info -->
+        <div class="drink-info">
+          <h1 class="drink-title">{{ drink.name || drink.drinkname }}</h1>
           
           <!-- Rating and Reviews -->
           <div class="rating-section">
@@ -282,84 +247,71 @@ onMounted(() => {
 
           <!-- Price -->
           <div class="price-section">
-            <span class="current-price">{{ formatPrice(product.price) }}</span>
-            <span class="price-note">after applying coupon code to ¥3,872</span>
-            <div class="discount-tag">Est. ¥672</div>
-          </div>
-
-          <!-- Product Details -->
-          <div class="product-details">
-            <div class="detail-item" v-if="product.category">
-              <strong>Category:</strong> {{ product.category }}
-            </div>
-            <div class="detail-item" v-if="product.material">
-              <strong>Material:</strong> {{ product.material }}
-            </div>
-            <div class="detail-item" v-if="product.keyword">
-              <strong>Keywords:</strong> {{ product.keyword }}
-            </div>
+            <span class="current-price">{{ formatPrice(drink.price || totalPrice) }}</span>
+            <span class="price-note">Custom drink recipe</span>
           </div>
 
           <!-- Description -->
           <div class="description-section">
             <h3>Description</h3>
-            <p>{{ product.description || 'No description available for this product.' }}</p>
+            <p>{{ drink.description || 'This is a custom drink recipe made with carefully selected ingredients.' }}</p>
           </div>
 
-          <!-- Purchase Mode Selector -->
-          <div class="purchase-mode-section">
-            <h3>Purchase Options</h3>
-            <div class="mode-selector">
-              <label class="mode-option">
-                <input type="radio" v-model="purchaseMode" value="product" />
-                <span class="option-content">
-                  <strong>Buy as Individual Product</strong>
-                  <small>Purchase this item directly</small>
-                </span>
-              </label>
-              <label class="mode-option">
-                <input type="radio" v-model="purchaseMode" value="design" />
-                <span class="option-content">
-                  <strong>Add to Drink Design</strong>
-                  <small>Use this ingredient in a custom drink</small>
-                </span>
-              </label>
+          <!-- Ingredients Section -->
+          <div class="ingredients-section">
+            <h3>Ingredients</h3>
+            <div v-if="ingredients.length === 0" class="no-ingredients">
+              <p>Loading ingredients...</p>
+            </div>
+            <div v-else class="ingredients-list">
+              <div 
+                v-for="ingredient in ingredients" 
+                :key="ingredient.productid"
+                class="ingredient-item"
+              >
+                <div class="ingredient-image">
+                  <img 
+                    v-if="ingredient.imageurl" 
+                    :src="ingredient.imageurl" 
+                    :alt="ingredient.name"
+                    class="ingredient-img"
+                  />
+                  <div v-else class="ingredient-placeholder">📦</div>
+                </div>
+                <div class="ingredient-info">
+                  <h4>{{ ingredient.name }}</h4>
+                  <p class="ingredient-description">{{ ingredient.description || 'Premium ingredient' }}</p>
+                  <div class="ingredient-details">
+                    <span class="ingredient-quantity">Qty: {{ ingredient.quantity }}</span>
+                    <span class="ingredient-price">{{ formatPrice(ingredient.price) }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Quantity and Add to Cart -->
+          <!-- Add to Cart Section -->
           <div class="purchase-section">
             <div class="quantity-selector">
               <label>Qty</label>
               <div class="quantity-controls">
-                <button @click="decrementQuantity" :disabled="quantity <= 1">-</button>
+                <button @click="quantity = Math.max(1, quantity - 1)" :disabled="quantity <= 1">-</button>
                 <input type="number" v-model.number="quantity" min="1" max="99" />
-                <button @click="incrementQuantity">+</button>
+                <button @click="quantity++">+</button>
               </div>
             </div>
 
             <button 
-              v-if="purchaseMode === 'product'"
-              @click="addProductToCart"
-              :disabled="addingAsProduct"
-              class="add-to-cart-btn primary"
-            >
-              <span v-if="addingAsProduct">Adding to Cart...</span>
-              <span v-else>Add Product to Cart</span>
-            </button>
-
-            <button 
-              v-if="purchaseMode === 'design'"
               @click="addToCart"
               :disabled="addingToCart"
-              class="add-to-cart-btn secondary"
+              class="add-to-cart-btn"
             >
-              <span v-if="addingToCart">Adding to Design...</span>
-              <span v-else>Add to Drink Design</span>
+              <span v-if="addingToCart">Adding to Cart...</span>
+              <span v-else>Add Drink to Cart</span>
             </button>
 
             <button class="buy-now-btn">
-              {{ purchaseMode === 'product' ? 'Buy Now' : 'Design & Buy' }}
+              Order Now
             </button>
           </div>
 
@@ -367,18 +319,15 @@ onMounted(() => {
           <div class="additional-info">
             <div class="info-item">
               <span class="icon">✓</span>
-              <span>Safe payments - Secure privacy?</span>
+              <span>Freshly prepared with premium ingredients</span>
             </div>
             <div class="info-item">
               <span class="icon">✓</span>
-              <span>Order guarantee</span>
+              <span>Custom recipe crafted for your taste</span>
             </div>
-            <div class="payment-badges">
-              <span class="badge">Guaranteed</span>
-              <span class="badge">Real product warranty</span>
-              <span class="badge">Free Credit Card</span>
-              <span class="badge">Speedy item verification</span>
-              <span class="badge">Quality Assurance testing</span>
+            <div class="info-item">
+              <span class="icon">✓</span>
+              <span>Made to order quality guarantee</span>
             </div>
           </div>
         </div>
@@ -395,11 +344,6 @@ onMounted(() => {
             <StarRating :modelValue="averageRating" />
             <span class="total-reviews">{{ totalReviews }} reviews</span>
           </div>
-          
-          <div class="verified-badge">
-            <span class="checkmark">✓</span>
-            <span>99 reviews from verified purchases</span>
-          </div>
         </div>
 
         <!-- Review Form -->
@@ -411,7 +355,7 @@ onMounted(() => {
           </div>
           <textarea 
             v-model="reviewText"
-            placeholder="Share your experience with this product..."
+            placeholder="Share your experience with this drink..."
             class="review-textarea"
             rows="4"
           ></textarea>
@@ -428,7 +372,7 @@ onMounted(() => {
         <!-- Reviews List -->
         <div class="reviews-list">
           <div v-if="reviews.length === 0" class="no-reviews">
-            <p>No reviews yet. Be the first to review this product!</p>
+            <p>No reviews yet. Be the first to review this drink!</p>
           </div>
           
           <div 
@@ -444,22 +388,6 @@ onMounted(() => {
               <StarRating :modelValue="review.rating" />
             </div>
             <p class="review-comment">{{ review.comment }}</p>
-            <div class="review-helpful">
-              <span>Helpful?</span>
-              <button class="helpful-btn">👍</button>
-              <button class="helpful-btn">👎</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Related Products -->
-      <div class="related-products">
-        <h2>Related Products</h2>
-        <div class="related-grid">
-          <!-- Related products would be loaded here -->
-          <div class="related-placeholder">
-            <p>Related products coming soon...</p>
           </div>
         </div>
       </div>
@@ -468,7 +396,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.product-detail-container {
+.drink-detail-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -486,7 +414,7 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #8B4513;
+  border-top: 4px solid #1976d2;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -498,7 +426,7 @@ onMounted(() => {
 }
 
 .back-btn {
-  background: #8B4513;
+  background: #1976d2;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -523,7 +451,7 @@ onMounted(() => {
 }
 
 .back-to-store-btn {
-  background: #8B4513;
+  background: #1976d2;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -533,7 +461,7 @@ onMounted(() => {
 }
 
 .breadcrumb a {
-  color: #8B4513;
+  color: #1976d2;
   text-decoration: none;
 }
 
@@ -545,7 +473,7 @@ onMounted(() => {
   margin: 0 8px;
 }
 
-.product-content {
+.drink-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
@@ -556,10 +484,11 @@ onMounted(() => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.product-images {
+.drink-images {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  position: relative;
 }
 
 .main-image {
@@ -569,39 +498,31 @@ onMounted(() => {
   background: #f5f5f5;
 }
 
-.main-product-image {
+.main-drink-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.thumbnail-images {
-  display: flex;
-  gap: 10px;
+.drink-type-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-.thumbnail {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-}
-
-.thumbnail:hover,
-.thumbnail.active {
-  border-color: #8B4513;
-}
-
-.product-info {
+.drink-info {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.product-title {
+.drink-title {
   font-size: 1.8rem;
   font-weight: bold;
   color: #333;
@@ -639,7 +560,7 @@ onMounted(() => {
 .current-price {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #8B4513;
+  color: #1976d2;
 }
 
 .price-note {
@@ -647,27 +568,8 @@ onMounted(() => {
   color: #666;
 }
 
-.discount-tag {
-  background: #ff4444;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  width: fit-content;
-}
-
-.product-details {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.detail-item {
-  font-size: 0.95rem;
-  color: #555;
-}
-
-.description-section h3 {
+.description-section h3,
+.ingredients-section h3 {
   margin: 0 0 10px 0;
   color: #333;
 }
@@ -678,68 +580,80 @@ onMounted(() => {
   margin: 0;
 }
 
-.purchase-mode-section {
+.ingredients-section {
   background: #f8f9fa;
   padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+}
+
+.ingredients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: white;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
 }
 
-.purchase-mode-section h3 {
-  margin: 0 0 15px 0;
-  color: #333;
-  font-size: 1.1rem;
-}
-
-.mode-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.mode-option {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 15px;
-  border: 2px solid #e0e0e0;
+.ingredient-image {
+  width: 60px;
+  height: 60px;
   border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-  background: white;
-}
-
-.mode-option:hover {
-  border-color: #8B4513;
-  background: #fefefe;
-}
-
-.mode-option input[type="radio"] {
-  margin-top: 2px;
-}
-
-.mode-option input[type="radio"]:checked {
-  accent-color: #8B4513;
-}
-
-.mode-option input[type="radio"]:checked + .option-content {
-  color: #8B4513;
-}
-
-.option-content {
+  overflow: hidden;
+  background: #f5f5f5;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  justify-content: center;
 }
 
-.option-content strong {
-  font-size: 1rem;
+.ingredient-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ingredient-placeholder {
+  font-size: 1.5rem;
+}
+
+.ingredient-info {
+  flex: 1;
+}
+
+.ingredient-info h4 {
+  margin: 0 0 5px 0;
   color: #333;
+  font-size: 1rem;
 }
 
-.option-content small {
+.ingredient-description {
+  margin: 0 0 8px 0;
   color: #666;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+}
+
+.ingredient-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ingredient-quantity {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.ingredient-price {
+  color: #1976d2;
+  font-weight: 600;
 }
 
 .purchase-section {
@@ -802,22 +716,13 @@ onMounted(() => {
   transition: background-color 0.3s;
 }
 
-.add-to-cart-btn.primary {
-  background: #8B4513;
-  color: white;
-}
-
-.add-to-cart-btn.primary:hover:not(:disabled) {
-  background: #6B3410;
-}
-
-.add-to-cart-btn.secondary {
-  background: #2196f3;
-  color: white;
-}
-
-.add-to-cart-btn.secondary:hover:not(:disabled) {
+.add-to-cart-btn {
   background: #1976d2;
+  color: white;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background: #1565c0;
 }
 
 .add-to-cart-btn:disabled {
@@ -849,24 +754,8 @@ onMounted(() => {
 }
 
 .icon {
-  color: #28a745;
+  color: #1976d2;
   font-weight: bold;
-}
-
-.payment-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.badge {
-  background: #e8f4f8;
-  color: #0066cc;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  border: 1px solid #b3d9ff;
 }
 
 .reviews-section {
@@ -903,26 +792,6 @@ onMounted(() => {
   color: #333;
 }
 
-.verified-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #28a745;
-  font-size: 0.9rem;
-}
-
-.checkmark {
-  background: #28a745;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-}
-
 .review-form {
   background: #f8f9fa;
   padding: 20px;
@@ -954,7 +823,7 @@ onMounted(() => {
 }
 
 .submit-review-btn {
-  background: #8B4513;
+  background: #1976d2;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -964,7 +833,7 @@ onMounted(() => {
 }
 
 .submit-review-btn:hover:not(:disabled) {
-  background: #6B3410;
+  background: #1565c0;
 }
 
 .submit-review-btn:disabled {
@@ -1017,58 +886,17 @@ onMounted(() => {
 .review-comment {
   color: #555;
   line-height: 1.6;
-  margin: 0 0 15px 0;
-}
-
-.review-helpful {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.helpful-btn {
-  background: none;
-  border: 1px solid #ddd;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.helpful-btn:hover {
-  background: #f5f5f5;
-}
-
-.related-products {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.related-products h2 {
-  margin: 0 0 20px 0;
-  color: #333;
-}
-
-.related-placeholder {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-  background: #f8f9fa;
-  border-radius: 8px;
+  margin: 0;
 }
 
 @media (max-width: 768px) {
-  .product-content {
+  .drink-content {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 20px;
   }
   
-  .product-detail-container {
+  .drink-detail-container {
     padding: 15px;
   }
   

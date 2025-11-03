@@ -129,7 +129,16 @@
     }
 
     function generateUniqueId() {
-        form.value.uniqueid = `DRINK_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`
+        let uniqueid = ''
+        const selectedProducts = form.value.productids.map(id => 
+            products.value.find(p => p.productid === id)
+        ).filter(Boolean) as Product[]
+        
+        for (const p of selectedProducts) {
+            uniqueid += String(p.productid).padStart(4, '0')
+        }
+        
+        form.value.uniqueid = uniqueid || `DRINK_${Date.now()}`
     }
 
     function toggleProduct(productId: number) {

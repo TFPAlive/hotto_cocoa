@@ -26,11 +26,13 @@ export interface User {
 
 export interface CartItem {
   cartitemid: number
-  drinkid: number
+  drinkid?: number
+  productid?: number
   quantity: number
   price: number
   name: string
   imageurl: string | null
+  item_type: 'drink' | 'product'
 }
 
 export interface Drink {

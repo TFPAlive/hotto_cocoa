@@ -40,8 +40,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const placeholders = cartItemIds.map(() => '?').join(',')
+      // Updated query to handle both drinks and products
       const [cartRows] = await conn.execute(
-        `SELECT ci.cartitemid, ci.drinkid, ci.quantity, ci.price FROM CartItem ci JOIN UserDrink ud ON ci.drinkid = ud.drinkid WHERE ci.cartitemid IN (${placeholders}) AND ud.userid = ?`,
+        `SELECT 
+          ci.cartitemid, 
+          ci.drinkid, 
+          ci.productid, 
+          ci.quantity, 
+          ci.price,
+          CASE 
+            WHEN ci.drinkid IS NOT NULL THEN 'drink'
+            WHEN ci.productid IS NOT NULL THEN 'product'
+            ELSE 'unknown'
+          END as item_type
+        FROM CartItem ci 
+        LEFT JOIN UserDrink ud ON ci.drinkid = ud.drinkid 
+        LEFT JOIN Product p ON ci.productid = p.productid
+        WHERE ci.cartitemid IN (${placeholders}) 
+        AND (
+          (ci.drinkid IS NOT NULL AND ud.userid = ?) OR 
+          (ci.productid IS NOT NULL)
+        )`,
         [...cartItemIds, userid]
       )
 
@@ -75,15 +94,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Insert order items
       for (const r of cartArray) {
         await conn.execute(
-          'INSERT INTO OrderItem (orderid, drinkid, quantity, price) VALUES (?, ?, ?, ?)',
-          [orderid, r.drinkid, r.quantity, r.price]
+          'INSERT INTO OrderItem (orderid, drinkid, productid, quantity, price) VALUES (?, ?, ?, ?, ?)',
+          [orderid, r.drinkid || null, r.productid || null, r.quantity, r.price]
         )
       }
 
-      // Clear entire cart for the user (delete CartItem rows that belong to this user)
+      // Clear cart items that were just ordered
       await conn.execute(
-        `DELETE ci FROM CartItem ci JOIN UserDrink ud ON ci.drinkid = ud.drinkid WHERE ud.userid = ?`,
-        [userid]
+        `DELETE FROM CartItem WHERE cartitemid IN (${placeholders})`,
+        cartItemIds
       )
 
       await conn.commit()

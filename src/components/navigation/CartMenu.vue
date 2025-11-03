@@ -34,13 +34,23 @@
     async function incrementItem(item: any) {
         const previous = item.quantity
         // optimistic UI
-            item.quantity = (item.quantity || 0) + 1
+        item.quantity = (item.quantity || 0) + 1
         try {
-                const res = await fetch('/api/user/cart?action=add', {
+            const requestBody: any = { userid: auth.user?.userid }
+            
+            // Add appropriate ID based on item type
+            if (item.item_type === 'drink' && item.drinkid) {
+                requestBody.drinkid = item.drinkid
+            } else if (item.item_type === 'product' && item.productid) {
+                requestBody.productid = item.productid
+                requestBody.quantity = 1 // Add one more
+            }
+
+            const res = await fetch('/api/user/cart?action=add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ drinkid: item.drinkid, userid: auth.user?.userid }),
+                body: JSON.stringify(requestBody),
             })
             if (!res.ok) throw new Error('Failed to increment cart item')
             // We don't re-fetch; back-end persisted. Optionally we could merge returned data.
@@ -94,8 +104,11 @@
     }
 
     async function loadCartItemProducts() {
-        // Fetch all drink-product mappings once, then group by drinkid
+        // Only fetch drink-product mappings for drink items
         try {
+            const drinkItems = cartItems.value.filter(item => item.item_type === 'drink' && item.drinkid)
+            if (drinkItems.length === 0) return
+
             const allProducts = await fetchDrinkProducts()
             // allProducts expected to be an array with { drinkid, productid, ... }
             const map: Record<number, any[]> = {}
@@ -105,12 +118,10 @@
                 map[id].push(p)
             }
 
-            // Populate cartItemProducts for items that exist in the cart
-            for (const item of cartItems.value) {
-                if (item.drinkid) {
-                    const id = Number(item.drinkid)
-                    cartItemProducts.value[id] = map[id] || []
-                }
+            // Populate cartItemProducts for drink items that exist in the cart
+            for (const item of drinkItems) {
+                const id = Number(item.drinkid)
+                cartItemProducts.value[id] = map[id] || []
             }
         } catch (err) {
             console.error('Failed to load drink products for cart items', err)
@@ -141,27 +152,46 @@
                         <div v-if="cartItems.length === 0">Your cart is empty.</div>
                         <div v-else>
                             <div v-for="item in cartItems" :key="item.cartitemid" class="cart-item">
+                                <!-- Item Type Badge -->
+                                <div class="item-type-badge" :class="item.item_type">
+                                    {{ item.item_type === 'drink' ? '🍹 Custom Drink' : '🛒 Product' }}
+                                </div>
+                                
                                 <div class="item-header">
                                     <div class="image-cell">
                                         <img v-if="item.imageurl" :src="item.imageurl" alt="Product Image" />
                                         <div v-else class="image-placeholder">No Image</div>
                                     </div>
-                                    <h3>{{ item.name }}</h3>
+                                    <div class="item-info">
+                                        <h3>{{ item.name }}</h3>
+                                        <p class="item-price">{{ formatPrice(item.price) }}</p>
+                                    </div>
                                 </div>
+                                
                                 <div class="qty-control">
                                     <button class="qty-btn" @click="decrementItem(item)" aria-label="Decrease">−</button>
                                     <span class="qty-value">{{ item.quantity }}</span>
                                     <button class="qty-btn" @click="incrementItem(item)" aria-label="Increase">+</button>
                                 </div>
-                                <div v-if="cartItemProducts[item.drinkid]" class="product-list">
-                                    <p><strong>Products used:</strong></p>
+                                
+                                <!-- Show ingredients for drinks -->
+                                <div v-if="item.item_type === 'drink' && item.drinkid && cartItemProducts[item.drinkid]" class="product-list">
+                                    <p><strong>Ingredients:</strong></p>
                                     <ul>
                                         <li v-for="product in cartItemProducts[item.drinkid]" :key="product.productid">
-                                            {{ product.name }} (ID: {{ product.productid }})
+                                            {{ product.name }}
                                         </li>
                                     </ul>
                                 </div>
-                                <p>Base Price: {{ formatPrice(item.price) }}</p>
+                                
+                                <!-- Show product details for individual products -->
+                                <div v-if="item.item_type === 'product'" class="product-details">
+                                    <p class="item-note">Individual product purchase</p>
+                                </div>
+                                
+                                <div class="item-total">
+                                    <strong>Subtotal: {{ formatPrice(item.price * item.quantity) }}</strong>
+                                </div>
                             </div>
                         </div>
                         <div v-if="cartItems.length > 0" class="cart-total">
@@ -235,15 +265,80 @@
 
     .cart-item {
         margin-bottom: 20px;
-        padding-bottom: 15px;
+        padding: 15px;
         border-bottom: 1px solid #eee;
+        background: #fafafa;
+        border-radius: 8px;
+    }
+
+    .item-type-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .item-type-badge.drink {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .item-type-badge.product {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .item-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-info h3 {
+        margin: 0 0 4px 0;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .item-price {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .item-total {
+        margin-top: 10px;
+        text-align: right;
+        color: #8B4513;
+    }
+
+    .product-details {
+        margin: 10px 0;
+        padding: 8px;
+        background: rgba(245, 124, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    .item-note {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #f57c00;
+        font-style: italic;
     }
 
     .product-list {
         margin: 10px 0;
         padding: 10px;
-        background: rgba(0, 0, 0, 0.05);
+        background: rgba(25, 118, 210, 0.1);
         border-radius: 5px;
+        border-left: 3px solid #1976d2;
     }
 
     .product-list ul {

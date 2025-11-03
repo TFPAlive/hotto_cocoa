@@ -66,7 +66,13 @@ async function placeOrder() {
             userid: auth.user?.userid,
             addressid: selectedAddressId.value,
             paymentMethod: selectedPayment.value,
-            items: cartItems.value.map(i => ({ cartitemid: i.cartitemid, drinkid: i.drinkid, quantity: i.quantity }))
+            items: cartItems.value.map(i => ({ 
+                cartitemid: i.cartitemid, 
+                drinkid: i.drinkid, 
+                productid: i.productid,
+                quantity: i.quantity,
+                item_type: i.item_type 
+            }))
         }
 
         const res = await fetch('/api/user/placeOrder', {
@@ -190,11 +196,22 @@ async function setAsDefault(addressid: number) {
                 <div v-if="cartItems.length === 0">Your cart is empty.</div>
                 <div v-else class="items-list">
                     <div v-for="item in cartItems" :key="item.cartitemid" class="checkout-item">
-                        <img v-if="item.imageurl" :src="item.imageurl" alt="" class="item-image" />
-                        <div class="item-info">
-                            <div class="item-name">{{ item.name }}</div>
-                            <div class="item-qty">Qty: {{ item.quantity }}</div>
-                            <div class="item-price">{{ formatPrice(item.price * item.quantity) }}</div>
+                        <div class="item-type-badge" :class="item.item_type">
+                            {{ item.item_type === 'drink' ? '🍹 Custom Drink' : '🛒 Product' }}
+                        </div>
+                        <div class="item-content">
+                            <img v-if="item.imageurl" :src="item.imageurl" alt="" class="item-image" />
+                            <div class="item-info">
+                                <div class="item-name">{{ item.name }}</div>
+                                <div class="item-description" v-if="item.item_type === 'drink'">
+                                    Custom drink recipe
+                                </div>
+                                <div class="item-description" v-else>
+                                    Individual product
+                                </div>
+                                <div class="item-qty">Qty: {{ item.quantity }}</div>
+                                <div class="item-price">{{ formatPrice(item.price * item.quantity) }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -352,10 +369,45 @@ async function setAsDefault(addressid: number) {
 
 .checkout-item {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 0 0 auto;
+    width: 280px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.item-type-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: fit-content;
+}
+
+.item-type-badge.drink {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.item-type-badge.product {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.item-content {
+    display: flex;
     gap: 12px;
     align-items: center;
-    flex: 0 0 auto;
-    width: 250px;
+}
+
+.item-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 2px 0;
 }
 
 .item-image {

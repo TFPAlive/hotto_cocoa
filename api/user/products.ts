@@ -61,6 +61,57 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 			return res.status(200).json(rows);
 		}
 
+		// GET /api/user/products?action=drinks -> list all available drinks with basic info
+		if (req.method === 'GET' && action === 'drinks') {
+			const connection = await getConnection();
+			
+			// Get query parameters for filtering
+			const { search, sortBy, userid } = q as any;
+			
+			let query = `
+				SELECT DISTINCT
+					d.drinkid,
+					ud.name as drinkname,
+					d.description,
+					d.baseprice as price,
+					d.imageurl,
+					d.createdat,
+					'drink' as item_type
+				FROM Drink d
+				LEFT JOIN UserDrink ud ON d.drinkid = ud.drinkid
+				WHERE 1=1
+			`;
+			const params: any[] = [];
+			
+			// Add search filter
+			if (search && typeof search === 'string' && search.trim()) {
+				query += " AND (ud.name LIKE ? OR d.description LIKE ?)";
+				const searchTerm = `%${search.trim()}%`;
+				params.push(searchTerm, searchTerm);
+			}
+			
+			// Only show drinks that have names (have been created by users)
+			query += " AND ud.name IS NOT NULL";
+			
+			// Add sorting
+			switch (sortBy) {
+				case 'price-low':
+					query += " ORDER BY d.baseprice ASC";
+					break;
+				case 'price-high':
+					query += " ORDER BY d.baseprice DESC";
+					break;
+				case 'name':
+					query += " ORDER BY ud.name ASC";
+					break;
+				default:
+					query += " ORDER BY d.createdat DESC"; // Newest first
+			}
+			
+			const [rows] = await connection.execute(query, params);
+			return res.status(200).json(rows);
+		}
+
 		// POST /api/user/products?action=create -> createDrink logic
 		if (req.method === 'POST' && action === 'create') {
 			const body = req.body || {}

@@ -2,26 +2,48 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { getConnection } from '../lib/db_conn'
 
 // This combined handler supports:
-// GET  -> /api/user/cart?userid=123            (was myCart.ts)
-// POST -> /api/user/cart?action=add             (body: { drinkid, userid, quantity? })
+// GET  -> /api/user/cart?userid=123            (get cart items - both drinks and products)
+// POST -> /api/user/cart?action=add             (body: { drinkid?, productid?, userid, quantity? })
 // POST -> /api/user/cart?action=remove          (body: { cartitemid, userid })
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method === 'GET') {
-      // myCart behavior
+      // Get all cart items (both drinks and products)
       const connection = await getConnection();
       const { userid } = req.query;
       if (!userid) {
         return res.status(400).json({ error: "Missing userid parameter" });
       }
+      
       const [rows] = await connection.execute(
-        `SELECT ci.cartitemid, ci.drinkid, ci.quantity, ci.price, ud.name, d.imageurl
-            FROM CartItem ci
-            JOIN Drink d ON ci.drinkid = d.drinkid
-            JOIN UserDrink ud ON ci.drinkid = ud.drinkid
-            WHERE ud.userid = ?`,
-        [userid]
+        `SELECT 
+          ci.cartitemid, 
+          ci.drinkid, 
+          ci.productid,
+          ci.quantity, 
+          ci.price,
+          -- Drink fields
+          ud.name as drink_name,
+          d.imageurl as drink_image,
+          -- Product fields  
+          p.name as product_name,
+          p.imageurl as product_image,
+          -- Unified fields for display
+          COALESCE(ud.name, p.name) as name,
+          COALESCE(d.imageurl, p.imageurl) as imageurl,
+          CASE 
+            WHEN ci.drinkid IS NOT NULL THEN 'drink'
+            WHEN ci.productid IS NOT NULL THEN 'product'
+          END as item_type
+        FROM CartItem ci
+        LEFT JOIN Cart c ON ci.cartid = c.cartid
+        LEFT JOIN Drink d ON ci.drinkid = d.drinkid
+        LEFT JOIN UserDrink ud ON ci.drinkid = ud.drinkid AND ud.userid = ?
+        LEFT JOIN Product p ON ci.productid = p.productid
+        WHERE c.userid = ?
+        ORDER BY ci.cartitemid DESC`,
+        [userid, userid]
       );
       return res.status(200).json(rows);
     }
@@ -30,12 +52,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const action = (req.query && (req.query as any).action) ? String((req.query as any).action) : 'add'
 
       if (action === 'add') {
-        // addCart behavior
+        // Add item to cart (drink or product)
         const body = req.body || {}
-        const item = { drinkid: Number(body.drinkid), quantity: body.quantity ? Number(body.quantity) : 1 }
+        const drinkid = body.drinkid ? Number(body.drinkid) : null
+        const productid = body.productid ? Number(body.productid) : null
+        const quantity = body.quantity ? Number(body.quantity) : 1
 
-        if (!item.drinkid || item.quantity <= 0) {
-          return res.status(400).json({ error: 'Product ID is required' })
+        // Validate that exactly one of drinkid or productid is provided
+        if ((!drinkid && !productid) || (drinkid && productid)) {
+          return res.status(400).json({ error: 'Exactly one of drinkid or productid is required' })
+        }
+
+        if (quantity <= 0) {
+          return res.status(400).json({ error: 'Quantity must be positive' })
         }
 
         const userid = Number(body.userid)
@@ -47,45 +76,94 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         try {
           await conn.query('START TRANSACTION')
 
+          // Get or create cart
           const [cartRows] = await conn.query('SELECT * FROM Cart WHERE userid = ? LIMIT 1', [userid]) as any
           let cartid: number
           if (!cartRows || cartRows.length === 0) {
-            const [insertResult] = await conn.query( 'INSERT INTO Cart (userid, createdat, updatedat) VALUES (?, NOW(), NOW())', [userid] ) as any
+            const [insertResult] = await conn.query( 
+              'INSERT INTO Cart (userid, createdat, updatedat) VALUES (?, NOW(), NOW())', 
+              [userid] 
+            ) as any
             cartid = insertResult.insertId
           } else {
             cartid = cartRows[0].cartid
             await conn.query('UPDATE Cart SET updatedat = NOW() WHERE cartid = ?', [cartid])
           }
 
-          const [productRows] = await conn.query('SELECT baseprice FROM Drink WHERE drinkid = ? LIMIT 1', [item.drinkid]) as any
-          if (!productRows || productRows.length === 0) {
-            await conn.query('ROLLBACK')
-            return res.status(404).json({ error: `Drink ${item.drinkid} not found` })
-          }
-          const price = productRows[0].baseprice
+          let price: number
+          let existingQuery: string
+          let existingParams: any[]
+          let insertQuery: string
+          let insertParams: any[]
 
-          const [existing] = await conn.query( 'SELECT * FROM CartItem WHERE cartid = ? AND drinkid = ? LIMIT 1', [cartid, item.drinkid] ) as any
-          if (existing && existing.length > 0) {
-            await conn.query( 'UPDATE CartItem SET quantity = quantity + ?, price = ? WHERE cartitemid = ?', [item.quantity, price, existing[0].cartitemid] )
+          if (drinkid) {
+            // Handle drink item
+            const [drinkRows] = await conn.query('SELECT baseprice FROM Drink WHERE drinkid = ? LIMIT 1', [drinkid]) as any
+            if (!drinkRows || drinkRows.length === 0) {
+              await conn.query('ROLLBACK')
+              return res.status(404).json({ error: `Drink ${drinkid} not found` })
+            }
+            price = drinkRows[0].baseprice
+
+            existingQuery = 'SELECT * FROM CartItem WHERE cartid = ? AND drinkid = ? LIMIT 1'
+            existingParams = [cartid, drinkid]
+            insertQuery = 'INSERT INTO CartItem (cartid, drinkid, quantity, price) VALUES (?, ?, ?, ?)'
+            insertParams = [cartid, drinkid, quantity, price]
           } else {
-            await conn.query( `INSERT INTO CartItem (cartid, drinkid, quantity, price) VALUES (?, ?, ?, ?)`, [cartid, item.drinkid, item.quantity, price] )
+            // Handle product item
+            const [productRows] = await conn.query('SELECT price FROM Product WHERE productid = ? LIMIT 1', [productid]) as any
+            if (!productRows || productRows.length === 0) {
+              await conn.query('ROLLBACK')
+              return res.status(404).json({ error: `Product ${productid} not found` })
+            }
+            price = productRows[0].price
+
+            existingQuery = 'SELECT * FROM CartItem WHERE cartid = ? AND productid = ? LIMIT 1'
+            existingParams = [cartid, productid]
+            insertQuery = 'INSERT INTO CartItem (cartid, productid, quantity, price) VALUES (?, ?, ?, ?)'
+            insertParams = [cartid, productid, quantity, price]
+          }
+
+          // Check if item already exists in cart
+          const [existing] = await conn.query(existingQuery, existingParams) as any
+          if (existing && existing.length > 0) {
+            await conn.query( 
+              'UPDATE CartItem SET quantity = quantity + ?, price = ? WHERE cartitemid = ?', 
+              [quantity, price, existing[0].cartitemid] 
+            )
+          } else {
+            await conn.query(insertQuery, insertParams)
           }
 
           await conn.query('COMMIT')
 
+          // Return updated cart items
           const [cartItems] = await conn.query(
-            `SELECT ci.cartitemid, ci.drinkid, ci.quantity, ci.price, ud.name, d.imageurl
+            `SELECT 
+              ci.cartitemid, 
+              ci.drinkid, 
+              ci.productid,
+              ci.quantity, 
+              ci.price,
+              COALESCE(ud.name, p.name) as name,
+              COALESCE(d.imageurl, p.imageurl) as imageurl,
+              CASE 
+                WHEN ci.drinkid IS NOT NULL THEN 'drink'
+                WHEN ci.productid IS NOT NULL THEN 'product'
+              END as item_type
             FROM CartItem ci
-            JOIN Drink d ON ci.drinkid = d.drinkid
-            JOIN UserDrink ud ON ci.drinkid = ud.drinkid
+            LEFT JOIN Drink d ON ci.drinkid = d.drinkid
+            LEFT JOIN UserDrink ud ON ci.drinkid = ud.drinkid AND ud.userid = ?
+            LEFT JOIN Product p ON ci.productid = p.productid
             WHERE ci.cartid = ?`,
-            [cartid] ) as any
+            [userid, cartid] 
+          ) as any
 
           return res.status(200).json({ cartid, items: cartItems })
         } catch (dbErr) {
           console.error('DB error:', dbErr)
           try { await conn.query('ROLLBACK') } catch(_) {}
-          return res.status(500).json({ error: 'Failed to add products to cart' })
+          return res.status(500).json({ error: 'Failed to add item to cart' })
         } finally {
           try { if (conn && typeof (conn as any).release === 'function') (conn as any).release() } catch(_) {}
         }

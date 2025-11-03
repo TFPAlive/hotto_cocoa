@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/composables/useStore'
+import { useStoreItems } from '@/composables/useStoreItems'
 import { useMyCart } from '@/composables/useMyCart'
 import { auth } from '@/composables/useAuth'
 import { formatPrice } from '@/utils/currency'
@@ -9,15 +9,16 @@ import StarRating from '@/components/design/StarRating.vue'
 
 const router = useRouter()
 const { 
-  products, 
+  items, 
   loading, 
   error, 
   selectedFilters, 
   searchQuery, 
   sortBy, 
   activeFilterCount, 
-  clearAllFilters 
-} = useStore()
+  clearAllFilters,
+  fetchStoreItems
+} = useStoreItems()
 const { fetchCartItems } = useMyCart()
 
 // Sort options
@@ -30,6 +31,11 @@ const sortOptions = [
 
 // Filter categories with predefined options
 const filterCategories = [
+  {
+    title: 'Item Type',
+    key: 'itemType',
+    options: ['products', 'drinks']
+  },
   {
     title: 'Ingredients',
     key: 'ingredients',
@@ -84,6 +90,7 @@ const filterCategories = [
 
 // Add to cart functionality
 const addingToCart = ref<number | null>(null)
+const addingAsProduct = ref<number | null>(null)
 
 async function addToCart(product: any) {
   if (!auth.isLoggedIn) {
@@ -140,8 +147,79 @@ async function addToCart(product: any) {
   }
 }
 
-onMounted(() => {
-  // Additional initialization if needed
+// Add product directly to cart
+async function addProductToCart(product: any) {
+  if (!auth.isLoggedIn) {
+    router.push('/auth/login')
+    return
+  }
+
+  addingAsProduct.value = product.productid
+  
+  try {
+    // Add product directly to cart
+    const cartResponse = await fetch('/api/user/cart?action=add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ 
+        productid: product.productid,
+        quantity: 1,
+        userid: auth.user?.userid 
+      })
+    })
+
+    if (!cartResponse.ok) throw new Error('Failed to add product to cart')
+    
+    // Refresh cart
+    await fetchCartItems()
+    
+    alert('Product added to cart successfully!')
+  } catch (error) {
+    console.error('Error adding product to cart:', error)
+    alert('Failed to add product to cart')
+  } finally {
+    addingAsProduct.value = null
+  }
+}
+
+// Add drink to cart
+async function addDrinkToCart(drink: any) {
+  if (!auth.isLoggedIn) {
+    router.push('/auth/login')
+    return
+  }
+
+  addingToCart.value = drink.drinkid
+  
+  try {
+    // Add drink directly to cart
+    const cartResponse = await fetch('/api/user/cart?action=add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ 
+        drinkid: drink.drinkid,
+        userid: auth.user?.userid 
+      })
+    })
+
+    if (!cartResponse.ok) throw new Error('Failed to add drink to cart')
+    
+    // Refresh cart
+    await fetchCartItems()
+    
+    alert('Drink added to cart successfully!')
+  } catch (error) {
+    console.error('Error adding drink to cart:', error)
+    alert('Failed to add drink to cart')
+  } finally {
+    addingToCart.value = null
+  }
+}
+
+onMounted(async () => {
+  await fetchStoreItems()
 })
 </script>
 
@@ -231,7 +309,7 @@ onMounted(() => {
         <!-- Sort and Results Header -->
         <div class="products-header">
           <div class="results-info">
-            <span>{{ products.length }} products found</span>
+            <span>{{ items.length }} items found</span>
           </div>
           
           <div class="sort-controls">
@@ -262,34 +340,47 @@ onMounted(() => {
         <!-- Products Grid -->
         <div class="products-grid">
           <div 
-            v-for="product in products" 
-            :key="product.productid"
+            v-for="item in items" 
+            :key="`${item.item_type}-${item.productid || item.drinkid}`"
             class="product-card"
           >
-            <router-link :to="`/product/${product.productid}`" class="product-image">
+            <!-- Item Type Badge -->
+            <div class="item-type-badge" :class="item.item_type">
+              {{ item.item_type === 'drink' ? '🍹 Drink' : '🛒 Product' }}
+            </div>
+
+            <router-link 
+              :to="item.item_type === 'drink' ? `/drinks/${item.drinkid}` : `/products/${item.productid}`" 
+              class="product-image"
+            >
               <img 
-                v-if="product.imageurl" 
-                :src="product.imageurl" 
-                :alt="product.name"
+                v-if="item.imageurl" 
+                :src="item.imageurl" 
+                :alt="item.name"
                 class="product-img"
               />
               <div v-else class="product-placeholder">
-                <span>No Image</span>
+                <span>{{ item.item_type === 'drink' ? '🍹' : '📦' }}</span>
               </div>
             </router-link>
             
             <div class="product-info">
-              <router-link :to="`/product/${product.productid}`" class="product-link">
-                <h3 class="product-name">{{ product.name }}</h3>
+              <router-link 
+                :to="item.item_type === 'drink' ? `/drinks/${item.drinkid}` : `/products/${item.productid}`" 
+                class="product-link"
+              >
+                <h3 class="product-name">{{ item.name }}</h3>
               </router-link>
-              <p class="product-description">{{ product.description || 'No description available' }}</p>
+              <p class="product-description">
+                {{ item.description || (item.item_type === 'drink' ? 'Custom drink recipe' : 'No description available') }}
+              </p>
               
-              <div class="product-details">
-                <span v-if="product.material" class="product-material">
-                  Material: {{ product.material }}
+              <div class="product-details" v-if="item.item_type === 'product'">
+                <span v-if="item.material" class="product-material">
+                  Material: {{ item.material }}
                 </span>
-                <span v-if="product.category" class="product-category">
-                  Category: {{ product.category }}
+                <span v-if="item.category" class="product-category">
+                  Category: {{ item.category }}
                 </span>
               </div>
               
@@ -299,19 +390,46 @@ onMounted(() => {
               </div>
               
               <div class="product-footer">
-                <span class="product-price">{{ formatPrice(product.price) }}</span>
+                <span class="product-price">{{ formatPrice(item.price) }}</span>
                 <div class="product-actions">
-                  <router-link :to="`/product/${product.productid}`" class="view-details-btn">
+                  <router-link 
+                    :to="item.item_type === 'drink' ? `/drinks/${item.drinkid}` : `/products/${item.productid}`" 
+                    class="view-details-btn"
+                  >
                     View Details
                   </router-link>
-                  <button 
-                    @click="addToCart(product)"
-                    :disabled="addingToCart === product.productid"
-                    class="add-to-cart-btn"
-                  >
-                    <span v-if="addingToCart === product.productid">Adding...</span>
-                    <span v-else>Add to Cart</span>
-                  </button>
+                  
+                  <!-- Product Actions -->
+                  <template v-if="item.item_type === 'product'">
+                    <button 
+                      @click="addProductToCart(item)"
+                      :disabled="addingAsProduct === item.productid"
+                      class="add-to-cart-btn primary"
+                    >
+                      <span v-if="addingAsProduct === item.productid">Adding...</span>
+                      <span v-else>Buy Item</span>
+                    </button>
+                    <button 
+                      @click="addToCart(item)"
+                      :disabled="addingToCart === item.productid"
+                      class="add-to-cart-btn secondary"
+                    >
+                      <span v-if="addingToCart === item.productid">Adding...</span>
+                      <span v-else>Add to Design</span>
+                    </button>
+                  </template>
+
+                  <!-- Drink Actions -->
+                  <template v-if="item.item_type === 'drink'">
+                    <button 
+                      @click="addDrinkToCart(item)"
+                      :disabled="addingToCart === item.drinkid"
+                      class="add-to-cart-btn primary"
+                    >
+                      <span v-if="addingToCart === item.drinkid">Adding...</span>
+                      <span v-else>Add to Cart</span>
+                    </button>
+                  </template>
                 </div>
               </div>
             </div>
@@ -319,9 +437,9 @@ onMounted(() => {
         </div>
 
         <!-- Empty State -->
-        <div v-if="!loading && !error && products.length === 0" class="empty-state">
+        <div v-if="!loading && !error && items.length === 0" class="empty-state">
           <div class="empty-icon">🔍</div>
-          <h3>No products found</h3>
+          <h3>No items found</h3>
           <p>Try adjusting your filters or search terms</p>
           <button @click="clearAllFilters" class="clear-filters-btn">Clear all filters</button>
         </div>
@@ -585,11 +703,33 @@ onMounted(() => {
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
   border: 1px solid #eee;
+  position: relative;
 }
 
 .product-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.item-type-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.item-type-badge.drink {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.item-type-badge.product {
+  background: #fff3e0;
+  color: #f57c00;
 }
 
 .product-image {
@@ -688,6 +828,7 @@ onMounted(() => {
 
 .product-actions {
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
@@ -713,8 +854,6 @@ onMounted(() => {
 
 .add-to-cart-btn {
   flex: 1;
-  background: #8B4513;
-  color: white;
   border: none;
   padding: 8px 16px;
   border-radius: 20px;
@@ -722,6 +861,24 @@ onMounted(() => {
   font-size: 0.85rem;
   font-weight: 500;
   transition: background 0.3s;
+}
+
+.add-to-cart-btn.primary {
+  background: #8B4513;
+  color: white;
+}
+
+.add-to-cart-btn.primary:hover:not(:disabled) {
+  background: #6B3410;
+}
+
+.add-to-cart-btn.secondary {
+  background: #2196f3;
+  color: white;
+}
+
+.add-to-cart-btn.secondary:hover:not(:disabled) {
+  background: #1976d2;
 }
 
 .add-to-cart-btn:hover:not(:disabled) {
