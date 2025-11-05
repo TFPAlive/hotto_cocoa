@@ -370,14 +370,14 @@ function formatPhoneNumber(value: string) {
 }
 
 .profile-header h2 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 28px;
   font-weight: 600;
 }
 
 .profile-header p {
-  color: #666;
+  color: var(--font-color);
   font-size: 16px;
 }
 
@@ -389,8 +389,8 @@ function formatPhoneNumber(value: string) {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #a0522d;
+  border: 4px solid var(--sub-bg-color);
+  border-top: 4px solid var(--header-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 16px;
@@ -402,7 +402,7 @@ function formatPhoneNumber(value: string) {
 }
 
 .profile-form {
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -414,11 +414,11 @@ function formatPhoneNumber(value: string) {
 }
 
 .form-section h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 16px;
   font-size: 18px;
   font-weight: 600;
-  border-bottom: 2px solid #a0522d;
+  border-bottom: 2px solid var(--header-color);
   padding-bottom: 8px;
 }
 
@@ -435,7 +435,7 @@ function formatPhoneNumber(value: string) {
 
 .form-row label {
   margin-bottom: 6px;
-  color: #2c3e50;
+  color: var(--header-color);
   font-weight: 500;
   font-size: 14px;
 }
@@ -443,17 +443,17 @@ function formatPhoneNumber(value: string) {
 .form-row input,
 .form-row select {
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--shadow-color);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
-  background: white;
+  background: var(--main-bg-color);
 }
 
 .form-row input:focus,
 .form-row select:focus {
   outline: none;
-  border-color: #a0522d;
+  border-color: var(--header-color);
   box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.1);
 }
 
@@ -468,11 +468,11 @@ function formatPhoneNumber(value: string) {
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid #e0e0e0;
+  border: 4px solid var(--shadow-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f8f8;
+  background: var(--sub-bg-color);
 }
 
 .avatar-image {
@@ -483,7 +483,7 @@ function formatPhoneNumber(value: string) {
 
 .avatar-placeholder {
   font-size: 48px;
-  color: #ccc;
+  color: var(--shadow-color);
 }
 
 .avatar-controls {
@@ -506,8 +506,8 @@ function formatPhoneNumber(value: string) {
 }
 
 .error-message {
-  color: #f44336;
-  background: #ffebee;
+  color: var(--button-color);
+  background: var(--sub-bg-color);
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 14px;
@@ -515,8 +515,8 @@ function formatPhoneNumber(value: string) {
 }
 
 .success-message {
-  color: #4caf50;
-  background: #f1f8e9;
+  color: var(--header-color);
+  background: var(--sub-bg-color);
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 14px;
@@ -524,8 +524,8 @@ function formatPhoneNumber(value: string) {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--header-color) 0%, var(--hover-color) 100%);
+  color: var(--main-bg-color);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -546,9 +546,9 @@ function formatPhoneNumber(value: string) {
 }
 
 .btn-secondary {
-  background: #f5f5f5;
-  color: #666;
-  border: 2px solid #e0e0e0;
+  background: var(--sub-bg-color);
+  color: var(--font-color);
+  border: 2px solid var(--shadow-color);
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -557,13 +557,13 @@ function formatPhoneNumber(value: string) {
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
-  color: #333;
+  background: var(--shadow-color);
+  color: var(--header-color);
 }
 
 .btn-danger {
-  background: #f44336;
-  color: white;
+  background: var(--button-color);
+  color: var(--main-bg-color);
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -573,18 +573,18 @@ function formatPhoneNumber(value: string) {
 }
 
 .btn-danger:hover {
-  background: #d32f2f;
+  background: var(--hover-color);
 }
 
 .account-info {
-  background: #f8f9fa;
+  background: var(--sub-bg-color);
   border-radius: 12px;
   padding: 24px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--shadow-color);
 }
 
 .account-info h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 16px;
   font-size: 18px;
   font-weight: 600;
@@ -603,21 +603,21 @@ function formatPhoneNumber(value: string) {
 }
 
 .info-item .label {
-  color: #666;
+  color: var(--font-color);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .info-item .value {
-  color: #2c3e50;
+  color: var(--header-color);
   font-weight: 500;
 }
 
 .no-profile {
   text-align: center;
   padding: 60px 20px;
-  color: #666;
+  color: var(--font-color);
 }
 
 @media (max-width: 768px) {

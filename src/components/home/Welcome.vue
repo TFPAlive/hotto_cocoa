@@ -4,7 +4,7 @@
         <div class="welcome-left">
             <div class="welcome-title">Self-design bar</div>
             <div class="cup-icons">
-                <svg v-for="n in 5" :key="n" width="36" height="36" viewBox="0 0 24 24" fill="#c69c6d" xmlns="http://www.w3.org/2000/svg" class="cup-icon">
+                <svg v-for="n in 5" :key="n" width="36" height="36" viewBox="0 0 24 24" fill="var(--hover-color)" xmlns="http://www.w3.org/2000/svg" class="cup-icon">
                     <rect x="7" y="8" width="10" height="10" rx="3" />
                     <rect x="9" y="4" width="6" height="4" rx="2" />
                     <rect x="10" y="18" width="4" height="2" rx="1" />
@@ -49,7 +49,7 @@
     }
 
     .cup-icon {
-        filter: drop-shadow(0 2px 4px #e0c3a0);
+        filter: drop-shadow(0 2px 4px var(--shadow-color));
     }
 
     .welcome-right {
@@ -76,7 +76,7 @@
         border-radius: 24px;
         text-decoration: none;
         font-size: 1.1rem;
-        box-shadow: 0 2px 8px #e0c3a0;
+        box-shadow: 0 2px 8px var(--shadow-color);
         transition: background 0.2s, color 0.2s;
     }
 

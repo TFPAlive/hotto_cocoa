@@ -472,21 +472,21 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background: #faf8f5;
+  background: var(--main-bg-color);
   min-height: 100vh;
 }
 
 .loading-state, .error-state {
   text-align: center;
   padding: 60px 20px;
-  color: #666;
+  color: var(--font-color);
 }
 
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #8B4513;
+  border: 4px solid var(--sub-bg-color);
+  border-top: 4px solid var(--header-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -498,8 +498,8 @@ onMounted(() => {
 }
 
 .back-btn {
-  background: #8B4513;
-  color: white;
+  background: var(--button-color);
+  color: var(--header-color);
   border: none;
   padding: 12px 24px;
   border-radius: 25px;
@@ -511,7 +511,7 @@ onMounted(() => {
 .breadcrumb {
   margin-bottom: 20px;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--font-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -523,8 +523,8 @@ onMounted(() => {
 }
 
 .back-to-store-btn {
-  background: #8B4513;
-  color: white;
+  background: var(--button-color);
+  color: var(--header-color);
   border: none;
   padding: 8px 16px;
   border-radius: 20px;
@@ -533,7 +533,7 @@ onMounted(() => {
 }
 
 .breadcrumb a {
-  color: #8B4513;
+  color: var(--header-color);
   text-decoration: none;
 }
 
@@ -947,7 +947,6 @@ onMounted(() => {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-family: inherit;
   font-size: 0.95rem;
   margin-bottom: 15px;
   resize: vertical;

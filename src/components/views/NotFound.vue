@@ -36,12 +36,12 @@ function goBack() {
 .home-link {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #a0522d;
-  color: white;
+  background-color: var(--header-color);
+  color: var(--main-bg-color);
   text-decoration: none;
   border-radius: 5px;
 }
 .home-link:hover {
-  background-color: #8b4513;
+  background-color: var(--hover-font-color);
 }
 </style>

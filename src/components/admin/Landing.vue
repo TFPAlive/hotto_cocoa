@@ -78,7 +78,6 @@
 <style scoped>
     .admin-dashboard {
         padding: 2rem;
-        font-family: Arial, sans-serif;
     }
     .stats {
         display: flex;
@@ -86,7 +85,7 @@
         margin-bottom: 2rem;
     }
     .stat-card {
-        background: #f5f5f5;
+        background: var(--sub-bg-color);
         padding: 1.5rem;
         border-radius: 8px;
         text-align: center;
@@ -95,11 +94,11 @@
     .stat-card h2 {
         margin: 0;
         font-size: 2rem;
-        color: #333;
+        color: var(--header-color);
     }
     .stat-card p {
         margin: 0.5rem 0 0 0;
-        color: #777;
+        color: var(--font-color);
     }
     .recent-orders {
         margin-top: 2rem;
@@ -110,10 +109,10 @@
     }
     .recent-orders th, .recent-orders td {
         padding: 0.75rem;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--shadow-color);
         text-align: left;
     }
     .recent-orders th {
-    background: #f0f0f0;
+    background: var(--sub-bg-color);
 }
 </style>

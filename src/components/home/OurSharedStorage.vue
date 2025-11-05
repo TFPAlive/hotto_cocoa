@@ -110,7 +110,7 @@
 
     .design-btn {
         display: inline-block;
-        background: var(--main-bg-color);
+        background: var(--button-color);
         color: var(--header-color);
         font-weight: bold;
         padding: 12px 32px;

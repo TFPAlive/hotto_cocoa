@@ -20,7 +20,7 @@
     <span class="star-rating">
         <span v-for="(type, idx) in starTypes" :key="idx" class="star" @click="setRating(idx + 1)">
             <template v-if="type === 'full'">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#a0522d" stroke="none">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--header-color)" stroke="none">
                     <polygon points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9" />
                 </svg>
             </template>
@@ -28,7 +28,7 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" stroke="none">
                     <defs>
                         <linearGradient id="halfGrad">
-                            <stop offset="50%" stop-color="#a0522d" />
+                            <stop offset="50%" stop-color="var(--header-color)" />
                             <stop offset="50%" stop-color="lightgray" />
                         </linearGradient>
                     </defs>

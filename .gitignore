@@ -35,3 +35,4 @@ coverage
 #Keys and database
 gcs-key.json
 cors.json
+.vercel

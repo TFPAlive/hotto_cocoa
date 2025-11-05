@@ -1,12 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho&display=swap');
+
 :root {
-  --font-color: rgb(151, 5, 5);
-  --header-color: rgb(160, 82, 45);
-  --main-bg-color: rgb(253, 255, 239);
-  --sub-bg-color: rgb(35, 40, 26);
+  --font-color: #3B201A;
+  --header-color: #A32924;
+  --main-bg-color: #FAF6EF;
+  --sub-bg-color: #ECE3D6;
   --shadow-color: rgba(0, 0, 0, 0.3);
-  --hover-color: rgb(255, 224, 128);
-  --hover-font-color: rgb(122, 58, 27);
-  --button-color: rgb(255, 230, 128);
+  --hover-color: #DCB06F;
+  --hover-font-color: #1D5B37;
+  --button-color: #ECE3D6;
 }
 
 a,
@@ -24,6 +26,12 @@ body,
   color: var(--font-color);
   background-color: transparent;
   scroll-behavior: smooth;
+}
+
+html, body, button, input, select, textarea {
+  font-family: 'Zen Old Mincho', serif;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 #app {

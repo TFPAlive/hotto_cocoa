@@ -398,20 +398,20 @@ function getDeviceIcon(device: string) {
 }
 
 .security-header h2 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 28px;
   font-weight: 600;
 }
 
 .security-header p {
-  color: #666;
+  color: var(--font-color);
   font-size: 16px;
 }
 
 .security-section {
-  background: white;
-  border: 2px solid #e3f2fd;
+  background: var(--main-bg-color);
+  border: 2px solid var(--sub-bg-color);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
@@ -425,14 +425,14 @@ function getDeviceIcon(device: string) {
 }
 
 .section-header h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin: 0 0 4px 0;
   font-size: 18px;
   font-weight: 600;
 }
 
 .section-header p {
-  color: #666;
+  color: var(--font-color);
   margin: 0;
   font-size: 14px;
 }
@@ -442,12 +442,12 @@ function getDeviceIcon(device: string) {
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background: #f8f9fa;
+  background: var(--sub-bg-color);
   border-radius: 8px;
 }
 
 .password-info p {
-  color: #666;
+  color: var(--font-color);
   margin: 0;
 }
 
@@ -462,23 +462,23 @@ function getDeviceIcon(device: string) {
 }
 
 .btn-primary {
-  background: #a0522d;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #8b4513;
+  background: var(--hover-font-color);
   transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background: #f5f5f5;
-  color: #666;
-  border: 1px solid #e0e0e0;
+  background: var(--sub-bg-color);
+  color: var(--font-color);
+  border: 1px solid var(--shadow-color);
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: var(--shadow-color);
 }
 
 .btn-danger {
@@ -501,7 +501,7 @@ function getDeviceIcon(device: string) {
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background: #f8f9fa;
+  background: var(--sub-bg-color);
   border-radius: 8px;
 }
 
@@ -511,12 +511,12 @@ function getDeviceIcon(device: string) {
 
 .setting-label {
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 4px;
 }
 
 .setting-description {
-  color: #666;
+  color: var(--font-color);
   font-size: 14px;
 }
 

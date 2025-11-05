@@ -94,7 +94,7 @@
 
     .menu-section {
         margin-bottom: 30px;
-        border: 2px solid #a0522d;
+        border: 2px solid var(--header-color);
         overflow: visible;
         position: relative;
     }
@@ -102,11 +102,11 @@
     .menu-item {
         padding: 12px 16px;
         cursor: pointer;
-        color: #a0522d;
+        color: var(--header-color);
         font-weight: 500;
-        border-bottom: 1px solid #a0522d;
+        border-bottom: 1px solid var(--header-color);
         transition: all 0.2s ease;
-        background: #fff;
+        background: var(--main-bg-color);
         position: relative;
     }
 
@@ -115,18 +115,18 @@
     }
 
     .menu-item:hover:not(.active) {
-        background: #f5f5f5;
-        color: #7a3e20;
+        background: var(--sub-bg-color);
+        color: var(--font-color);
     }
 
     .menu-item.active {
-        background: #fff;
-        color: #a0522d;
+        background: var(--main-bg-color);
+        color: var(--header-color);
         font-weight: 600;
         position: relative;
         z-index: 10;
-        box-shadow: 0 2px 8px rgba(160, 82, 45, 0.15);
-        border-left: 4px solid #ff8800;
+        box-shadow: 0 2px 8px var(--shadow-color);
+        border-left: 4px solid var(--hover-color);
     }
 
     .menu-item.active::after {
@@ -136,7 +136,7 @@
         top: 0;
         bottom: 0;
         width: 2px;
-        background: #fff;
+        background: var(--main-bg-color);
         z-index: 11;
     }
 
@@ -146,8 +146,8 @@
 
     .content-area {
         flex: 1;
-        background: #fff;
-        border: 2px solid #a0522d;
+        background: var(--main-bg-color);
+        border: 2px solid var(--header-color);
         border-left: none;
         border-radius: 0 8px 8px 0;
         padding: 30px;
@@ -164,33 +164,33 @@
         bottom: -2px;
         width: 2px;
         background: linear-gradient(to bottom,
-                #a0522d 0%,
-                #a0522d 2px,
+                var(--header-color) 0%,
+                var(--header-color) 2px,
                 transparent 2px,
                 transparent 355px,
-                #a0522d 355px,
-                #a0522d 387px,
+                var(--header-color) 355px,
+                var(--header-color) 387px,
                 transparent 387px,
                 transparent 490px,
-                #a0522d 490px,
-                #a0522d 522px,
+                var(--header-color) 490px,
+                var(--header-color) 522px,
                 transparent 522px,
                 transparent 574px,
-                #a0522d 574px,
-                #a0522d 100%);
+                var(--header-color) 574px,
+                var(--header-color) 100%);
         z-index: 2;
     }
 
     .content-section h2 {
-        color: #a0522d;
+        color: var(--header-color);
         margin-bottom: 20px;
         font-size: 1.8rem;
-        border-bottom: 2px solid #a0522d;
+        border-bottom: 2px solid var(--header-color);
         padding-bottom: 10px;
     }
 
     .content-section p {
-        color: #666;
+        color: var(--font-color);
         line-height: 1.6;
         font-size: 1rem;
     }
@@ -210,7 +210,7 @@
 
         .menu-section {
             margin-bottom: 15px;
-            border: 2px solid #a0522d;
+            border: 2px solid var(--header-color);
             overflow: visible;
         }
 
@@ -219,10 +219,10 @@
             bottom: -20px;
             width: 100%;
             height: 20px;
-            background: #fff;
-            border-left: 2px solid #a0522d;
-            border-bottom: 2px solid #a0522d;
-            border-right: 2px solid #a0522d;
+            background: var(--main-bg-color);
+            border-left: 2px solid var(--header-color);
+            border-bottom: 2px solid var(--header-color);
+            border-right: 2px solid var(--header-color);
             border-bottom-left-radius: 8px;
             border-bottom-right-radius: 8px;
             border-top: none;
@@ -234,11 +234,11 @@
             bottom: -2px;
             width: 100%;
             height: 2px;
-            background: #fff;
+            background: var(--main-bg-color);
         }
 
         .content-area {
-            border-left: 2px solid #a0522d;
+            border-left: 2px solid var(--header-color);
             border-top: none;
             border-radius: 0 0 8px 8px;
             padding: 20px;

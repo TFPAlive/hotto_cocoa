@@ -39,7 +39,7 @@
 
     .instruction-box-red {
         background: #e53935;
-        color: #fff;
+        color: var(--main-bg-color);
         font-size: 1.2rem;
         font-weight: bold;
         padding: 18px 32px;
@@ -51,7 +51,7 @@
         left: 50%;
         transform: translateX(-50%) translateY(275%);
         z-index: 2;
-        box-shadow: 0 2px 12px #b71c1c44;
+        box-shadow: 0 2px 12px var(--shadow-color);
     }
 
     .banner-video-container {

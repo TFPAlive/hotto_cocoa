@@ -295,26 +295,26 @@ async function setAsDefault(addressid: number) {
 
 .change-address-btn {
     background: transparent;
-    border: 1px solid #c9b37c;
-    color: #4a4a4a;
+    border: 1px solid var(--hover-color);
+    color: var(--font-color);
     padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
 }
 
 .change-address-btn:hover {
-    background: #fbfaf6;
+    background: var(--sub-bg-color);
 }
 
 .shipping-actions { display: flex; gap: 8px; align-items: center }
-.add-address-inline { background: #4caf50; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer }
+.add-address-inline { background: #4caf50; color: var(--main-bg-color); border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer }
 .add-address-inline:hover { filter: brightness(0.95) }
 
-.default-address { border: 1px solid #eee; padding: 12px; border-radius: 8px; margin-bottom: 8px }
+.default-address { border: 1px solid var(--shadow-color); padding: 12px; border-radius: 8px; margin-bottom: 8px }
 
-.address-dropdown { margin-top: 8px; border: 1px solid #eee; padding: 12px; border-radius: 8px; background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.06) }
+.address-dropdown { margin-top: 8px; border: 1px solid var(--shadow-color); padding: 12px; border-radius: 8px; background: var(--main-bg-color); box-shadow: 0 6px 20px rgba(0,0,0,0.06) }
 .address-list-dropdown { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px }
-.address-list-dropdown li { padding: 10px; border-radius: 6px; border: 1px solid #f0f0f0; cursor: pointer }
+.address-list-dropdown li { padding: 10px; border-radius: 6px; border: 1px solid var(--sub-bg-color); cursor: pointer }
 
 .address-dropdown-anchored {
     position: absolute;
@@ -322,8 +322,8 @@ async function setAsDefault(addressid: number) {
     top: 36px;
     width: 500px;
     max-width: calc(100vw - 40px);
-    background: white;
-    border: 1px solid #eee;
+    background: var(--main-bg-color);
+    border: 1px solid var(--shadow-color);
     padding: 12px;
     border-radius: 8px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.08);
@@ -339,15 +339,15 @@ async function setAsDefault(addressid: number) {
 .fade-slide-leave-to { opacity: 0; transform: translateY(-6px) }
 
 .address-list li {
-    border: 1px solid #eee;
+    border: 1px solid var(--shadow-color);
     padding: 12px;
     border-radius: 8px;
     cursor: pointer;
 }
 
 .address-list li.selected {
-    border-color: #c9b37c;
-    background: #fbfaf6;
+    border-color: var(--hover-color);
+    background: var(--sub-bg-color);
 }
 
 .items-list {

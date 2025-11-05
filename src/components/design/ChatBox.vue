@@ -78,7 +78,7 @@ Tell me what you want, or click on the stuff below.`;
         margin: 0 auto;
         background: var(--main-bg-color);
         border-radius: 18px;
-        box-shadow: 0 2px 12px #e0c3a033;
+        box-shadow: 0 2px 12px var(--shadow-color);
         padding: 32px 24px 24px 24px;
         display: flex;
         flex-direction: column;
@@ -87,14 +87,14 @@ Tell me what you want, or click on the stuff below.`;
 
     .chatbot-header {
         font-size: 1.7rem;
-        color: #a0522d;
+        color: var(--header-color);
         margin-bottom: 18px;
         text-align: center;
     }
 
     .chatbot-respond {
         font-size: 1.1rem;
-        color: #5a3a1b;
+        color: var(--font-color);
         margin-bottom: 24px;
     }
 
@@ -103,7 +103,7 @@ Tell me what you want, or click on the stuff below.`;
         min-height: 200px;
         background: var(--main-bg-color);
         border-radius: 12px;
-        box-shadow: 0 1px 6px #e0c3a044;
+        box-shadow: 0 1px 6px var(--shadow-color);
         padding: 18px 14px;
         display: flex;
         flex-direction: column;
@@ -123,29 +123,29 @@ Tell me what you want, or click on the stuff below.`;
         flex: 1;
         padding: 10px 14px;
         border-radius: 8px;
-        border: 1.5px solid #e6b800;
+        border: 1.5px solid var(--hover-color);
         font-size: 1rem;
         outline: none;
         background: var(--main-bg-color);
-        color: #5a3a1b;
+        color: var(--font-color);
         transition: border 0.2s;
         margin: 20px 20px 10px 0;
     }
 
     .chatbot-input:focus {
-        border-color: #a0522d;
+        border-color: var(--header-color);
     }
 
     .chatbot-send-btn {
-        background: #ffe680;
-        color: #a0522d;
+        background: var(--button-color);
+        color: var(--header-color);
         border: none;
         border-radius: 8px;
         padding: 0 22px;
         font-size: 1rem;
         font-weight: bold;
         cursor: pointer;
-        box-shadow: 0 1px 4px #e0c3a044;
+        box-shadow: 0 1px 4px var(--shadow-color);
         transition: background 0.2s, color 0.2s;
         height: 40px;
         display: flex;
@@ -154,8 +154,8 @@ Tell me what you want, or click on the stuff below.`;
     }
 
     .chatbot-send-btn:hover {
-        background: #ffe080;
-        color: #7a3a1b;
+        background: var(--hover-color);
+        color: var(--hover-font-color);
     }
 
     .chat-messages {

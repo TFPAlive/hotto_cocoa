@@ -176,14 +176,14 @@ const filteredHistory = computed(() => {
 }
 
 .history-header h2 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 28px;
   font-weight: 600;
 }
 
 .history-header p {
-  color: #666;
+  color: var(--font-color);
   font-size: 16px;
 }
 
@@ -197,7 +197,7 @@ const filteredHistory = computed(() => {
 
 .tab-navigation {
   display: flex;
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 8px;
   padding: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -211,17 +211,17 @@ const filteredHistory = computed(() => {
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: var(--font-color);
   transition: all 0.2s ease;
 }
 
 .tab-btn:hover {
-  background: #f5f5f5;
+  background: var(--sub-bg-color);
 }
 
 .tab-btn.active {
-  background: #a0522d;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
 }
 
 .btn-danger {
@@ -248,8 +248,8 @@ const filteredHistory = computed(() => {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #a0522d;
+  border: 4px solid var(--sub-bg-color);
+  border-top: 4px solid var(--header-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 16px;
@@ -275,7 +275,7 @@ const filteredHistory = computed(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -292,7 +292,7 @@ const filteredHistory = computed(() => {
   height: 60px;
   border-radius: 8px;
   overflow: hidden;
-  background: #f8f9fa;
+  background: var(--sub-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -315,7 +315,7 @@ const filteredHistory = computed(() => {
 }
 
 .item-type {
-  color: #a0522d;
+  color: var(--header-color);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
@@ -324,21 +324,21 @@ const filteredHistory = computed(() => {
 }
 
 .item-details h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 4px;
   font-size: 16px;
   font-weight: 600;
 }
 
 .item-price {
-  color: #a0522d;
+  color: var(--header-color);
   font-size: 14px;
   font-weight: 600;
 }
 
 .item-meta {
   text-align: right;
-  color: #666;
+  color: var(--font-color);
   font-size: 12px;
 }
 
@@ -357,9 +357,9 @@ const filteredHistory = computed(() => {
 
 .btn-secondary {
   padding: 8px 16px;
-  border: 1px solid #e0e0e0;
-  background: #f5f5f5;
-  color: #666;
+  border: 1px solid var(--shadow-color);
+  background: var(--sub-bg-color);
+  color: var(--font-color);
   border-radius: 6px;
   text-decoration: none;
   font-size: 12px;
@@ -369,14 +369,14 @@ const filteredHistory = computed(() => {
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: var(--shadow-color);
 }
 
 .btn-primary {
   padding: 12px 24px;
   border: none;
-  background: #a0522d;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
   border-radius: 8px;
   text-decoration: none;
   font-size: 14px;
@@ -386,7 +386,7 @@ const filteredHistory = computed(() => {
 }
 
 .btn-primary:hover {
-  background: #8b4513;
+  background: var(--hover-font-color);
 }
 
 @media (max-width: 768px) {

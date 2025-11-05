@@ -182,7 +182,7 @@
     }
 
     .user-trigger:hover {
-        background: #f5f5f5;
+        background: var(--sub-bg-color);
     }
 
     .user-avatar {
@@ -190,7 +190,7 @@
         height: 32px;
         border-radius: 50%;
         object-fit: cover;
-        border: 1.5px solid #ccc;
+        border: 1.5px solid var(--button-color);
     }
 
     .user-name {
@@ -200,7 +200,7 @@
 
     .dropdown-arrow {
         margin-left: 2px;
-        color: #888;
+        color: var(--font-color);
     }
 
     .dropdown-menu {
@@ -208,10 +208,10 @@
         top: 110%;
         right: 0;
         min-width: 220px;
-        background: #222;
-        color: #fff;
+        background: var(--font-color);
+        color: var(--main-bg-color);
         border-radius: 10px;
-        box-shadow: 0 4px 24px #0002;
+        box-shadow: 0 4px 24px var(--shadow-color);
         padding: 0.5rem 0;
         z-index: 2;
         display: flex;
@@ -250,12 +250,12 @@
     .dropdown-username {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #fff;
+        color: var(--main-bg-color);
         margin-bottom: 0.2rem;
     }
 
     .dropdown-item {
-        color: #fff;
+        color: var(--main-bg-color);
         text-decoration: none;
         padding: 0.7rem 1.5rem;
         font-size: 1rem;
@@ -266,12 +266,12 @@
     }
 
     .dropdown-item:hover {
-        background: #333;
+        background: var(--hover-font-color);
     }
 
     .dropdown-logout {
-        color: #fff;
-        background: #a0522d;
+        color: var(--main-bg-color);
+        background: var(--header-color);
         border: none;
         border-radius: 6px;
         padding: 0.7rem 1.5rem;
@@ -282,7 +282,7 @@
     }
 
     .dropdown-logout:hover {
-        background: #7a3a1d;
+        background: var(--hover-font-color);
     }
     hr {
         width: 90%;

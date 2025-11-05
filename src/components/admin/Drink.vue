@@ -342,13 +342,13 @@
         max-width: 100%;
         margin: 0 auto;
         padding: 2rem;
-        background: #fff;
+        background: var(--main-bg-color);
         border-radius: 12px;
-        box-shadow: 0 2px 12px #a0522d22;
+        box-shadow: 0 2px 12px var(--shadow-color);
     }
 
     h1, h2 {
-        color: #a0522d;
+        color: var(--header-color);
     }
 
     form > div {
@@ -359,12 +359,12 @@
         width: 100%;
         padding: 0.5rem;
         border-radius: 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--button-color);
     }
 
     button {
-        background: #a0522d;
-        color: #fff;
+        background: var(--button-color);
+        color: var(--header-color);
         border: none;
         border-radius: 6px;
         padding: 0.5rem 1.2rem;
@@ -374,7 +374,8 @@
     }
 
     button:hover {
-        background: #7a3a1d;
+        background: var(--hover-color);
+        color: var(--hover-font-color);
     }
 
     table {
@@ -384,13 +385,12 @@
     }
 
     th, td {
-        border: 1px solid #eee;
+        border: 1px solid var(--sub-bg-color);
         padding: 0.5rem;
         text-align: left;
     }
 
     .uniqueid-cell {
-        font-family: monospace;
         font-size: 0.9rem;
         max-width: 120px;
         overflow: hidden;
@@ -406,7 +406,7 @@
 
     .product-composition {
         font-size: 0.8rem;
-        color: #666;
+        color: var(--font-color);
         font-style: italic;
     }
 
@@ -417,8 +417,8 @@
         right: -600px;
         width: 600px;
         height: 100vh;
-        background: #fff;
-        box-shadow: -2px 0 16px #a0522d22;
+        background: var(--main-bg-color);
+        box-shadow: -2px 0 16px var(--shadow-color);
         transition: right 0.3s cubic-bezier(.4, 0, .2, 1);
         z-index: 1000;
         display: flex;
@@ -445,8 +445,8 @@
     }
 
     .add-btn {
-        background: #a0522d;
-        color: #fff;
+        background: var(--button-color);
+        color: var(--header-color);
         border: none;
         border-radius: 6px;
         padding: 0.5rem 1.2rem;
@@ -456,7 +456,8 @@
     }
 
     .add-btn:hover {
-        background: #7a3a1d;
+        background: var(--hover-color);
+        color: var(--hover-font-color);
     }
 
     /* Drawer backdrop */
@@ -477,16 +478,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #f5f5f5;
+        background: var(--sub-bg-color);
         border-radius: 8px;
         overflow: hidden;
         cursor: pointer;
-        border: 2px dashed #ccc;
+        border: 2px dashed var(--button-color);
         transition: border 0.2s;
     }
 
     .image-cell.clickable:hover {
-        border: 2px solid #a0522d;
+        border: 2px solid var(--header-color);
     }
 
     .image-cell img {
@@ -497,7 +498,7 @@
     }
 
     .image-placeholder, .product-placeholder {
-        color: #bbb;
+        color: var(--font-color);
         font-size: 0.9rem;
         text-align: center;
     }
@@ -513,19 +514,19 @@
     }
 
     .product-section {
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--sub-bg-color);
         border-radius: 8px;
         padding: 1rem;
-        background: #f9f9f9;
+        background: var(--main-bg-color);
     }
 
     .toggle-products {
-        background: #6c757d;
+        background: var(--font-color);
         margin-bottom: 1rem;
     }
 
     .toggle-products:hover {
-        background: #5a6268;
+        background: var(--hover-font-color);
     }
 
     .selected-products {
@@ -533,7 +534,7 @@
     }
 
     .selected-products h4 {
-        color: #a0522d;
+        color: var(--header-color);
         margin-bottom: 0.5rem;
     }
 
@@ -544,7 +545,7 @@
     }
 
     .selected-product {
-        background: #e3f2fd;
+        background: var(--sub-bg-color);
         padding: 0.25rem 0.5rem;
         border-radius: 12px;
         font-size: 0.9rem;
@@ -554,8 +555,8 @@
     }
 
     .selected-product button {
-        background: #f44336;
-        color: white;
+        background: var(--header-color);
+        color: var(--main-bg-color);
         border: none;
         border-radius: 50%;
         width: 20px;
@@ -571,10 +572,10 @@
     .product-selector {
         max-height: 300px;
         overflow-y: auto;
-        border: 1px solid #ddd;
+        border: 1px solid var(--button-color);
         border-radius: 8px;
         padding: 1rem;
-        background: white;
+        background: var(--main-bg-color);
     }
 
     .products-grid {
@@ -584,7 +585,7 @@
     }
 
     .product-card {
-        border: 2px solid #e0e0e0;
+        border: 2px solid var(--sub-bg-color);
         border-radius: 8px;
         padding: 0.5rem;
         cursor: pointer;
@@ -593,12 +594,12 @@
     }
 
     .product-card:hover {
-        border-color: #a0522d;
+        border-color: var(--header-color);
     }
 
     .product-card.selected {
-        border-color: #4caf50;
-        background: #f0fff0;
+        border-color: var(--hover-font-color);
+        background: var(--sub-bg-color);
     }
 
     .product-card img {
@@ -613,7 +614,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #f5f5f5;
+        background: var(--sub-bg-color);
         border-radius: 4px;
     }
 
@@ -624,21 +625,21 @@
 
     .product-info p {
         margin: 0;
-        color: #666;
+        color: var(--font-color);
         font-size: 0.8rem;
     }
 
     .price-calculation {
         margin-top: 1rem;
         padding: 0.5rem;
-        background: #fff;
+        background: var(--main-bg-color);
         border-radius: 4px;
         font-size: 0.9rem;
     }
 
     .total-price {
         font-weight: bold;
-        color: #a0522d;
+        color: var(--header-color);
         font-size: 1.1rem;
     }
 

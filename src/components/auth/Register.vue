@@ -97,16 +97,16 @@
         max-width: 400px;
         margin: 60px auto;
         padding: 32px 24px 24px 24px;
-        background: #fffbe6;
+        background: var(--main-bg-color);
         border-radius: 18px;
-        box-shadow: 0 2px 12px #e0c3a033;
+        box-shadow: 0 2px 12px var(--shadow-color);
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
     h2 {
-        color: #a0522d;
+        color: var(--header-color);
         margin-bottom: 18px;
     }
 
@@ -119,7 +119,7 @@
 
     label {
         font-weight: 500;
-        color: #5a3a1b;
+        color: var(--font-color);
     }
 
     input[type="email"],
@@ -128,34 +128,34 @@
         width: 370px;
         padding: 10px 14px;
         border-radius: 8px;
-        border: 1.5px solid #e6b800;
+        border: 1.5px solid var(--hover-color);
         font-size: 1rem;
         outline: none;
-        background: #fffbe6;
-        color: #5a3a1b;
+        background: var(--main-bg-color);
+        color: var(--font-color);
         transition: border 0.2s;
     }
 
     input:focus {
-        border-color: #a0522d;
+        border-color: var(--header-color);
     }
 
     button[type="submit"] {
-        background: #ffe680;
-        color: #a0522d;
+        background: var(--hover-color);
+        color: var(--header-color);
         border: none;
         border-radius: 8px;
         padding: 0.5rem 1.5rem;
         font-size: 1rem;
         font-weight: bold;
         cursor: pointer;
-        box-shadow: 0 1px 4px #e0c3a044;
+        box-shadow: 0 1px 4px var(--shadow-color);
         transition: background 0.2s, color 0.2s;
     }
 
     button[type="submit"]:hover {
-        background: #ffe080;
-        color: #7a3a1b;
+        background: var(--hover-color);
+        color: var(--hover-font-color);
     }
 
     .error {
@@ -173,18 +173,18 @@
     }
 
     .login-link {
-        color: #a0522d;
+        color: var(--header-color);
         font-weight: bold;
         text-decoration: underline;
         transition: color 0.2s;
     }
 
     .login-link:hover {
-        color: #e6b800;
+        color: var(--hover-color);
     }
 
     .loading-text {
-        color: #e6b800;
+        color: var(--hover-color);
         margin-top: 12px;
         font-size: 1rem;
     }
@@ -197,6 +197,6 @@
         background: none;
         border: none;
         cursor: pointer;
-        color: #a0522d;
+        color: var(--header-color);
     }
 </style>

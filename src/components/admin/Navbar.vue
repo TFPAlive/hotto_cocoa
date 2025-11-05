@@ -139,7 +139,7 @@
     }
 
     .logout-btn:hover {
-        background: #e6b800;
-        color: #fffbe6;
+        background: var(--hover-color);
+        color: var(--main-bg-color);
     }
 </style>

@@ -266,8 +266,8 @@
     .cart-item {
         margin-bottom: 20px;
         padding: 15px;
-        border-bottom: 1px solid #eee;
-        background: #fafafa;
+        border-bottom: 1px solid var(--sub-bg-color);
+        background: var(--main-bg-color);
         border-radius: 8px;
     }
 
@@ -281,13 +281,13 @@
     }
 
     .item-type-badge.drink {
-        background: #e3f2fd;
-        color: #1976d2;
+        background: var(--sub-bg-color);
+        color: var(--header-color);
     }
 
     .item-type-badge.product {
-        background: #fff3e0;
-        color: #f57c00;
+        background: var(--hover-color);
+        color: var(--font-color);
     }
 
     .item-header {
@@ -304,19 +304,19 @@
     .item-info h3 {
         margin: 0 0 4px 0;
         font-size: 1rem;
-        color: #333;
+        color: var(--font-color);
     }
 
     .item-price {
         margin: 0;
-        color: #666;
+        color: var(--font-color);
         font-size: 0.9rem;
     }
 
     .item-total {
         margin-top: 10px;
         text-align: right;
-        color: #8B4513;
+        color: var(--header-color);
     }
 
     .product-details {

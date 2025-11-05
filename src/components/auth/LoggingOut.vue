@@ -11,7 +11,6 @@
         align-items: center;
         justify-content: center;
         min-height: 60vh;
-        font-family: Arial, sans-serif;
     }
 
     .spinner {

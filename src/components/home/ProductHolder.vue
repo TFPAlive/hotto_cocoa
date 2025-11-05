@@ -126,8 +126,7 @@ onMounted(async () => {
                 </div>
                 
                 <div class="products-row" :style="{
-                    transform: `translateX(-${(scrollIndexes[idx] * 200) / Math.max(sectionData[idx].length, visibleCount)}%)`,
-                    width: `${(Math.max(sectionData[idx].length, visibleCount) / visibleCount) * 100}%`,
+                    transform: `translateX(-${(scrollIndexes[idx] * 200) / Math.max(sectionData[idx].length, visibleCount)}%)`
                 }">
                     <!-- Show actual items if available -->
                     <div 
@@ -224,7 +223,7 @@ onMounted(async () => {
     .loading-spinner {
         width: 40px;
         height: 40px;
-        border: 4px solid #f3f3f3;
+        border: 4px solid var(--sub-bg-color);
         border-top: 4px solid var(--header-color);
         border-radius: 50%;
         animation: spin 1s linear infinite;
@@ -241,7 +240,7 @@ onMounted(async () => {
         max-width: 1200px;
         background: var(--main-bg-color);
         border-radius: 18px;
-        box-shadow: 0 2px 8px #e0c3a033;
+        box-shadow: 0 2px 8px var(--shadow-color);
         padding: 32px 24px 24px 24px;
     }
 
@@ -267,7 +266,7 @@ onMounted(async () => {
         padding: 8px 24px;
         font-size: 1rem;
         cursor: pointer;
-        box-shadow: 0 2px 8px #e0c3a0;
+        box-shadow: 0 2px 8px var(--shadow-color);
         transition: background 0.2s, color 0.2s;
         text-decoration: none;
     }
@@ -328,13 +327,13 @@ onMounted(async () => {
     }
 
     .item-type-badge.drink {
-        background: #e3f2fd;
-        color: #1976d2;
+        background: var(--sub-bg-color);
+        color: var(--header-color);
     }
 
     .item-type-badge.product {
-        background: #fff3e0;
-        color: #f57c00;
+        background: var(--hover-color);
+        color: var(--font-color);
     }
 
     .product-image {
@@ -357,8 +356,8 @@ onMounted(async () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #f5f5f5;
-        color: #999;
+        background: var(--sub-bg-color);
+        color: var(--font-color);
         font-size: 2rem;
     }
 
@@ -419,8 +418,8 @@ onMounted(async () => {
     }
 
     .empty-card {
-        background: #f9f9f9;
-        border: 2px dashed #ddd;
+        background: var(--main-bg-color);
+        border: 2px dashed var(--button-color);
     }
 
     .empty-text {
@@ -449,7 +448,7 @@ onMounted(async () => {
         font-weight: bold;
         margin: 0 8px;
         cursor: pointer;
-        box-shadow: 0 2px 8px #e0c3a0;
+        box-shadow: 0 2px 8px var(--shadow-color);
         transition: background 0.2s, color 0.2s;
         display: flex;
         align-items: center;

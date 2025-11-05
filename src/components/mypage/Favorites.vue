@@ -185,14 +185,14 @@ const filteredFavorites = computed(() => {
 }
 
 .favorites-header h2 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 28px;
   font-weight: 600;
 }
 
 .favorites-header p {
-  color: #666;
+  color: var(--font-color);
   font-size: 16px;
 }
 
@@ -200,7 +200,7 @@ const filteredFavorites = computed(() => {
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 8px;
   padding: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -215,17 +215,17 @@ const filteredFavorites = computed(() => {
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: var(--font-color);
   transition: all 0.2s ease;
 }
 
 .tab-btn:hover {
-  background: #f5f5f5;
+  background: var(--sub-bg-color);
 }
 
 .tab-btn.active {
-  background: #a0522d;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
 }
 
 .loading-state, .error-state, .empty-state {
@@ -236,8 +236,8 @@ const filteredFavorites = computed(() => {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #a0522d;
+  border: 4px solid var(--sub-bg-color);
+  border-top: 4px solid var(--header-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 16px;
@@ -260,7 +260,7 @@ const filteredFavorites = computed(() => {
 }
 
 .favorite-card {
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -276,7 +276,7 @@ const filteredFavorites = computed(() => {
   position: relative;
   height: 180px;
   overflow: hidden;
-  background: #f8f9fa;
+  background: var(--sub-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,7 +298,7 @@ const filteredFavorites = computed(() => {
   top: 8px;
   right: 8px;
   background: rgba(160, 82, 45, 0.9);
-  color: white;
+  color: var(--main-bg-color);
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 10px;
@@ -312,21 +312,21 @@ const filteredFavorites = computed(() => {
 }
 
 .item-details h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 16px;
   font-weight: 600;
 }
 
 .item-description {
-  color: #666;
+  color: var(--font-color);
   font-size: 14px;
   line-height: 1.4;
   margin-bottom: 8px;
 }
 
 .item-price {
-  color: #a0522d;
+  color: var(--header-color);
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 4px;
@@ -339,7 +339,7 @@ const filteredFavorites = computed(() => {
 
 .item-actions {
   padding: 12px 16px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--shadow-color);
   display: flex;
   gap: 8px;
 }
@@ -356,22 +356,22 @@ const filteredFavorites = computed(() => {
 }
 
 .btn-primary {
-  background: #a0522d;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
 }
 
 .btn-primary:hover {
-  background: #8b4513;
+  background: var(--hover-font-color);
 }
 
 .btn-secondary {
-  background: #f5f5f5;
-  color: #666;
-  border: 1px solid #e0e0e0;
+  background: var(--sub-bg-color);
+  color: var(--font-color);
+  border: 1px solid var(--shadow-color);
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: var(--shadow-color);
 }
 
 .btn-danger {

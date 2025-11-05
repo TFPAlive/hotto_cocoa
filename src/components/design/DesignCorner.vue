@@ -192,6 +192,11 @@
                 <div class="drink-name-holder">
                     <input v-model="drinkName" type="text" class="drink-name-input" placeholder="Enter drink name..." maxlength="50" />
                 </div>
+                <div class="button-holder">
+                    <button class="create-drink" @click="createDrink">Create Drink</button>
+                    <button class="add-to-cart-btn" @click="addToCart">Add to Cart</button>
+                    <button class="reset-btn" @click="resetSelections">Reset</button>
+                </div>
                 <div class="rating-bars">
                     <div class="rating-row">
                         <span>Sweetness level</span>
@@ -211,11 +216,6 @@
               }, 0))
             }}
           </p>
-                </div>
-                <div class="button-holder">
-                    <button class="create-drink" @click="createDrink">Create Drink</button>
-                    <button class="add-to-cart-btn" @click="addToCart">Add to Cart</button>
-                    <button class="reset-btn" @click="resetSelections">Reset</button>
                 </div>
             </div>
             <div class="design-corner-right">
@@ -303,7 +303,7 @@
     .cup-image-placeholder {
         width: 220px;
         height: 220px;
-        background: #333;
+        background: var(--font-color);
         border-radius: 50%;
         margin-bottom: 32px;
         display: flex;
@@ -320,8 +320,8 @@
         width: 100%;
         background: transparent;
         border: none;
-        border-bottom: 2px solid #a0522d;
-        color: #ffe680;
+        border-bottom: 2px solid var(--header-color);
+        color: var(--hover-color);
         font-size: 1.5rem;
         font-weight: bold;
         text-align: center;
@@ -331,12 +331,12 @@
     }
 
     .drink-name-input:focus {
-        border-bottom-color: #ff8800;
-        color: #fff;
+        border-bottom-color: var(--hover-color);
+        color: var(--main-bg-color);
     }
 
     .drink-name-input::placeholder {
-        color: #888;
+        color: var(--font-color);
         font-weight: normal;
     }
 
@@ -351,7 +351,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: #ffe680;
+        color: var(--hover-color);
         font-size: 1.1rem;
     }
 
@@ -383,8 +383,8 @@
     }
 
     .category-buttons button {
-        background: #fff;
-        color: #23281a;
+        background: var(--main-bg-color);
+        color: var(--font-color);
         border: none;
         border-radius: 24px;
         padding: 10px 28px;
@@ -396,17 +396,21 @@
     }
 
     .category-buttons button.active {
-        background: #a0522d;
-        color: #fff;
+        background: var(--header-color);
+        color: var(--main-bg-color);
     }
 
-    .options-placeholder {
-        background: #23281a;
+    .category-buttons button:hover {
+        background: var(--hover-font-color);
+    }
+
+    .product-list {
+        background: var(--sub-bg-color);
         border-radius: 12px;
         min-height: 500px;
         padding: 24px;
-        color: #fff;
-        box-shadow: 0 1px 6px #e0c3a044;
+        color: var(--main-bg-color);
+        box-shadow: 0 1px 6px var(--shadow-color);
         overflow-y: auto;
     }
 
@@ -437,13 +441,13 @@
     }
 
     .image-cell.selected {
-        border: 2px solid #ff8800;
+        border: 2px solid var(--hover-color);
         border-radius: 12px;
     }
 
     .create-drink {
-        background: #a0522d;
-        color: #fff;
+        background: var(--button-color);
+        color: var(--header-color);
         border: none;
         border-radius: 6px;
         padding: 0.5rem 1.2rem;
@@ -452,12 +456,13 @@
     }
 
     .create-drink:hover {
-        background: #7a3a1d;
+        background: var(--hover-color);
+        color: var(--hover-font-color);
     }
 
     .add-to-cart-btn {
-        background: #ff8800;
-        color: #fff;
+        background: var(--button-color);
+        color: var(--header-color);
         border: none;
         border-radius: 6px;
         padding: 0.5rem 1.2rem;
@@ -466,7 +471,8 @@
     }
 
     .add-to-cart-btn:hover {
-        background: #e67600;
+        background: var(--hover-color);
+        color: var(--hover-font-color);
     }
 
     .price {
@@ -484,7 +490,7 @@
     .price p {
         font-size: 1.8rem;
         font-weight: bold;
-        color: #ff8800;
+        color: var(--hover-color);
     }
 
     .button-holder {
@@ -503,32 +509,32 @@
     /* Tooltip styles */
     .choice-tooltip {
         position: fixed;
-        background: rgba(35, 40, 26, 0.95);
-        border: 1px solid #a0522d;
+        background: var(--font-color);
+        border: 1px solid var(--header-color);
         border-radius: 8px;
         padding: 12px;
         z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 12px var(--shadow-color);
         backdrop-filter: blur(4px);
         pointer-events: none;
     }
 
     .choice-tooltip table {
         border-collapse: collapse;
-        color: #fff;
+        color: var(--main-bg-color);
         font-size: 0.9rem;
     }
 
     .choice-tooltip th, .choice-tooltip td {
         padding: 6px 12px;
         text-align: left;
-        border-bottom: 1px solid #666;
+        border-bottom: 1px solid var(--font-color);
     }
 
     .choice-tooltip th {
-        background: #a0522d;
+        background: var(--header-color);
         font-weight: bold;
-        color: #fff;
+        color: var(--main-bg-color);
     }
 
     .choice-tooltip tr:last-child td {
@@ -537,19 +543,19 @@
 
     /* Description tooltip styles */
     .description-tooltip {
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid #a0522d;
+        background: var(--shadow-color);
+        border: 1px solid var(--header-color);
         border-radius: 8px;
         padding: 16px;
         margin-top: 16px;
         max-width: 100%;
-        color: #fff;
+        color: var(--main-bg-color);
         backdrop-filter: blur(2px);
     }
 
     .product-details h4 {
         margin: 0 0 8px 0;
-        color: #ff8800;
+        color: var(--hover-color);
         font-size: 1.1rem;
     }
 
@@ -557,7 +563,7 @@
         margin: 0 0 12px 0;
         font-size: 0.9rem;
         line-height: 1.4;
-        color: #e0e0e0;
+        color: var(--main-bg-color);
     }
 
     .product-info {
@@ -568,17 +574,17 @@
 
     .product-info span {
         font-size: 0.8rem;
-        color: #ccc;
+        color: var(--sub-bg-color);
     }
 
     .product-info .price {
-        color: #ff8800;
+        color: var(--hover-color);
         font-weight: bold;
     }
 
     .reset-btn {
-        background: #555;
-        color: #fff;
+        background: var(--font-color);
+        color: var(--main-bg-color);
         border: none;
         border-radius: 6px;
         padding: 0.5rem 1.2rem;

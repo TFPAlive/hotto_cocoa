@@ -78,7 +78,7 @@
 
     .design-btn {
         display: inline-block;
-        background: var(--hover-color);
+        background: var(--sub-bg-color);
         color: var(--header-color);
         font-weight: bold;
         padding: 12px 32px;

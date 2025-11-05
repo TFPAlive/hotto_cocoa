@@ -16,6 +16,6 @@ onMounted(() => {
 <style scoped>
 .drink-detail-view {
     min-height: 100vh;
-    background: #faf8f5;
+    background: var(--main-bg-color);
 }
 </style>

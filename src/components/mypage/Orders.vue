@@ -336,21 +336,21 @@ function canReorder(order: Order): boolean {
 }
 
 .orders-header h2 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 28px;
   font-weight: 600;
 }
 
 .orders-header p {
-  color: #666;
+  color: var(--font-color);
   font-size: 16px;
 }
 
 .filter-section {
   margin-bottom: 24px;
   padding: 16px;
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -363,8 +363,8 @@ function canReorder(order: Order): boolean {
 
 .filter-btn {
   padding: 8px 16px;
-  border: 2px solid #e0e0e0;
-  background: white;
+  border: 2px solid var(--shadow-color);
+  background: var(--main-bg-color);
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
@@ -372,13 +372,13 @@ function canReorder(order: Order): boolean {
 }
 
 .filter-btn:hover {
-  border-color: #a0522d;
+  border-color: var(--header-color);
 }
 
 .filter-btn.active {
-  background: #a0522d;
-  color: white;
-  border-color: #a0522d;
+  background: var(--header-color);
+  color: var(--main-bg-color);
+  border-color: var(--header-color);
 }
 
 .count {
@@ -394,8 +394,8 @@ function canReorder(order: Order): boolean {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #a0522d;
+  border: 4px solid var(--sub-bg-color);
+  border-top: 4px solid var(--header-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 16px;
@@ -418,7 +418,7 @@ function canReorder(order: Order): boolean {
 }
 
 .order-card {
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -436,23 +436,23 @@ function canReorder(order: Order): boolean {
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--shadow-color);
 }
 
 .order-info h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 4px;
   font-size: 18px;
   font-weight: 600;
 }
 
 .order-date {
-  color: #666;
+  color: var(--font-color);
   font-size: 14px;
 }
 
 .status-badge {
-  color: white;
+  color: var(--main-bg-color);
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 12px;
@@ -477,7 +477,7 @@ function canReorder(order: Order): boolean {
   height: 48px;
   border-radius: 6px;
   overflow: hidden;
-  background: #f5f5f5;
+  background: var(--sub-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -491,22 +491,22 @@ function canReorder(order: Order): boolean {
 
 .image-placeholder {
   font-size: 20px;
-  color: #ccc;
+  color: var(--shadow-color);
 }
 
 .item-details h4 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 4px;
   font-size: 14px;
 }
 
 .item-details p {
-  color: #666;
+  color: var(--font-color);
   font-size: 12px;
 }
 
 .more-items {
-  color: #666;
+  color: var(--font-color);
   font-size: 12px;
   font-style: italic;
   margin-left: 60px;
@@ -521,7 +521,7 @@ function canReorder(order: Order): boolean {
 }
 
 .order-total {
-  color: #2c3e50;
+  color: var(--header-color);
   font-size: 16px;
   font-weight: 600;
 }
@@ -542,31 +542,31 @@ function canReorder(order: Order): boolean {
 }
 
 .btn-primary {
-  background: #a0522d;
-  color: white;
+  background: var(--button-color);
+  color: var(--main-bg-color);
 }
 
 .btn-primary:hover {
-  background: #8b4513;
+  background: var(--hover-color);
 }
 
 .btn-secondary {
-  background: #f5f5f5;
-  color: #666;
-  border: 1px solid #e0e0e0;
+  background: var(--sub-bg-color);
+  color: var(--font-color);
+  border: 1px solid var(--shadow-color);
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: var(--shadow-color);
 }
 
 .btn-danger {
-  background: #f44336;
-  color: white;
+  background: var(--button-color);
+  color: var(--main-bg-color);
 }
 
 .btn-danger:hover {
-  background: #d32f2f;
+  background: var(--hover-color);
 }
 
 /* Modal Styles */
@@ -584,7 +584,7 @@ function canReorder(order: Order): boolean {
 }
 
 .modal-content {
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 12px;
   max-width: 600px;
   width: 90%;
@@ -601,7 +601,7 @@ function canReorder(order: Order): boolean {
 }
 
 .modal-header h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin: 0;
   font-size: 20px;
 }
@@ -611,7 +611,7 @@ function canReorder(order: Order): boolean {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
+  color: var(--font-color);
   padding: 4px;
 }
 
@@ -624,7 +624,7 @@ function canReorder(order: Order): boolean {
 }
 
 .detail-section h4 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 12px;
   font-size: 16px;
   font-weight: 600;
@@ -642,12 +642,12 @@ function canReorder(order: Order): boolean {
 }
 
 .detail-item .label {
-  color: #666;
+  color: var(--font-color);
   font-size: 14px;
 }
 
 .detail-item .value {
-  color: #2c3e50;
+  color: var(--header-color);
   font-weight: 500;
   font-size: 14px;
 }
@@ -663,7 +663,7 @@ function canReorder(order: Order): boolean {
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #f8f9fa;
+  background: var(--sub-bg-color);
   border-radius: 8px;
 }
 
@@ -672,25 +672,25 @@ function canReorder(order: Order): boolean {
 }
 
 .modal-item h5 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 4px;
   font-size: 14px;
 }
 
 .modal-item p {
-  color: #666;
+  color: var(--font-color);
   font-size: 12px;
   margin-bottom: 2px;
 }
 
 .item-total {
-  color: #2c3e50;
+  color: var(--header-color);
   font-weight: 600;
   font-size: 14px;
 }
 
 .order-summary {
-  background: #f8f9fa;
+  background: var(--sub-bg-color);
   border-radius: 8px;
   padding: 16px;
 }
@@ -703,11 +703,11 @@ function canReorder(order: Order): boolean {
 }
 
 .summary-row.total {
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--shadow-color);
   padding-top: 8px;
   font-weight: 600;
   font-size: 16px;
-  color: #2c3e50;
+  color: var(--header-color);
 }
 
 .modal-footer {

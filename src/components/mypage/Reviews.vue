@@ -529,12 +529,12 @@ function setRating(rating: number) {
 }
 
 .rating-number {
-  color: #666;
+  color: var(--font-color);
   font-size: 12px;
 }
 
 .status-badge {
-  color: white;
+  color: var(--main-bg-color);
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 12px;
@@ -544,14 +544,14 @@ function setRating(rating: number) {
 }
 
 .review-content h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 18px;
   font-weight: 600;
 }
 
 .review-content p {
-  color: #666;
+  color: var(--font-color);
   line-height: 1.6;
   margin-bottom: 16px;
 }
@@ -561,11 +561,11 @@ function setRating(rating: number) {
   justify-content: space-between;
   align-items: center;
   padding-top: 12px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--shadow-color);
 }
 
 .review-date {
-  color: #999;
+  color: var(--font-color);
   font-size: 12px;
 }
 

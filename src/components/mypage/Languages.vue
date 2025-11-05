@@ -368,14 +368,14 @@ function resetToDefaults() {
 }
 
 .languages-header h2 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 28px;
   font-weight: 600;
 }
 
 .languages-header p {
-  color: #666;
+  color: var(--font-color);
   font-size: 16px;
 }
 
@@ -387,8 +387,8 @@ function resetToDefaults() {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #a0522d;
+  border: 4px solid var(--sub-bg-color);
+  border-top: 4px solid var(--header-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 16px;
@@ -406,15 +406,15 @@ function resetToDefaults() {
 }
 
 .settings-section {
-  background: white;
-  border: 2px solid #e3f2fd;
+  background: var(--main-bg-color);
+  border: 2px solid var(--sub-bg-color);
   border-radius: 12px;
   padding: 24px;
 }
 
 .preview-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-color: #dee2e6;
+  background: linear-gradient(135deg, var(--sub-bg-color) 0%, var(--shadow-color) 100%);
+  border-color: var(--shadow-color);
 }
 
 .section-header {
@@ -422,7 +422,7 @@ function resetToDefaults() {
 }
 
 .section-header h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin: 0 0 4px 0;
   font-size: 18px;
   font-weight: 600;

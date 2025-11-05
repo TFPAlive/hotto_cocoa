@@ -481,7 +481,7 @@ function onPhoneNumberInput(event: Event) {
 
 .address-management {
   padding: 24px;
-  background: #fafafa;
+  background: var(--sub-bg-color);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -497,14 +497,14 @@ function onPhoneNumberInput(event: Event) {
 
 .address-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--header-color);
   font-size: 24px;
   font-weight: 600;
 }
 
 .add-address-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  color: var(--main-bg-color);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -528,8 +528,8 @@ function onPhoneNumberInput(event: Event) {
 }
 
 .address-card {
-  background: white;
-  border: 2px solid #e3f2fd;
+  background: var(--main-bg-color);
+  border: 2px solid var(--sub-bg-color);
   border-radius: 12px;
   padding: 20px;
   transition: all 0.3s ease;
@@ -541,12 +541,12 @@ function onPhoneNumberInput(event: Event) {
 .address-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: #2196f3;
+  border-color: var(--header-color);
 }
 
 .address-card.default {
-  border-color: #4caf50;
-  background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+  border-color: var(--header-color);
+  background: var(--sub-bg-color);
 }
 
 .address-card.default::before {
@@ -563,8 +563,8 @@ function onPhoneNumberInput(event: Event) {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #4caf50;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 10px;
@@ -579,14 +579,14 @@ function onPhoneNumberInput(event: Event) {
 
 .address-content h3 {
   margin: 0 0 8px 0;
-  color: #2c3e50;
+  color: var(--header-color);
   font-size: 16px;
   font-weight: 600;
 }
 
 .address-content p {
   margin: 4px 0;
-  color: #666;
+  color: var(--font-color);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -608,30 +608,30 @@ function onPhoneNumberInput(event: Event) {
 }
 
 .edit-btn {
-  background: #2196f3;
-  color: white;
+  background: var(--button-color);
+  color: var(--main-bg-color);
 }
 
 .edit-btn:hover {
-  background: #1976d2;
+  background: var(--hover-color);
 }
 
 .delete-btn {
-  background: #f44336;
-  color: white;
+  background: var(--button-color);
+  color: var(--main-bg-color);
 }
 
 .delete-btn:hover {
-  background: #d32f2f;
+  background: var(--hover-color);
 }
 
 .set-default-btn {
-  background: #ff9800;
-  color: white;
+  background: var(--button-color);
+  color: var(--main-bg-color);
 }
 
 .set-default-btn:hover {
-  background: #f57c00;
+  background: var(--hover-color);
 }
 
 .modal-overlay {
@@ -639,7 +639,7 @@ function onPhoneNumberInput(event: Event) {
   top: 0;
   right: 0;
   width: -webkit-fill-available;
-  background: white;
+  background: var(--main-bg-color);
   transform: translateX(100%);
   transition: transform 0.4s ease-in-out;
   overflow-y: auto;
@@ -682,7 +682,7 @@ function onPhoneNumberInput(event: Event) {
 
 .modal-header h3 {
   margin: 0;
-  color: #2c3e50;
+  color: var(--header-color);
   font-size: 20px;
   font-weight: 600;
 }
@@ -692,15 +692,15 @@ function onPhoneNumberInput(event: Event) {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #666;
+  color: var(--font-color);
   padding: 4px;
   border-radius: 4px;
   transition: all 0.2s ease;
 }
 
 .close-btn:hover {
-  background: #f5f5f5;
-  color: #333;
+  background: var(--sub-bg-color);
+  color: var(--header-color);
 }
 
 .modal-body {
@@ -732,7 +732,7 @@ function onPhoneNumberInput(event: Event) {
 .form-row label,
 .form-field label {
   margin-bottom: 8px;
-  color: #2c3e50;
+  color: var(--header-color);
   font-weight: 500;
   font-size: 14px;
 }
@@ -742,11 +742,11 @@ function onPhoneNumberInput(event: Event) {
 .form-field input,
 .form-field select {
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--shadow-color);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
-  background: white;
+  background: var(--main-bg-color);
 }
 
 .form-row input:focus,
@@ -754,7 +754,7 @@ function onPhoneNumberInput(event: Event) {
 .form-field input:focus,
 .form-field select:focus {
   outline: none;
-  border-color: #2196f3;
+  border-color: var(--header-color);
   box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
 }
 
@@ -795,18 +795,18 @@ function onPhoneNumberInput(event: Event) {
 }
 
 .cancel-btn {
-  background: #f5f5f5;
-  color: #666;
+  background: var(--sub-bg-color);
+  color: var(--font-color);
 }
 
 .cancel-btn:hover {
-  background: #e0e0e0;
-  color: #333;
+  background: var(--shadow-color);
+  color: var(--header-color);
 }
 
 .save-btn {
   background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
-  color: white;
+  color: var(--main-bg-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 

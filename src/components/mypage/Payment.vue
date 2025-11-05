@@ -366,14 +366,14 @@ function formatExpiryDate(month?: number, year?: number) {
 }
 
 .payment-header h2 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
   font-size: 28px;
   font-weight: 600;
 }
 
 .payment-header p {
-  color: #666;
+  color: var(--font-color);
   font-size: 16px;
 }
 
@@ -383,8 +383,8 @@ function formatExpiryDate(month?: number, year?: number) {
 }
 
 .btn-primary {
-  background: #a0522d;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -395,7 +395,7 @@ function formatExpiryDate(month?: number, year?: number) {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #8b4513;
+  background: var(--hover-font-color);
   transform: translateY(-2px);
 }
 
@@ -412,8 +412,8 @@ function formatExpiryDate(month?: number, year?: number) {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #a0522d;
+  border: 4px solid var(--sub-bg-color);
+  border-top: 4px solid var(--header-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 16px;
@@ -436,16 +436,16 @@ function formatExpiryDate(month?: number, year?: number) {
 }
 
 .payment-card {
-  background: white;
-  border: 2px solid #e3f2fd;
+  background: var(--main-bg-color);
+  border: 2px solid var(--sub-bg-color);
   border-radius: 12px;
   padding: 20px;
   transition: all 0.3s ease;
 }
 
 .payment-card.default {
-  border-color: #4caf50;
-  background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+  border-color: var(--header-color);
+  background: var(--sub-bg-color);
 }
 
 .payment-header-card {
@@ -473,12 +473,12 @@ function formatExpiryDate(month?: number, year?: number) {
 
 .type-label {
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--header-color);
 }
 
 .default-badge {
-  background: #4caf50;
-  color: white;
+  background: var(--header-color);
+  color: var(--main-bg-color);
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 10px;
@@ -494,9 +494,8 @@ function formatExpiryDate(month?: number, year?: number) {
 .card-details .card-number {
   font-size: 18px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--header-color);
   margin-bottom: 8px;
-  font-family: 'Courier New', monospace;
 }
 
 .card-info {
@@ -506,17 +505,17 @@ function formatExpiryDate(month?: number, year?: number) {
 }
 
 .cardholder {
-  color: #666;
+  color: var(--font-color);
   font-size: 14px;
 }
 
 .expiry {
-  color: #666;
+  color: var(--font-color);
   font-size: 14px;
 }
 
 .card-provider, .provider {
-  color: #a0522d;
+  color: var(--header-color);
   font-weight: 600;
   font-size: 14px;
 }
@@ -538,22 +537,22 @@ function formatExpiryDate(month?: number, year?: number) {
 }
 
 .btn-secondary {
-  background: #f5f5f5;
-  color: #666;
-  border: 1px solid #e0e0e0;
+  background: var(--sub-bg-color);
+  color: var(--font-color);
+  border: 1px solid var(--shadow-color);
 }
 
 .btn-secondary:hover {
-  background: #e0e0e0;
+  background: var(--shadow-color);
 }
 
 .btn-danger {
-  background: #f44336;
-  color: white;
+  background: var(--button-color);
+  color: var(--main-bg-color);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #d32f2f;
+  background: var(--hover-color);
 }
 
 .btn-danger:disabled {
@@ -576,7 +575,7 @@ function formatExpiryDate(month?: number, year?: number) {
 }
 
 .modal-content {
-  background: white;
+  background: var(--main-bg-color);
   border-radius: 12px;
   max-width: 600px;
   width: 90%;
@@ -589,11 +588,11 @@ function formatExpiryDate(month?: number, year?: number) {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--shadow-color);
 }
 
 .modal-header h3 {
-  color: #2c3e50;
+  color: var(--header-color);
   margin: 0;
   font-size: 20px;
 }

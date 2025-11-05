@@ -816,7 +816,6 @@ onMounted(() => {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-family: inherit;
   font-size: 0.95rem;
   margin-bottom: 15px;
   resize: vertical;
