@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const cupImages = ref<Array<{productid: number, name: string, imageurl: string}>>([])
 const selectedCups = ref<Array<{productid: number, name: string, imageurl: string}>>([])
 const loading = ref(false)
@@ -34,6 +36,57 @@ function selectRandomCups() {
     selectedCups.value = shuffled.slice(0, Math.min(5, shuffled.length))
 }
 
+// Get random drink recipe for a specific cup
+async function getRandomDrinkForCup(cupId: number) {
+    try {
+        const response = await fetch(`/api/user/products?action=random-drink&cupId=${cupId}`)
+        if (!response.ok) {
+            throw new Error('Failed to fetch random drink')
+        }
+        return await response.json()
+    } catch (err) {
+        console.error('Error fetching random drink:', err)
+        // Return basic fallback drink structure
+        return {
+            drinkid: null,
+            products: [{ productid: cupId, category: 'mugs & cups' }]
+        }
+    }
+}
+
+// Handle cup click - implement drink roulette
+async function handleCupClick(cupProduct: any) {
+    try {
+        // Get a random drink recipe that uses this cup
+        const randomDrink = await getRandomDrinkForCup(cupProduct.productid)
+        
+        // Navigate to design corner with pre-populated data
+        await router.push({
+            path: '/design',
+            hash: '#design-corner',
+            query: {
+                roulette: 'true',
+                cupId: cupProduct.productid.toString(),
+                drinkId: randomDrink.drinkid ? randomDrink.drinkid.toString() : '',
+                drinkName: randomDrink.drinkname || `${cupProduct.name || 'Custom'} Special`,
+                products: randomDrink.products ? JSON.stringify(randomDrink.products) : JSON.stringify([{ productid: cupProduct.productid, category: 'mugs & cups' }])
+            }
+        })
+    } catch (err) {
+        console.error('Error handling cup click:', err)
+        // Fallback: just navigate to design corner with the cup
+        await router.push({
+            path: '/design',
+            hash: '#design-corner',
+            query: {
+                roulette: 'true',
+                cupId: cupProduct.productid.toString(),
+                drinkName: `${cupProduct.name || 'Custom'} Special`
+            }
+        })
+    }
+}
+
 onMounted(() => {
     fetchCupImages()
 })
@@ -54,9 +107,13 @@ onMounted(() => {
                         v-for="cup in selectedCups" 
                         :key="cup.productid" 
                         class="cup-item"
-                        :title="cup.name"
+                        :title="`${cup.name} - Click for drink roulette!`"
+                        @click="handleCupClick(cup)"
                     >
                         <img :src="cup.imageurl" :alt="cup.name" class="cup-image" />
+                        <div class="cup-roulette-overlay">
+                            <span class="roulette-icon">🎲</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -123,7 +180,7 @@ onMounted(() => {
     }
 
     .cup-item:hover {
-        transform: translateY(-2px);
+        transform: translateY(-2px) scale(1.05);
     }
 
     .cup-image {
@@ -137,6 +194,31 @@ onMounted(() => {
 
     .cup-image:hover {
         box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .cup-roulette-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(229, 57, 53, 0.85);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .cup-item:hover .cup-roulette-overlay {
+        opacity: 1;
+    }
+
+    .roulette-icon {
+        font-size: 1.2rem;
+        color: white;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     .cup-placeholder {
