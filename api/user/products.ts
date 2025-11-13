@@ -112,6 +112,77 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 			return res.status(200).json(rows);
 		}
 
+		// GET /api/user/products?action=random-drink -> get a random drink recipe for a specific cup
+		if (req.method === 'GET' && action === 'random-drink') {
+			const connection = await getConnection();
+			const cupId = parseInt(q.cupId as string);
+			
+			if (!cupId || isNaN(cupId)) {
+				return res.status(400).json({ error: 'Valid cupId is required' });
+			}
+			
+			try {
+				// Get a random drink that uses this cup
+				const [drinkRows] = await connection.execute(`
+					SELECT DISTINCT d.drinkid, ud.name as drinkname, d.description, d.baseprice, d.imageurl
+					FROM Drink d
+					INNER JOIN DrinkProduct dp ON d.drinkid = dp.drinkid
+					LEFT JOIN UserDrink ud ON d.drinkid = ud.drinkid
+					WHERE dp.productid = ? AND ud.name IS NOT NULL
+					ORDER BY RAND()
+					LIMIT 1
+				`, [cupId]);
+				
+				if (!Array.isArray(drinkRows) || drinkRows.length === 0) {
+					// No existing drinks with this cup, create a basic random recipe
+					const [randomProducts] = await connection.execute(`
+						SELECT productid, name, category, price 
+						FROM Product 
+						WHERE category IN ('drink bases', 'choco bombs', 'marshmallows', 'sprinkles') 
+						ORDER BY RAND() 
+						LIMIT 3
+					`);
+					
+					const products = [
+						{ productid: cupId, category: 'mugs & cups' },
+						...(Array.isArray(randomProducts) ? randomProducts.slice(0, 2).map((p: any) => ({ 
+							productid: p.productid, 
+							category: p.category 
+						})) : [])
+					];
+					
+					return res.status(200).json({
+						drinkid: null,
+						drinkname: 'Random Special',
+						products: products
+					});
+				}
+				
+				// Get all products for this drink
+				const drink = (drinkRows as any[])[0];
+				const [productRows] = await connection.execute(`
+					SELECT dp.productid, dp.quantity, p.name, p.category, p.price
+					FROM DrinkProduct dp
+					INNER JOIN Product p ON dp.productid = p.productid
+					WHERE dp.drinkid = ?
+				`, [drink.drinkid]);
+				
+				return res.status(200).json({
+					drinkid: drink.drinkid,
+					drinkname: drink.drinkname || drink.description || 'Random Special',
+					products: Array.isArray(productRows) ? productRows.map((p: any) => ({
+						productid: p.productid,
+						category: p.category,
+						quantity: p.quantity || 1
+					})) : []
+				});
+				
+			} catch (error) {
+				console.error('Random drink fetch error:', error);
+				return res.status(500).json({ error: 'Failed to fetch random drink' });
+			}
+		}
+
 		// POST /api/user/products?action=create -> createDrink logic
 		if (req.method === 'POST' && action === 'create') {
 			const body = req.body || {}

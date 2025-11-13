@@ -305,28 +305,7 @@ onMounted(() => {
             <h3>Description</h3>
             <p>{{ product.description || 'No description available for this product.' }}</p>
           </div>
-
-          <!-- Purchase Mode Selector -->
-          <div class="purchase-mode-section">
-            <h3>Purchase Options</h3>
-            <div class="mode-selector">
-              <label class="mode-option">
-                <input type="radio" v-model="purchaseMode" value="product" />
-                <span class="option-content">
-                  <strong>Buy as Individual Product</strong>
-                  <small>Purchase this item directly</small>
-                </span>
-              </label>
-              <label class="mode-option">
-                <input type="radio" v-model="purchaseMode" value="design" />
-                <span class="option-content">
-                  <strong>Add to Drink Design</strong>
-                  <small>Use this ingredient in a custom drink</small>
-                </span>
-              </label>
-            </div>
-          </div>
-
+          
           <!-- Quantity and Add to Cart -->
           <div class="purchase-section">
             <div class="quantity-selector">

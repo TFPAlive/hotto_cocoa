@@ -1,14 +1,73 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+const cupImages = ref<Array<{productid: number, name: string, imageurl: string}>>([])
+const selectedCups = ref<Array<{productid: number, name: string, imageurl: string}>>([])
+const loading = ref(false)
+
+async function fetchCupImages() {
+    loading.value = true
+    try {
+        const response = await fetch('/api/user/products?category=Mugs & Cups')
+        if (!response.ok) throw new Error('Failed to fetch products')
+        
+        const products = await response.json()
+        // Filter products that have images
+        cupImages.value = products.filter((product: any) => product.imageurl && product.imageurl.trim())
+        
+        // Select 5 random cups
+        selectRandomCups()
+    } catch (error) {
+        console.error('Error fetching cup images:', error)
+        // Fallback to empty array if fetch fails
+        cupImages.value = []
+        selectedCups.value = []
+    } finally {
+        loading.value = false
+    }
+}
+
+function selectRandomCups() {
+    if (cupImages.value.length === 0) return
+    
+    const shuffled = [...cupImages.value].sort(() => Math.random() - 0.5)
+    selectedCups.value = shuffled.slice(0, Math.min(5, shuffled.length))
+}
+
+onMounted(() => {
+    fetchCupImages()
+})
+</script>
 <template>
     <div class="welcome-container">
         <div class="welcome-left">
             <div class="welcome-title">Self-design bar</div>
             <div class="cup-icons">
-                <svg v-for="n in 5" :key="n" width="36" height="36" viewBox="0 0 24 24" fill="var(--hover-color)" xmlns="http://www.w3.org/2000/svg" class="cup-icon">
-                    <rect x="7" y="8" width="10" height="10" rx="3" />
-                    <rect x="9" y="4" width="6" height="4" rx="2" />
-                    <rect x="10" y="18" width="4" height="2" rx="1" />
-                </svg>
+                <!-- Loading state -->
+                <div v-if="loading" class="loading-cups">
+                    <div v-for="n in 5" :key="n" class="cup-placeholder"></div>
+                </div>
+                
+                <!-- Actual cup images -->
+                <div v-else-if="selectedCups.length > 0" class="cup-images">
+                    <div 
+                        v-for="cup in selectedCups" 
+                        :key="cup.productid" 
+                        class="cup-item"
+                        :title="cup.name"
+                    >
+                        <img :src="cup.imageurl" :alt="cup.name" class="cup-image" />
+                    </div>
+                </div>
+                
+                <!-- Fallback SVG icons if no images available -->
+                <div v-else class="cup-svg-fallback">
+                    <svg v-for="n in 5" :key="n" width="36" height="36" viewBox="0 0 24 24" fill="var(--hover-color)" xmlns="http://www.w3.org/2000/svg" class="cup-icon">
+                        <rect x="7" y="8" width="10" height="10" rx="3" />
+                        <rect x="9" y="4" width="6" height="4" rx="2" />
+                        <rect x="10" y="18" width="4" height="2" rx="1" />
+                    </svg>
+                </div>
             </div>
         </div>
         <div class="welcome-right">
@@ -46,6 +105,55 @@
     .cup-icons {
         display: flex;
         gap: 12px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cup-images, .cup-svg-fallback, .loading-cups {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cup-item {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .cup-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .cup-image {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px var(--shadow-color);
+        transition: box-shadow 0.2s ease;
+    }
+
+    .cup-image:hover {
+        box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .cup-placeholder {
+        width: 48px;
+        height: 48px;
+        background: var(--sub-bg-color);
+        border-radius: 8px;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 0.7;
+        }
+        50% {
+            opacity: 1;
+        }
     }
 
     .cup-icon {

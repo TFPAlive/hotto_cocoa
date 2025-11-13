@@ -409,14 +409,6 @@ onMounted(async () => {
                       <span v-if="addingAsProduct === item.productid">Adding...</span>
                       <span v-else>Buy Item</span>
                     </button>
-                    <button 
-                      @click="addToCart(item)"
-                      :disabled="addingToCart === item.productid"
-                      class="add-to-cart-btn secondary"
-                    >
-                      <span v-if="addingToCart === item.productid">Adding...</span>
-                      <span v-else>Add to Design</span>
-                    </button>
                   </template>
 
                   <!-- Drink Actions -->

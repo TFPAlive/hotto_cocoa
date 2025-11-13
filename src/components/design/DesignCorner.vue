@@ -2,7 +2,8 @@
     import LeftPointIcon from '../icons/IconPointLeft.vue'
     import RightPointIcon from '../icons/IconPointRight.vue'
     import StarRating from './StarRating.vue'
-    import { ref, onMounted, nextTick } from 'vue'
+    import { ref, onMounted, nextTick, watch } from 'vue'
+    import { useRoute } from 'vue-router'
     import { useProducts } from '@/composables/useProducts'
     import { auth } from '@/composables/useAuth'
     import { formatPrice } from '@/utils/currency'
@@ -10,6 +11,7 @@
 
     const { products } = useProducts()
     const { fetchCartItems } = useMyCart()
+    const route = useRoute()
     const sweetness = ref(3)
     const calories = ref(2)
     const categories = ref(['Mugs & Cups', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straws', 'Coasters', 'Packing styles'])
@@ -29,6 +31,69 @@
     const canScrollLeft = ref(false)
     const canScrollRight = ref(false)
     const drinkName = ref('Your Custom Drink')
+    
+    // Drink roulette handling
+    async function handleRouletteData() {
+        const query = route.query
+        
+        if (query.roulette === 'true') {
+            // Clear existing selections first
+            resetSelections()
+            
+            try {
+                // Set drink name if provided
+                if (query.drinkName) {
+                    drinkName.value = query.drinkName as string
+                }
+                
+                // Parse and apply pre-selected products
+                if (query.products) {
+                    const productList = JSON.parse(query.products as string)
+                    
+                    // Fetch full product details for each product
+                    for (const prodInfo of productList) {
+                        await applyRouletteProduct(prodInfo.productid, prodInfo.category)
+                    }
+                } else if (query.cupId) {
+                    // Just apply the cup if no full product list
+                    await applyRouletteProduct(parseInt(query.cupId as string), 'mugs & cups')
+                }
+                
+                // Set random sweetness and calories for the roulette experience
+                sweetness.value = Math.floor(Math.random() * 5) + 1
+                calories.value = Math.floor(Math.random() * 5) + 1
+                
+                console.log('Applied drink roulette selections')
+            } catch (error) {
+                console.error('Error applying roulette data:', error)
+            }
+        }
+    }
+    
+    // Apply a specific product from roulette selection
+    async function applyRouletteProduct(productId: number, category: string) {
+        try {
+            // Find the product in the loaded products
+            const foundProduct = products.value.find(p => p.productid === productId)
+            
+            if (foundProduct) {
+                selectedProducts.value[category.toLowerCase()] = foundProduct
+                console.log(`Applied ${category} product:`, foundProduct.name)
+            } else {
+                // If product not found in current products, fetch it specifically
+                const response = await fetch(`/api/user/products?productid=${productId}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    if (data.product) {
+                        selectedProducts.value[category.toLowerCase()] = data.product
+                        console.log(`Fetched and applied ${category} product:`, data.product.name)
+                    }
+                }
+            }
+        } catch (error) {
+            console.error(`Error applying ${category} product:`, error)
+        }
+    }
 
     function scrollCategoryLeft() {
         if (categoryButtonsRef.value) {
@@ -180,6 +245,14 @@
         }
         updateScrollButtons()
     }
+    
+    function selectDrinkNameText(event: Event) {
+        const input = event.target as HTMLInputElement
+        if (input) {
+            input.select()
+        }
+    }
+    
     function updateScrollButtons() {
         if (!categoryButtonsRef.value) return
         const element = categoryButtonsRef.value
@@ -187,25 +260,43 @@
         canScrollRight.value = element.scrollLeft < (element.scrollWidth - element.clientWidth)
     }
 
+    // Watch for route changes to handle roulette data
+    watch(() => route.query, (newQuery) => {
+        if (newQuery.roulette === 'true') {
+            handleRouletteData()
+        }
+    }, { immediate: true })
+
     onMounted(() => {
         nextTick(() => {
             updateScrollButtons()
+            // Handle roulette data if present on initial load
+            if (route.query.roulette === 'true') {
+                handleRouletteData()
+            }
         })
     })
 </script>
 <template>
-    <div class="design-corner-layout">
+    <div id="design-corner" class="design-corner-layout">
         <div class="design-corner-holder">
             <div class="design-corner-left">
                 <div class="cup-image-placeholder" @mouseenter="showChoiceTooltip" @mouseleave="hideChoiceTooltip" @mousemove="updateTooltipPosition">
                     <img v-if="hoveredProduct && hoveredProduct.imageurl" :src="hoveredProduct.imageurl" :alt="hoveredProduct.name || 'Product Image'" class="preview-image" />
                     <div v-else class="placeholder-text">
                         <!-- Cup image goes here -->
-                        Preview
                     </div>
                 </div>
                 <div class="drink-name-holder">
-                    <input v-model="drinkName" type="text" class="drink-name-input" placeholder="Enter drink name..." maxlength="50" />
+                    <input 
+                        v-model="drinkName" 
+                        type="text" 
+                        class="drink-name-input" 
+                        placeholder="Enter drink name..." 
+                        maxlength="50" 
+                        @click="selectDrinkNameText"
+                        @focus="selectDrinkNameText"
+                    />
                 </div>
                 <div class="button-holder">
                     <button class="create-drink" @click="createDrink">Create Drink</button>
