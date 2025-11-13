@@ -10,7 +10,7 @@
 
     const { products } = useProducts()
     const { fetchCartItems } = useMyCart()
-    const sweetness = ref(3.5)
+    const sweetness = ref(3)
     const calories = ref(2)
     const categories = ref(['Mugs & Cups', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straws', 'Coasters', 'Packing styles'])
     const selectedCategory = ref(categories.value[0])
@@ -71,10 +71,21 @@
             let uniqueid = ''
             for (const p of products) uniqueid += String(p.productid).padStart(4, '0')
 
+            // Find the cup/mug image to use as the drink image
+            const cupProduct = selectedProducts.value['mugs & cups']
+            const drinkImageUrl = cupProduct?.imageurl || null
+
             const res = await fetch('/api/user/products?action=create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ drinkname: drinkName.value, products, price: Object.values(selectedProducts.value).reduce((sum, prod) => sum + (prod?.price || 0), 0), userid: auth.user?.userid, uniqueid }),
+                body: JSON.stringify({ 
+                    drinkname: drinkName.value, 
+                    products, 
+                    price: Object.values(selectedProducts.value).reduce((sum, prod) => sum + (prod?.price || 0), 0), 
+                    userid: auth.user?.userid, 
+                    uniqueid,
+                    imageurl: drinkImageUrl
+                }),
             })
 
             if (!res.ok) throw new Error('Network response was not ok')
@@ -187,7 +198,11 @@
         <div class="design-corner-holder">
             <div class="design-corner-left">
                 <div class="cup-image-placeholder" @mouseenter="showChoiceTooltip" @mouseleave="hideChoiceTooltip" @mousemove="updateTooltipPosition">
-                    <!-- Cup image goes here -->
+                    <img v-if="hoveredProduct && hoveredProduct.imageurl" :src="hoveredProduct.imageurl" :alt="hoveredProduct.name || 'Product Image'" class="preview-image" />
+                    <div v-else class="placeholder-text">
+                        <!-- Cup image goes here -->
+                        Preview
+                    </div>
                 </div>
                 <div class="drink-name-holder">
                     <input v-model="drinkName" type="text" class="drink-name-input" placeholder="Enter drink name..." maxlength="50" />
@@ -309,6 +324,22 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .preview-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .placeholder-text {
+        color: var(--main-bg-color);
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
     }
 
     .drink-name-holder {
@@ -332,7 +363,7 @@
 
     .drink-name-input:focus {
         border-bottom-color: var(--hover-color);
-        color: var(--main-bg-color);
+        color: var(--hover-font-color);
     }
 
     .drink-name-input::placeholder {
@@ -543,7 +574,7 @@
 
     /* Description tooltip styles */
     .description-tooltip {
-        background: var(--shadow-color);
+        background: var(--font-color);
         border: 1px solid var(--header-color);
         border-radius: 8px;
         padding: 16px;

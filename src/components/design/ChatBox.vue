@@ -102,8 +102,6 @@ Tell me what you want, or click on the stuff below.`;
         width: 100%;
         min-height: 200px;
         background: var(--main-bg-color);
-        border-radius: 12px;
-        box-shadow: 0 1px 6px var(--shadow-color);
         padding: 18px 14px;
         display: flex;
         flex-direction: column;
