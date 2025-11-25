@@ -11,6 +11,7 @@
     import Security from '../mypage/Security.vue';
     import Permissions from '../mypage/Permissions.vue';
     import Languages from '../mypage/Languages.vue';
+    import SideAdvertisement from '../mypage/SideAdvertisement.vue';
 
     const route = useRoute();
     const router = useRouter();
@@ -73,12 +74,15 @@
             <Security v-if="activeSection === 'security'" />
             <Permissions v-if="activeSection === 'permissions'" />
         </div>
+        <div class="ad-sidebar">
+            <SideAdvertisement />
+        </div>
     </div>
 </template>
 <style scoped>
     .mypage-container {
         display: flex;
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
         padding: 20px;
         gap: 0;
@@ -97,6 +101,96 @@
         border: 2px solid var(--header-color);
         overflow: visible;
         position: relative;
+    }
+
+    .menu-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        color: var(--header-color);
+        font-weight: 500;
+        border-bottom: 1px solid var(--header-color);
+        transition: all 0.2s ease;
+        background: var(--main-bg-color);
+        position: relative;
+    }
+
+    .menu-item:last-child {
+        border-bottom: none;
+    }
+
+    .menu-item:hover:not(.active) {
+        background: var(--sub-bg-color);
+        color: var(--font-color);
+    }
+
+    .menu-item.active {
+        background: var(--main-bg-color);
+        color: var(--header-color);
+        font-weight: 600;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 2px 8px var(--shadow-color);
+        border-left: 4px solid var(--hover-color);
+    }
+
+    .menu-item.active::after {
+        content: '';
+        position: absolute;
+        right: -2px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--main-bg-color);
+        z-index: 11;
+    }
+
+    .languages-currencies {
+        font-size: 0.9rem;
+    }
+
+    .content-area {
+        flex: 1;
+        background: var(--main-bg-color);
+        border: 2px solid var(--header-color);
+        border-left: none;
+        border-right: none;
+        padding: 30px;
+        min-height: 600px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .ad-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        background: var(--sub-bg-color);
+        border: 2px solid var(--header-color);
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+        padding: 20px;
+        position: sticky;
+        top: 20px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .ad-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .ad-sidebar::-webkit-scrollbar-track {
+        background: var(--main-bg-color);
+        border-radius: 3px;
+    }
+
+    .ad-sidebar::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+    }
+
+    .ad-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--hover-color);
     }
 
     .menu-item {
@@ -196,7 +290,7 @@
     }
 
     /* Responsive design */
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         .mypage-container {
             flex-direction: column;
             padding: 10px;
@@ -206,6 +300,17 @@
         .sidebar {
             width: 100%;
             margin-bottom: 0;
+        }
+
+        .ad-sidebar {
+            width: 100%;
+            position: relative;
+            top: 0;
+            max-height: none;
+            border-left: 2px solid var(--header-color);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            margin-top: 0;
         }
 
         .menu-section {
@@ -239,9 +344,45 @@
 
         .content-area {
             border-left: 2px solid var(--header-color);
+            border-right: 2px solid var(--header-color);
             border-top: none;
-            border-radius: 0 0 8px 8px;
+            border-radius: 0;
             padding: 20px;
+        }
+
+        .content-area::before {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .menu-section {
+            margin-bottom: 15px;
+            border: 2px solid var(--header-color);
+            overflow: visible;
+        }
+
+        .menu-item.active::before {
+            right: -2px;
+            bottom: -20px;
+            width: 100%;
+            height: 20px;
+            background: var(--main-bg-color);
+            border-left: 2px solid var(--header-color);
+            border-bottom: 2px solid var(--header-color);
+            border-right: 2px solid var(--header-color);
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            border-top: none;
+            border-top-right-radius: 0;
+        }
+
+        .menu-item.active::after {
+            right: 0;
+            bottom: -2px;
+            width: 100%;
+            height: 2px;
+            background: var(--main-bg-color);
         }
     }
 </style>
