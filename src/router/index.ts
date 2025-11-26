@@ -67,6 +67,12 @@ export const router = createRouter({
 
 // Admin authentication guard
 router.beforeEach(async (to, from, next) => {
+	// Allow access to the access-denied page without admin check
+	if (to.path === '/admin/access-denied') {
+		next()
+		return
+	}
+
 	// Check if route requires admin access
 	if (to.matched.some(record => record.meta.requiresAdmin)) {
 		// If user role is not set, wait a moment for auth to initialize
