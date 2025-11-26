@@ -90,6 +90,7 @@
     }
 
     .sidebar {
+        margin-left: 25px;
         width: 250px;
         flex-shrink: 0;
         position: relative;
