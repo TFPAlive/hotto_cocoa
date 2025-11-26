@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 		}
 
 		const model = genAI.getGenerativeModel({
-			model: "gemini-1.5-flash",
+			model: "gemini-1.5-flash-latest",
 			systemInstruction: `
     You are a friendly AI assistant for an e-commerce shop that sells chocolate drinks. 
     Your role is to recommend the best chocolate drink for customers based on their tastes and preferences. 
