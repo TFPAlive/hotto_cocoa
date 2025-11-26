@@ -74,7 +74,7 @@
             <Security v-if="activeSection === 'security'" />
             <Permissions v-if="activeSection === 'permissions'" />
         </div>
-        <div class="ad-sidebar">
+        <div class="sidebar">
             <SideAdvertisement />
         </div>
     </div>
@@ -82,7 +82,7 @@
 <style scoped>
     .mypage-container {
         display: flex;
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
         gap: 0;
@@ -146,18 +146,6 @@
 
     .languages-currencies {
         font-size: 0.9rem;
-    }
-
-    .content-area {
-        flex: 1;
-        background: var(--main-bg-color);
-        border: 2px solid var(--header-color);
-        border-left: none;
-        border-right: none;
-        padding: 30px;
-        min-height: 600px;
-        position: relative;
-        z-index: 1;
     }
 
     .ad-sidebar {

@@ -403,9 +403,7 @@ function formatPhoneNumber(value: string) {
 
 .profile-form {
   background: var(--main-bg-color);
-  border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 24px;
 }
 
