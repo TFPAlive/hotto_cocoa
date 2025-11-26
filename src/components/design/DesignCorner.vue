@@ -409,8 +409,6 @@
     .cup-image-placeholder {
         width: 100%;
         aspect-ratio: 1 / 1;
-        background: var(--font-color);
-        border-radius: 50%;
         margin-bottom: 32px;
         display: flex;
         align-items: center;
@@ -423,7 +421,6 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 50%;
     }
 
     .placeholder-text {
