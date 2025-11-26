@@ -31,6 +31,7 @@
     const canScrollLeft = ref(false)
     const canScrollRight = ref(false)
     const drinkName = ref('Your Custom Drink')
+    const shippingCost = ref(500) // Fixed shipping cost
     
     // Drink roulette handling
     async function handleRouletteData() {
@@ -314,14 +315,30 @@
                     </div>
                 </div>
                 <div class="price">
-                    <h2>Total Price</h2>
-                    <p>
-            {{
-              formatPrice(Object.values(selectedProducts).reduce((sum, prod) => {
-                return sum + (prod?.price || 0)
-              }, 0))
-            }}
-          </p>
+                    <div class="price-row">
+                        <h3>Drink Price</h3>
+                        <p>
+                            {{
+                              formatPrice(Object.values(selectedProducts).reduce((sum, prod) => {
+                                return sum + (prod?.price || 0)
+                              }, 0))
+                            }}
+                        </p>
+                    </div>
+                    <div class="price-row">
+                        <h3>Shipping Cost</h3>
+                        <p>{{ formatPrice(shippingCost) }}</p>
+                    </div>
+                    <div class="price-row total">
+                        <h2>Total Price</h2>
+                        <p>
+                            {{
+                              formatPrice(Object.values(selectedProducts).reduce((sum, prod) => {
+                                return sum + (prod?.price || 0)
+                              }, 0) + shippingCost)
+                            }}
+                        </p>
+                    </div>
                 </div>
             </div>
             <div class="design-corner-right">
@@ -596,17 +613,49 @@
 
     .price {
         display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+        border-top: 2px solid var(--border-color);
+        padding-top: 20px;
+        margin-top: 20px;
+    }
+
+    .price-row {
+        display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: space-between;
         width: 100%;
     }
 
-    .price h2 {
-        margin-right: 12px;
-        font-size: 2rem;
+    .price-row h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: var(--font-color);
+        font-weight: 500;
     }
 
-    .price p {
+    .price-row p {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--font-color);
+    }
+
+    .price-row.total {
+        border-top: 2px solid var(--hover-color);
+        padding-top: 12px;
+        margin-top: 8px;
+    }
+
+    .price-row.total h2 {
+        margin: 0;
+        font-size: 1.6rem;
+        color: var(--header-color);
+    }
+
+    .price-row.total p {
         font-size: 1.8rem;
         font-weight: bold;
         color: var(--hover-color);
