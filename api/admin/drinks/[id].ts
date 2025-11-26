@@ -177,7 +177,43 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
       }
     }
 
-    res.setHeader('Allow', ['GET', 'PUT'])
+    if (req.method === 'DELETE') {
+      await conn.beginTransaction()
+
+      try {
+        // Check if drink exists
+        const [existingRows] = await conn.execute('SELECT drinkid FROM Drink WHERE drinkid = ?', [drinkid])
+        if (!Array.isArray(existingRows) || (existingRows as any).length === 0) {
+          await conn.rollback()
+          return res.status(404).json({ error: 'Drink not found' })
+        }
+
+        // Delete product associations
+        await conn.execute('DELETE FROM DrinkProduct WHERE drinkid = ?', [drinkid])
+
+        // Delete user drink names
+        await conn.execute('DELETE FROM UserDrink WHERE drinkid = ?', [drinkid])
+
+        // Delete cart items containing this drink
+        await conn.execute('DELETE FROM Cart WHERE drinkid = ?', [drinkid])
+
+        // Delete the drink itself
+        await conn.execute('DELETE FROM Drink WHERE drinkid = ?', [drinkid])
+
+        await conn.commit()
+
+        return res.status(200).json({
+          message: 'Drink deleted successfully',
+          drinkid
+        })
+      } catch (transactionError) {
+        await conn.rollback()
+        console.error('Transaction error deleting drink:', transactionError)
+        return res.status(500).json({ error: 'Failed to delete drink' })
+      }
+    }
+
+    res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
     return res.status(405).end(`Method ${req.method} Not Allowed`)
     
   } catch (error) {
