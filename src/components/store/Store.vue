@@ -371,9 +371,6 @@ onMounted(async () => {
               >
                 <h3 class="product-name">{{ item.name }}</h3>
               </router-link>
-              <p class="product-description">
-                {{ item.description || (item.item_type === 'drink' ? 'Custom drink recipe' : 'No description available') }}
-              </p>
               
               <div class="product-details" v-if="item.item_type === 'product'">
                 <span v-if="item.material" class="product-material">
@@ -685,8 +682,8 @@ onMounted(async () => {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
 }
 
 .product-card {
@@ -893,7 +890,8 @@ onMounted(async () => {
   }
   
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 }
 
@@ -913,8 +911,8 @@ onMounted(async () => {
   }
   
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
 }
 </style>
