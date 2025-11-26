@@ -282,7 +282,7 @@
         <div class="design-corner-holder">
             <div class="design-corner-left">
                 <div class="cup-image-placeholder" @mouseenter="showChoiceTooltip" @mouseleave="hideChoiceTooltip" @mousemove="updateTooltipPosition">
-                    <img v-if="hoveredProduct && hoveredProduct.imageurl" :src="hoveredProduct.imageurl" :alt="hoveredProduct.name || 'Product Image'" class="preview-image" />
+                    <img v-if="selectedProducts[selectedCategory.toLowerCase()] && selectedProducts[selectedCategory.toLowerCase()].imageurl" :src="selectedProducts[selectedCategory.toLowerCase()].imageurl" :alt="selectedProducts[selectedCategory.toLowerCase()].name || 'Product Image'" class="preview-image" />
                     <div v-else class="placeholder-text">
                         <!-- Cup image goes here -->
                     </div>
