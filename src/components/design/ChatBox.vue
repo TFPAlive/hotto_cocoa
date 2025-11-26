@@ -77,8 +77,6 @@ Tell me what you want, or click on the stuff below.`;
         max-width: 1000px;
         margin: 0 auto;
         background: var(--main-bg-color);
-        border-radius: 18px;
-        box-shadow: 0 2px 12px var(--shadow-color);
         padding: 32px 24px 24px 24px;
         display: flex;
         flex-direction: column;

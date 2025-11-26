@@ -399,7 +399,7 @@
     }
 
     .design-corner-left {
-        width: 20%;
+        width: 50%;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -407,8 +407,8 @@
     }
 
     .cup-image-placeholder {
-        width: 220px;
-        height: 220px;
+        width: 100%;
+        aspect-ratio: 1 / 1;
         background: var(--font-color);
         border-radius: 50%;
         margin-bottom: 32px;
@@ -478,7 +478,7 @@
     }
 
     .design-corner-right {
-        width: 70%;
+        width: 50%;
         flex: 2;
         display: flex;
         flex-direction: column;
