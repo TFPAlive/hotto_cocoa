@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "@/layouts/MainLayout.vue";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import AuthenticationLayout from "@/layouts/Authentication.vue";
+import { auth } from "@/composables/useAuth";
 
 const routes = [
 	{
@@ -22,11 +23,13 @@ const routes = [
 	{
 		path: "/admin",
 		component: AdminLayout,
+		meta: { requiresAdmin: true },
 		children: [
-			{ path: "", component: () => import("@/components/admin/Landing.vue") },
-			{ path: "product", component: () => import("@/components/admin/Product.vue") },
-			{ path: "drink", component: () => import("@/components/admin/Drink.vue") },
-			{ path: "order", component: () => import("@/components/admin/Order.vue") }
+			{ path: "", component: () => import("@/components/admin/Landing.vue"), meta: { requiresAdmin: true } },
+			{ path: "product", component: () => import("@/components/admin/Product.vue"), meta: { requiresAdmin: true } },
+			{ path: "drink", component: () => import("@/components/admin/Drink.vue"), meta: { requiresAdmin: true } },
+			{ path: "order", component: () => import("@/components/admin/Order.vue"), meta: { requiresAdmin: true } },
+			{ path: "access-denied", component: () => import("@/components/admin/AccessDenied.vue") }
 			// ...other admin pages
 		]
 	},
@@ -61,3 +64,25 @@ export const router = createRouter({
 		};
 	}
 });
+
+// Admin authentication guard
+router.beforeEach(async (to, from, next) => {
+	// Check if route requires admin access
+	if (to.matched.some(record => record.meta.requiresAdmin)) {
+		// If user role is not set, wait a moment for auth to initialize
+		if (auth.userRole === "guest" && !auth.isLoggedIn) {
+			// Give auth a chance to load
+			await new Promise(resolve => setTimeout(resolve, 100))
+		}
+		
+		// Check if user is admin
+		if (auth.userRole !== "admin") {
+			// Not an admin, redirect to access denied page
+			next({ path: '/admin/access-denied' })
+			return
+		}
+	}
+	
+	// Allow navigation
+	next()
+})

@@ -77,13 +77,13 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
         return res.status(400).json({ error: 'Valid base price is required' })
       }
 
-      await conn.beginTransaction()
-
       try {
+        await conn.query('START TRANSACTION')
+
         // Check if drink exists
         const [existingRows] = await conn.execute('SELECT drinkid FROM Drink WHERE drinkid = ?', [drinkid])
         if (!Array.isArray(existingRows) || (existingRows as any).length === 0) {
-          await conn.rollback()
+          await conn.query('ROLLBACK')
           return res.status(404).json({ error: 'Drink not found' })
         }
 
@@ -132,7 +132,7 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
             [uniqueid, drinkid]
           )
           if (Array.isArray(duplicateRows) && (duplicateRows as any).length > 0) {
-            await conn.rollback()
+            await conn.query('ROLLBACK')
             return res.status(409).json({ error: 'Another drink with this product composition already exists' })
           }
 
@@ -151,7 +151,7 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
           }
         }
 
-        await conn.commit()
+        await conn.query('COMMIT')
 
         // Return updated drink
         const [updatedRows] = await conn.execute(`
@@ -171,20 +171,20 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
           drink: (updatedRows as any)[0]
         })
       } catch (transactionError) {
-        await conn.rollback()
+        try { await conn.query('ROLLBACK') } catch(_) {}
         console.error('Transaction error updating drink:', transactionError)
         return res.status(500).json({ error: 'Failed to update drink' })
       }
     }
 
     if (req.method === 'DELETE') {
-      await conn.beginTransaction()
-
       try {
+        await conn.query('START TRANSACTION')
+
         // Check if drink exists
         const [existingRows] = await conn.execute('SELECT drinkid FROM Drink WHERE drinkid = ?', [drinkid])
         if (!Array.isArray(existingRows) || (existingRows as any).length === 0) {
-          await conn.rollback()
+          await conn.query('ROLLBACK')
           return res.status(404).json({ error: 'Drink not found' })
         }
 
@@ -200,14 +200,14 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
         // Delete the drink itself
         await conn.execute('DELETE FROM Drink WHERE drinkid = ?', [drinkid])
 
-        await conn.commit()
+        await conn.query('COMMIT')
 
         return res.status(200).json({
           message: 'Drink deleted successfully',
           drinkid
         })
       } catch (transactionError) {
-        await conn.rollback()
+        try { await conn.query('ROLLBACK') } catch(_) {}
         console.error('Transaction error deleting drink:', transactionError)
         return res.status(500).json({ error: 'Failed to delete drink' })
       }
