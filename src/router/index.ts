@@ -23,7 +23,6 @@ const routes = [
 	{
 		path: "/admin",
 		component: AdminLayout,
-		meta: { requiresAdmin: true },
 		children: [
 			{ path: "", component: () => import("@/components/admin/Landing.vue"), meta: { requiresAdmin: true } },
 			{ path: "product", component: () => import("@/components/admin/Product.vue"), meta: { requiresAdmin: true } },
