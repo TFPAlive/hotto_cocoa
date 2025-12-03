@@ -3,7 +3,7 @@
     import RightPointIcon from '../icons/IconPointRight.vue'
     import StarRating from './StarRating.vue'
     import { ref, onMounted, nextTick, watch } from 'vue'
-    import { useRoute } from 'vue-router'
+    import { useRoute, useRouter } from 'vue-router'
     import { useProducts } from '@/composables/useProducts'
     import { auth } from '@/composables/useAuth'
     import { formatPrice } from '@/utils/currency'
@@ -12,6 +12,7 @@
     const { products } = useProducts()
     const { fetchCartItems } = useMyCart()
     const route = useRoute()
+    const router = useRouter()
     const sweetness = ref(3)
     const calories = ref(2)
     const categories = ref(['Mugs & Cups', 'Drink bases', 'Choco bombs', 'Dipped cookies', 'Top-cream', 'Marshmallows', 'Sprinkles', 'Spoons & Candy canes', 'Straws', 'Coasters', 'Packing styles'])
@@ -154,12 +155,38 @@
                 }),
             })
 
-            if (!res.ok) throw new Error('Network response was not ok')
+            if (!res.ok) {
+                const errorData = await res.json()
+                
+                // Handle unauthorized error - redirect to login with return path
+                if (errorData.error === 'Unauthorized: valid userid required') {
+                    // Build return URL with all current selections
+                    const returnParams = new URLSearchParams({
+                        roulette: 'true',
+                        drinkName: drinkName.value,
+                        products: JSON.stringify(products)
+                    })
+                    
+                    // Navigate to login with return path
+                    await router.push(`/auth/login?returnTo=/design%23design-corner&${returnParams.toString()}`)
+                    return
+                }
+                
+                // Handle drink name validation error
+                if (errorData.error === 'Drink name is required and must be a string') {
+                    createError.value = 'Please enter a valid drink name'
+                    return
+                }
+                
+                throw new Error(errorData.error || 'Failed to create drink')
+            }
 
             const output = await res.json()
             drinkid.value = output.drink?.drinkid || null
-        } catch (err) {
-            createError.value = 'Failed to create drink'
+        } catch (err: any) {
+            if (!createError.value) {
+                createError.value = err.message || 'Failed to create drink'
+            }
             console.error(err)
         } finally {
             creating.value = false
@@ -298,6 +325,7 @@
                         @click="selectDrinkNameText"
                         @focus="selectDrinkNameText"
                     />
+                    <div v-if="createError" class="error-message">{{ createError }}</div>
                 </div>
                 <div class="button-holder">
                     <button class="create-drink" @click="createDrink">Create Drink</button>
@@ -474,6 +502,14 @@
     .drink-name-input::placeholder {
         color: var(--font-color);
         font-weight: normal;
+    }
+
+    .error-message {
+        color: #ff4444;
+        font-size: 0.9rem;
+        margin-top: 8px;
+        text-align: center;
+        font-weight: 500;
     }
 
     .rating-bars {

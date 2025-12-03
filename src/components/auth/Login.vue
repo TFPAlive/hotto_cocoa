@@ -1,10 +1,11 @@
 <script lang="ts" setup>
     import { ref } from "vue";
     import axios from "axios";
-    import { useRouter } from "vue-router";
+    import { useRouter, useRoute } from "vue-router";
     import { checkUser } from "@/composables/useAuth";
 
     const router = useRouter();
+    const route = useRoute();
     const identifier = ref(""); // email or username
     const password = ref("");
     const error = ref("");
@@ -19,7 +20,21 @@
             router.push("/auth/logging-in"); // Redirect to logging-in page first
             const { role } = res.data;
             await checkUser();
-            if (role === "admin") {
+            
+            // Check if there's a return path from the query params
+            const returnTo = route.query.returnTo as string;
+            
+            if (returnTo) {
+                // Preserve all query params for the return path
+                const queryParams = { ...route.query };
+                delete queryParams.returnTo; // Remove returnTo from params
+                
+                // Build the full path with all preserved parameters
+                const queryString = new URLSearchParams(queryParams as Record<string, string>).toString();
+                const fullReturnPath = queryString ? `${returnTo}&${queryString}` : returnTo;
+                
+                router.push(fullReturnPath);
+            } else if (role === "admin") {
                 router.push("/admin");
             } else {
                 router.push("/");

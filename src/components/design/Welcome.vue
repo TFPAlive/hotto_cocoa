@@ -2,7 +2,7 @@
 </script>
 <template>
     <div class="design-section">
-        <div class="instruction-box-red">Click a cup to start your drink roulette!</div>
+        <div class="instruction-box-red">Instruction HERE</div>
         <div class="main-box-black">Making your own <br />Hotto Choco </div>
         
     </div>
