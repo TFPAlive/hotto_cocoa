@@ -188,6 +188,13 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
           return res.status(404).json({ error: 'Drink not found' })
         }
 
+        // Check if drink is in any orders (prevent deletion if so)
+        const [orderCheck] = await conn.execute('SELECT COUNT(*) as count FROM OrderItem WHERE drinkid = ?', [drinkid])
+        if (Array.isArray(orderCheck) && (orderCheck as any)[0]?.count > 0) {
+          await conn.query('ROLLBACK')
+          return res.status(400).json({ error: 'Cannot delete drink that has been ordered' })
+        }
+
         // Delete product associations
         await conn.execute('DELETE FROM DrinkProduct WHERE drinkid = ?', [drinkid])
 
@@ -195,7 +202,7 @@ export default async function handler(req: AuthRequest, res: VercelResponse) {
         await conn.execute('DELETE FROM UserDrink WHERE drinkid = ?', [drinkid])
 
         // Delete cart items containing this drink
-        await conn.execute('DELETE FROM Cart WHERE drinkid = ?', [drinkid])
+        await conn.execute('DELETE FROM CartItem WHERE drinkid = ?', [drinkid])
 
         // Delete the drink itself
         await conn.execute('DELETE FROM Drink WHERE drinkid = ?', [drinkid])
