@@ -372,18 +372,8 @@ onMounted(async () => {
                 <h3 class="product-name">{{ item.name }}</h3>
               </router-link>
               
-              <div class="product-details" v-if="item.item_type === 'product'">
-                <span v-if="item.material" class="product-material">
-                  Material: {{ item.material }}
-                </span>
-                <span v-if="item.category" class="product-category">
-                  Category: {{ item.category }}
-                </span>
-              </div>
-              
               <div class="product-rating">
                 <StarRating :modelValue="4" />
-                <span class="rating-text">({{ Math.floor(Math.random() * 50) + 10 }} reviews)</span>
               </div>
               
               <div class="product-footer">
@@ -440,7 +430,6 @@ onMounted(async () => {
 <style scoped>
 .store-container {
   max-width: 1400px;
-  margin: 0 auto;
   padding: 20px;
   background: var(--main-bg-color);
   min-height: 100vh;
@@ -730,6 +719,8 @@ onMounted(async () => {
 }
 
 .product-link {
+  display: block;
+  height: fit-content;
   text-decoration: none;
   color: inherit;
 }
@@ -755,7 +746,7 @@ onMounted(async () => {
 }
 
 .product-info {
-  padding: 20px;
+  padding: 10px;
 }
 
 .product-name {
@@ -776,13 +767,6 @@ onMounted(async () => {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.product-details {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 12px;
 }
 
 .product-material, .product-category {
