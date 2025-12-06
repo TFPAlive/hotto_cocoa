@@ -5,6 +5,9 @@ import SideAdvertisement from '@/components/mypage/SideAdvertisement.vue'
 
 <template>
     <Store />
+    <div class="ad-sidebar">
+      <SideAdvertisement />
+    </div>
 </template>
 
 <style scoped>
