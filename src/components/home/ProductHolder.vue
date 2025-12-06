@@ -159,6 +159,7 @@ onMounted(async () => {
                                     :src="item.imageurl" 
                                     :alt="item.name || item.drinkname"
                                     class="product-img"
+                                    draggable="false"
                                 />
                                 <div v-else class="product-placeholder">
                                     {{ section.type === 'drinks' ? '🍹' : '📦' }}
@@ -182,7 +183,7 @@ onMounted(async () => {
                     </div>
                     
                     <!-- Show empty slots if no items -->
-                    <div v-else v-for="i in 7" :key="`empty-${i}`" class="product-slot">
+                    <div v-else v-for="i in 10" :key="`empty-${i}`" class="product-slot">
                         <div class="product-card empty-card">
                             <div class="icon-empty-wrap">
                                 <svg viewBox="0 0 32 32" width="48" height="48">
@@ -235,7 +236,7 @@ onMounted(async () => {
 
     .product-section {
         margin: 0 auto;
-        max-width: 1200px;
+        max-width: 95%;
         padding: 32px 24px 24px 24px;
     }
 
