@@ -4,4 +4,7 @@ import Store from '@/components/store/Store.vue'
 
 <template>
   <Store />
+  <div class="sidebar">
+    <SideAdvertisement />
+  </div>
 </template>
