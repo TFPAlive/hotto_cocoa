@@ -74,7 +74,7 @@
             <Security v-if="activeSection === 'security'" />
             <Permissions v-if="activeSection === 'permissions'" />
         </div>
-        <div class="sidebar">
+        <div class="ad-sidebar">
             <SideAdvertisement />
         </div>
     </div>
