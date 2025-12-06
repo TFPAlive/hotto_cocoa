@@ -4,22 +4,10 @@ import SideAdvertisement from '@/components/mypage/SideAdvertisement.vue'
 </script>
 
 <template>
-  <div class="store-container">
     <Store />
-    <div class="ad-sidebar">
-      <SideAdvertisement />
-    </div>
-  </div>
 </template>
 
 <style scoped>
-.store-container {
-  display: flex;
-  max-width: 1400px;
-  margin: 0 auto;
-  gap: 0;
-}
-
 .ad-sidebar {
   width: 280px;
   flex-shrink: 0;
