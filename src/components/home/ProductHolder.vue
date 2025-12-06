@@ -153,6 +153,7 @@ onMounted(async () => {
                             <router-link 
                                 :to="section.type === 'drinks' ? `/drinks/${item.drinkid}` : `/products/${item.productid}`"
                                 class="product-image"
+                                draggable="false"
                             >
                                 <img 
                                     v-if="item.imageurl" 
@@ -174,6 +175,7 @@ onMounted(async () => {
                                     <router-link 
                                         :to="section.type === 'drinks' ? `/drinks/${item.drinkid}` : `/products/${item.productid}`"
                                         class="view-btn"
+                                        draggable="false"
                                     >
                                         View
                                     </router-link>
