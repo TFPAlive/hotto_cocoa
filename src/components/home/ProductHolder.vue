@@ -17,9 +17,11 @@ const products = ref<any[]>([])
 const popularDrinks = ref<any[]>([])
 const loading = ref(true)
 
-// Each section gets its own scroll index
-const visibleCount = 5
-const scrollIndexes = ref([0, 0, 0])
+// Dragging state
+const isDragging = ref(false)
+const startX = ref(0)
+const scrollLeft = ref(0)
+const activeSection = ref<number | null>(null)
 
 // Computed data for each section
 const sectionData = computed(() => [
@@ -28,17 +30,29 @@ const sectionData = computed(() => [
     popularDrinks.value.slice(0, 10)
 ])
 
-function scrollLeft(sectionIdx: number) {
-    if (scrollIndexes.value[sectionIdx] > 0) {
-        scrollIndexes.value[sectionIdx]--
-    }
+function startDrag(event: MouseEvent, sectionIdx: number) {
+    isDragging.value = true
+    activeSection.value = sectionIdx
+    const row = (event.currentTarget as HTMLElement)
+    startX.value = event.pageX - row.offsetLeft
+    scrollLeft.value = row.scrollLeft
+    row.style.cursor = 'grabbing'
 }
 
-function scrollRight(sectionIdx: number) {
-    const itemCount = sectionData.value[sectionIdx].length
-    if (scrollIndexes.value[sectionIdx] < Math.max(0, itemCount - visibleCount)) {
-        scrollIndexes.value[sectionIdx]++
-    }
+function drag(event: MouseEvent) {
+    if (!isDragging.value || activeSection.value === null) return
+    event.preventDefault()
+    const row = event.currentTarget as HTMLElement
+    const x = event.pageX - row.offsetLeft
+    const walk = (x - startX.value) * 2
+    row.scrollLeft = scrollLeft.value - walk
+}
+
+function endDrag(event: MouseEvent) {
+    isDragging.value = false
+    activeSection.value = null
+    const row = event.currentTarget as HTMLElement
+    row.style.cursor = 'grab'
 }
 
 // Fetch user's drinks
@@ -115,19 +129,13 @@ onMounted(async () => {
             </div>
             
             <div class="products-row-wrapper">
-                <div class="products-row-bg">
-                    <button 
-                        class="scroll-btn left" 
-                        @click="scrollLeft(idx)" 
-                        :disabled="scrollIndexes[idx] === 0"
-                    > 
-                        &#8592; 
-                    </button>
-                </div>
-                
-                <div class="products-row" :style="{
-                    transform: `translateX(-${(scrollIndexes[idx] * 200) / Math.max(sectionData[idx].length, visibleCount)}%)`
-                }">
+                <div 
+                    class="products-row" 
+                    @mousedown="(e) => startDrag(e, idx)"
+                    @mousemove="drag"
+                    @mouseup="endDrag"
+                    @mouseleave="endDrag"
+                >
                     <!-- Show actual items if available -->
                     <div 
                         v-if="sectionData[idx].length > 0"
@@ -189,16 +197,6 @@ onMounted(async () => {
                         </div>
                     </div>
                 </div>
-                
-                <div class="products-row-bg">
-                    <button 
-                        class="scroll-btn right" 
-                        @click="scrollRight(idx)" 
-                        :disabled="scrollIndexes[idx] >= Math.max(0, sectionData[idx].length - visibleCount)"
-                    > 
-                        &#8594; 
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -238,9 +236,6 @@ onMounted(async () => {
     .product-section {
         margin: 0 auto;
         max-width: 1200px;
-        background: var(--main-bg-color);
-        border-radius: 18px;
-        box-shadow: 0 2px 8px var(--shadow-color);
         padding: 32px 24px 24px 24px;
     }
 
@@ -276,14 +271,29 @@ onMounted(async () => {
         color: var(--hover-font-color);
     }
 
+    .products-row-wrapper {
+        width: 95%;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
     .products-row {
         display: flex;
         gap: 24px;
-        justify-content: stretch;
-        align-items: flex-end;
         width: 100%;
-        transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1);
-        will-change: transform;
+        overflow-x: auto;
+        scrollbar-width: none;
+        cursor: grab;
+        user-select: none;
+        padding: 10px 0;
+    }
+
+    .products-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .products-row:active {
+        cursor: grabbing;
     }
 
     .product-slot {
@@ -430,51 +440,6 @@ onMounted(async () => {
         line-height: 1.3;
     }
 
-    .products-row-wrapper {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        overflow: hidden;
-    }
-
-    .scroll-btn {
-        background: var(--button-color);
-        color: var(--header-color);
-        border: none;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin: 0 8px;
-        cursor: pointer;
-        box-shadow: 0 2px 8px var(--shadow-color);
-        transition: background 0.2s, color 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1;
-    }
-
-    .scroll-btn:hover:not(:disabled) {
-        background: var(--hover-color);
-        color: var(--hover-font-color);
-    }
-
-    .scroll-btn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-    }
-
-    .products-row-bg {
-        display: flex;
-        align-items: center;
-        background: var(--main-bg-color);
-        border-radius: 12px;
-        height: 100%;
-        z-index: 1;
-    }
-
     @media (max-width: 1024px) {
         .product-holder-wrapper {
             padding: 24px 0;
@@ -483,6 +448,10 @@ onMounted(async () => {
 
         .product-section {
             padding: 18px 8px 16px 8px;
+        }
+
+        .products-row-wrapper {
+            width: 95%;
         }
 
         .products-row {
